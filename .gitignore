@@ -523,3 +523,4 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,java,go,node,python,intellij+all,vscode,visualstudiocode,eclipse
 /apis
+src/main/java/app/onepass/apis
