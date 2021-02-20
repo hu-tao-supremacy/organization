@@ -10,6 +10,7 @@ import app.onepass.organizer.repositories.OrganizationRepository;
 
 @Service
 public class OrganizationService {
+
 	@Autowired
 	private OrganizationRepository organizationRepository;
 

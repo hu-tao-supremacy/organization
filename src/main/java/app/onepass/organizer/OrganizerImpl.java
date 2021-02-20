@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import app.onepass.apis.CreateEventReq;
 import app.onepass.apis.Organization;
@@ -16,10 +17,11 @@ import app.onepass.organizer.services.OrganizationService;
 import app.onepass.organizer.utilities.EntityParser;
 import io.grpc.stub.StreamObserver;
 
+@Component
 public class OrganizerImpl extends OrganizationServiceGrpc.OrganizationServiceImplBase {
 
 	@Autowired
-	public OrganizationService organizationService;
+	private OrganizationService organizationService;
 
 	@Override
 	public void createEvent(CreateEventReq request, StreamObserver<Result> responseObserver) {
@@ -40,7 +42,7 @@ public class OrganizerImpl extends OrganizationServiceGrpc.OrganizationServiceIm
 
 		responseObserver.onNext(
 				ReadOrganizationRes.newBuilder().addAllOrganizations(allOrganizations).build());
-		
+
 		responseObserver.onCompleted();
 	}
 }
