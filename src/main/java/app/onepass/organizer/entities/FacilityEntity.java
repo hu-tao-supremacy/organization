@@ -15,7 +15,7 @@ public class FacilityEntity {
 	@Id
 	@GeneratedValue
 	private long id;
-	private long organization_id
+	private long organization_id;
 	private String name;
 	private double latitude;
 	private double longitude;
