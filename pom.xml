@@ -52,13 +52,6 @@
       <version>1.35.0</version>
     </dependency>
 
-    <dependency> <!-- necessary for Java 9+ -->
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>annotations-api</artifactId>
-      <version>6.0.53</version>
-      <scope>provided</scope>
-    </dependency>
-
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
@@ -92,6 +85,19 @@
       <artifactId>lombok</artifactId>
       <scope>provided</scope>
     </dependency>
+
+    <dependency>
+      <groupId>io.github.lognet</groupId>
+      <artifactId>grpc-spring-boot-starter</artifactId>
+      <version>4.4.4</version>
+    </dependency>
+
+    <dependency> <!-- necessary for Java 9+ -->
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>annotations-api</artifactId>
+      <version>6.0.53</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -104,7 +110,7 @@
           <configuration>
             <archive>
               <manifest>
-                <mainClass>app.onepass.organizer.App</mainClass>
+                <mainClass>app.onepass.organizer.DeprecatedApp</mainClass>
               </manifest>
             </archive>
             <descriptorRefs>

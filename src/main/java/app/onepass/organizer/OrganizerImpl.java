@@ -3,8 +3,8 @@ package app.onepass.organizer;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.lognet.springboot.grpc.GRpcService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import app.onepass.apis.CreateEventReq;
 import app.onepass.apis.Organization;
@@ -17,32 +17,32 @@ import app.onepass.organizer.services.OrganizationService;
 import app.onepass.organizer.utilities.EntityParser;
 import io.grpc.stub.StreamObserver;
 
-@Component
+@GRpcService
 public class OrganizerImpl extends OrganizationServiceGrpc.OrganizationServiceImplBase {
 
-	@Autowired
-	private OrganizationService organizationService;
+    @Autowired
+    private OrganizationService organizationService;
 
-	@Override
-	public void createEvent(CreateEventReq request, StreamObserver<Result> responseObserver) {
-		responseObserver.onNext(
-				Result.newBuilder().setIsOk(true).setDescription("Jean").build()
-							   );
-		responseObserver.onCompleted();
-	}
+    @Override
+    public void createEvent(CreateEventReq request, StreamObserver<Result> responseObserver) {
+        responseObserver.onNext(
+                Result.newBuilder().setIsOk(true).setDescription("Jean").build()
+                               );
+        responseObserver.onCompleted();
+    }
 
-	@Override
-	public void readOrganization(UserReq request, StreamObserver<ReadOrganizationRes> responseObserver) {
+    @Override
+    public void readOrganization(UserReq request, StreamObserver<ReadOrganizationRes> responseObserver) {
 
-		List<OrganizationEntity> allOrganizationEntities = organizationService.getAllOrganizations();
+        List<OrganizationEntity> allOrganizationEntities = organizationService.getAllOrganizations();
 
-		List<Organization> allOrganizations = allOrganizationEntities.stream()
-				.map(EntityParser::parseOrganization)
-				.collect(Collectors.toList());
+        List<Organization> allOrganizations = allOrganizationEntities.stream()
+                .map(EntityParser::parseOrganization)
+                .collect(Collectors.toList());
 
-		responseObserver.onNext(
-				ReadOrganizationRes.newBuilder().addAllOrganizations(allOrganizations).build());
+        responseObserver.onNext(
+                ReadOrganizationRes.newBuilder().addAllOrganizations(allOrganizations).build());
 
-		responseObserver.onCompleted();
-	}
+        responseObserver.onCompleted();
+    }
 }

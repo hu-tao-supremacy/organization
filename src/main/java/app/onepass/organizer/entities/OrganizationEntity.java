@@ -1,10 +1,10 @@
 package app.onepass.organizer.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
 
@@ -17,9 +17,9 @@ public class OrganizationEntity {
 	@GeneratedValue
 	private long id;
 
-	@NotNull
+	@Column(nullable = false)
 	private String name;
 
-	@NotNull
+	@Column(nullable = false)
 	private boolean is_verified;
 }
