@@ -8,13 +8,12 @@ import javax.persistence.Table;
 import lombok.Getter;
 
 @Entity
-@Table(name = "organization")
+@Table(name = "tag")
 @Getter
-public class OrganizationEntity {
+public class TagEntity {
 
 	@Id
 	@GeneratedValue
 	private long id;
 	private String name;
-	private boolean is_verified;
 }

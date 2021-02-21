@@ -8,13 +8,17 @@ import javax.persistence.Table;
 import lombok.Getter;
 
 @Entity
-@Table(name = "organization")
+@Table(name = "facility")
 @Getter
-public class OrganizationEntity {
+public class FacilityEntity {
 
 	@Id
 	@GeneratedValue
 	private long id;
+	private long organization_id
 	private String name;
-	private boolean is_verified;
+	private double latitude;
+	private double longitude;
+	private String operating_hours;
+	private String description;
 }
