@@ -6,11 +6,9 @@ import java.util.stream.Collectors;
 import org.lognet.springboot.grpc.GRpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import app.onepass.apis.CreateEventReq;
 import app.onepass.apis.Organization;
 import app.onepass.apis.OrganizationServiceGrpc;
 import app.onepass.apis.ReadOrganizationRes;
-import app.onepass.apis.Result;
 import app.onepass.apis.UserReq;
 import app.onepass.organizer.entities.OrganizationEntity;
 import app.onepass.organizer.services.OrganizationService;
@@ -24,14 +22,6 @@ public class OrganizerImpl extends OrganizationServiceGrpc.OrganizationServiceIm
     private OrganizationService organizationService;
 
     @Override
-    public void createEvent(CreateEventReq request, StreamObserver<Result> responseObserver) {
-        responseObserver.onNext(
-                Result.newBuilder().setIsOk(true).setDescription("Jean").build()
-                               );
-        responseObserver.onCompleted();
-    }
-
-    @Override
     public void readOrganization(UserReq request, StreamObserver<ReadOrganizationRes> responseObserver) {
 
         List<OrganizationEntity> allOrganizationEntities = organizationService.getAllOrganizations();
@@ -40,9 +30,15 @@ public class OrganizerImpl extends OrganizationServiceGrpc.OrganizationServiceIm
                 .map(EntityParser::parseOrganization)
                 .collect(Collectors.toList());
 
-        responseObserver.onNext(
-                ReadOrganizationRes.newBuilder().addAllOrganizations(allOrganizations).build());
+        ReadOrganizationRes readOrganizationRes = ReadOrganizationRes.newBuilder()
+                .addAllOrganizations(allOrganizations).build();
 
+        configureResponseObserver(responseObserver, readOrganizationRes);
+
+    }
+
+    private <T> void configureResponseObserver(StreamObserver<T> responseObserver, T result) {
+        responseObserver.onNext(result);
         responseObserver.onCompleted();
     }
 }

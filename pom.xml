@@ -103,7 +103,7 @@
           <configuration>
             <archive>
               <manifest>
-                <mainClass>app.onepass.organizer.DeprecatedApp</mainClass>
+                <mainClass>app.onepass.organizer.App</mainClass>
               </manifest>
             </archive>
             <descriptorRefs>
