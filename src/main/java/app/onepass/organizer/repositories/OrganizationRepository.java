@@ -6,6 +6,4 @@ import org.springframework.stereotype.Repository;
 import app.onepass.organizer.entities.OrganizationEntity;
 
 @Repository
-public interface OrganizationRepository extends JpaRepository<OrganizationEntity, Long> {
-
-}
+public interface OrganizationRepository extends JpaRepository<OrganizationEntity, Long> {}

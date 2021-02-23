@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 import app.onepass.organizer.entities.EventEntity;
 
 @Repository
-public interface EventRepository  extends JpaRepository<EventEntity, Long> {
-}
+public interface EventRepository  extends JpaRepository<EventEntity, Long> { }

@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 import app.onepass.organizer.entities.FacilityEntity;
 
 @Repository
-public interface FacilityRepository  extends JpaRepository<FacilityEntity, Long> {
-}
+public interface FacilityRepository  extends JpaRepository<FacilityEntity, Long> { }

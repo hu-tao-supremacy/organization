@@ -6,12 +6,16 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import lombok.Builder;
 import lombok.Getter;
 
 @Entity
 @Table(name = "facility")
 @Getter
+@Builder
 public class FacilityEntity {
+
+	public FacilityEntity() {}
 
 	@Id
 	@GeneratedValue
