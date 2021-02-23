@@ -39,6 +39,10 @@ public class OrganizerImpl extends OrganizationServiceGrpc.OrganizationServiceIm
         OrganizationEntity organizationEntity = parseOrganization(organization);
 
         organizationRepository.save(organizationEntity);
+
+        Result result = returnSuccessful("Organization creation successful.");
+
+        configureResponseObserver(responseObserver, result);
     }
 
     @Override
@@ -81,6 +85,10 @@ public class OrganizerImpl extends OrganizationServiceGrpc.OrganizationServiceIm
         OrganizationEntity organizationEntity2 = EntityParser.parseOrganization(organization);
 
         organizationRepository.save(organizationEntity2);
+
+        Result result = returnSuccessful("Organization update successful.");
+
+        configureResponseObserver(responseObserver, result);
     }
 
     @Override
@@ -101,6 +109,10 @@ public class OrganizerImpl extends OrganizationServiceGrpc.OrganizationServiceIm
         }
 
         organizationRepository.delete(organizationEntity);
+
+        Result result = returnSuccessful("Organization deletion successful.");
+
+        configureResponseObserver(responseObserver, result);
     }
 
 //    private void saveEntity(String entityName, Object entity) {
@@ -139,6 +151,10 @@ public class OrganizerImpl extends OrganizationServiceGrpc.OrganizationServiceIm
 
     private Result returnError(String description) {
         return Result.newBuilder().setIsOk(false).setDescription(description).build();
+    }
+
+    private Result returnSuccessful(String description) {
+        return Result.newBuilder().setIsOk(true).setDescription(description).build();
     }
 
     private <T> void configureResponseObserver(StreamObserver<T> responseObserver, T result) {
