@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import org.lognet.springboot.grpc.GRpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static app.onepass.organizer.utilities.EntityParser.parseOrganization;
+
 import app.onepass.apis.CreateOrganizationReq;
 import app.onepass.apis.DeleteOrganizationReq;
 import app.onepass.apis.Organization;
@@ -34,7 +36,7 @@ public class OrganizerImpl extends OrganizationServiceGrpc.OrganizationServiceIm
 
         Organization organization = request.getOrganization();
 
-        OrganizationEntity organizationEntity = EntityParser.parseOrganization(organization);
+        OrganizationEntity organizationEntity = parseOrganization(organization);
 
         organizationRepository.save(organizationEntity);
     }
@@ -60,20 +62,80 @@ public class OrganizerImpl extends OrganizationServiceGrpc.OrganizationServiceIm
 
         long organizationId = request.getOrganizationId();
 
-        try (OrganizationEntity organizationEntity = new OrganizationEntity()) {
-            OrganizationEntity organizationEntity = organizationRepository
+        OrganizationEntity organizationEntity;
+
+        try {
+            organizationEntity = organizationRepository
                     .findById(organizationId)
                     .orElseThrow(IllegalArgumentException::new);
         } catch (IllegalArgumentException illegalArgumentException) {
-            returnError("Cannot find organization from given ID.");
+            Result result = returnError("Cannot find organization from given ID.");
+            configureResponseObserver(responseObserver, result);
+            return;
         }
-        request.getOrganization();
+
+        organizationRepository.delete(organizationEntity);
+
+        Organization organization = request.getOrganization();
+
+        OrganizationEntity organizationEntity2 = EntityParser.parseOrganization(organization);
+
+        organizationRepository.save(organizationEntity2);
     }
 
     @Override
     public void deleteOrganization(DeleteOrganizationReq request, StreamObserver<Result> responseObserver) {
-        super.deleteOrganization(request, responseObserver);
+
+        long organizationId = request.getOrganizationId();
+
+        OrganizationEntity organizationEntity;
+
+        try {
+            organizationEntity = organizationRepository
+                    .findById(organizationId)
+                    .orElseThrow(IllegalArgumentException::new);
+        } catch (IllegalArgumentException illegalArgumentException) {
+            Result result = returnError("Cannot delete organization from given ID.");
+            configureResponseObserver(responseObserver, result);
+            return;
+        }
+
+        organizationRepository.delete(organizationEntity);
     }
+
+//    private void saveEntity(String entityName, Object entity) {
+//
+//        if (entityName.equals("organization")) {
+//
+//            Organization organization = (Organization) entity;
+//
+//            OrganizationEntity organizationEntity = EntityParser.parseOrganization(organization)
+//
+//            organizationRepository.save(organizationEntity);
+//        }
+//    }
+//
+//    private boolean deleteEntity(String entityName, Object entity, long id) {
+//
+//        if (entityName.equals("organization")) {
+//
+//            long organizationId = id;
+//
+//            OrganizationEntity organizationEntity;
+//
+//            try {
+//                organizationEntity = organizationRepository
+//                        .findById(organizationId)
+//                        .orElseThrow(IllegalArgumentException::new);
+//            } catch (IllegalArgumentException illegalArgumentException) {
+//                Result result = returnError("Cannot find organization from given ID.");
+//                configureResponseObserver(responseObserver, result);
+//                return;
+//            }
+//
+//            organizationRepository.delete(organizationEntity);
+//        }
+//    }
 
     private Result returnError(String description) {
         return Result.newBuilder().setIsOk(false).setDescription(description).build();

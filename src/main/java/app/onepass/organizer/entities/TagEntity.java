@@ -7,8 +7,11 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(
@@ -16,10 +19,11 @@ import lombok.Getter;
 		uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})}
 )
 @Getter
+@Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TagEntity {
-
-	public TagEntity() {}
 
 	@Id
 	@GeneratedValue
