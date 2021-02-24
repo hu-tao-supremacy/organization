@@ -7,8 +7,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
-import com.google.protobuf.MessageOrBuilder;
-
+import app.onepass.apis.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,7 +24,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TagEntity implements BaseEntity {
+public class TagEntity implements BaseEntity<Tag, TagEntity> {
 
 	@Id
 	@GeneratedValue
@@ -33,14 +32,8 @@ public class TagEntity implements BaseEntity {
 	@NotNull
 	private String name;
 
-	//TODO: Implement methods
 	@Override
-	public BaseEntity parseInto(MessageOrBuilder message) {
-		return null;
-	}
-
-	@Override
-	public MessageOrBuilder parseAway(BaseEntity entity) {
+	public Tag parseEntity() {
 		return null;
 	}
 }

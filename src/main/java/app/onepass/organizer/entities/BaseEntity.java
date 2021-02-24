@@ -1,10 +1,8 @@
 package app.onepass.organizer.entities;
 
-import com.google.protobuf.MessageOrBuilder;
+import app.onepass.organizer.messages.BaseMessage;
 
-public interface BaseEntity<T extends MessageOrBuilder, S extends BaseEntity<T, S>> {
+public interface BaseEntity<M extends BaseMessage<M, E>, E extends BaseEntity<M, E>> {
 
-	public S parseInto(T message);
-
-	public T parseAway(S entity);
+	public M parseEntity();
 }

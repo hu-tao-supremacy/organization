@@ -31,10 +31,10 @@ public class OrganizationEntity implements BaseEntity<Organization, Organization
 	private boolean is_verified;
 
 	@Override
-	public Organization parseAway(OrganizationEntity organizationEntity) {
+	public Organization parseEntity() {
 		return Organization.newBuilder()
-				.setId(organizationEntity.getId())
-				.setName(organizationEntity.getName())
-				.setIsVerified(organizationEntity.is_verified()).build();
+				.setId(this.getId())
+				.setName(this.getName())
+				.setIsVerified(this.is_verified()).build();
 	}
 }

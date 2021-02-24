@@ -6,8 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import com.google.protobuf.MessageOrBuilder;
-
+import app.onepass.apis.Event;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +20,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventEntity implements BaseEntity {
+public class EventEntity implements BaseEntity<Event, EventEntity> {
 
 	@Id
 	@GeneratedValue
@@ -40,14 +39,8 @@ public class EventEntity implements BaseEntity {
 	@NotNull
 	private String contact;
 
-	//TODO: Implement methods
 	@Override
-	public BaseEntity parseInto(MessageOrBuilder message) {
-		return null;
-	}
-
-	@Override
-	public MessageOrBuilder parseAway(BaseEntity entity) {
+	public Event parseEntity() {
 		return null;
 	}
 }

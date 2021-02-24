@@ -6,8 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import com.google.protobuf.MessageOrBuilder;
-
+import app.onepass.apis.Facility;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +20,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FacilityEntity implements BaseEntity {
+public class FacilityEntity implements BaseEntity<Facility, FacilityEntity> {
 
 	@Id
 	@GeneratedValue
@@ -39,14 +38,8 @@ public class FacilityEntity implements BaseEntity {
 	@NotNull
 	private String description;
 
-	//TODO: Implement methods
 	@Override
-	public BaseEntity parseInto(MessageOrBuilder message) {
-		return null;
-	}
-
-	@Override
-	public MessageOrBuilder parseAway(BaseEntity entity) {
+	public Facility parseEntity() {
 		return null;
 	}
 }
