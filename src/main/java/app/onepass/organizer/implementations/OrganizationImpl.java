@@ -20,6 +20,7 @@ import app.onepass.organizer.entities.OrganizationEntity;
 import app.onepass.organizer.repositories.OrganizationRepository;
 import app.onepass.organizer.services.OrganizationService;
 import app.onepass.organizer.utilities.EntityParser;
+import app.onepass.organizer.utilities.ServiceUtil;
 import io.grpc.stub.StreamObserver;
 
 @GRpcService
@@ -36,11 +37,11 @@ public class OrganizationImpl extends OrganizationServiceGrpc.OrganizationServic
 
         Organization organization = request.getOrganization();
 
-        OrganizationEntity organizationEntity = parseOrganization(organization);
+        OrganizationEntity organizationEntity = OrganizationEntity.builder().build().parseInto(organization);
 
         organizationRepository.save(organizationEntity);
 
-        Result result = returnSuccessful("Organization creation successful.");
+        Result result = ServiceUtil.returnSuccessful("Organization creation successful.");
 
         configureResponseObserver(responseObserver, result);
     }

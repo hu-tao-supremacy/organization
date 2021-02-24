@@ -6,6 +6,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.google.protobuf.MessageOrBuilder;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +21,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventEntity extends BaseEntity {
+public class EventEntity implements BaseEntity {
 
 	@Id
 	@GeneratedValue
@@ -37,4 +39,15 @@ public class EventEntity extends BaseEntity {
 	private String poster_image_hash;
 	@NotNull
 	private String contact;
+
+	//TODO: Implement methods
+	@Override
+	public BaseEntity parseInto(MessageOrBuilder message) {
+		return null;
+	}
+
+	@Override
+	public MessageOrBuilder parseAway(BaseEntity entity) {
+		return null;
+	}
 }

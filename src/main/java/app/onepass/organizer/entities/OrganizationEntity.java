@@ -6,6 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import app.onepass.apis.Organization;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +20,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrganizationEntity extends BaseEntity {
+public class OrganizationEntity implements BaseEntity<Organization, OrganizationEntity> {
 
 	@Id
 	@GeneratedValue
@@ -28,4 +29,12 @@ public class OrganizationEntity extends BaseEntity {
 	private String name;
 	@NotNull
 	private boolean is_verified;
+
+	@Override
+	public Organization parseAway(OrganizationEntity organizationEntity) {
+		return Organization.newBuilder()
+				.setId(organizationEntity.getId())
+				.setName(organizationEntity.getName())
+				.setIsVerified(organizationEntity.is_verified()).build();
+	}
 }
