@@ -1,4 +1,4 @@
-package app.onepass.organizer;
+package app.onepass.organizer.implementations;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,10 +20,11 @@ import app.onepass.organizer.entities.OrganizationEntity;
 import app.onepass.organizer.repositories.OrganizationRepository;
 import app.onepass.organizer.services.OrganizationService;
 import app.onepass.organizer.utilities.EntityParser;
+import app.onepass.organizer.utilities.ServiceUtil;
 import io.grpc.stub.StreamObserver;
 
 @GRpcService
-public class OrganizerImpl extends OrganizationServiceGrpc.OrganizationServiceImplBase {
+public class OrganizationImpl extends OrganizationServiceGrpc.OrganizationServiceImplBase {
 
     @Autowired
     private OrganizationService organizationService;
@@ -36,11 +37,11 @@ public class OrganizerImpl extends OrganizationServiceGrpc.OrganizationServiceIm
 
         Organization organization = request.getOrganization();
 
-        OrganizationEntity organizationEntity = parseOrganization(organization);
+        OrganizationEntity organizationEntity = OrganizationEntity.builder().build().parseInto(organization);
 
         organizationRepository.save(organizationEntity);
 
-        Result result = returnSuccessful("Organization creation successful.");
+        Result result = ServiceUtil.returnSuccessful("Organization creation successful.");
 
         configureResponseObserver(responseObserver, result);
     }
@@ -113,52 +114,5 @@ public class OrganizerImpl extends OrganizationServiceGrpc.OrganizationServiceIm
         Result result = returnSuccessful("Organization deletion successful.");
 
         configureResponseObserver(responseObserver, result);
-    }
-
-//    private void saveEntity(String entityName, Object entity) {
-//
-//        if (entityName.equals("organization")) {
-//
-//            Organization organization = (Organization) entity;
-//
-//            OrganizationEntity organizationEntity = EntityParser.parseOrganization(organization)
-//
-//            organizationRepository.save(organizationEntity);
-//        }
-//    }
-//
-//    private boolean deleteEntity(String entityName, Object entity, long id) {
-//
-//        if (entityName.equals("organization")) {
-//
-//            long organizationId = id;
-//
-//            OrganizationEntity organizationEntity;
-//
-//            try {
-//                organizationEntity = organizationRepository
-//                        .findById(organizationId)
-//                        .orElseThrow(IllegalArgumentException::new);
-//            } catch (IllegalArgumentException illegalArgumentException) {
-//                Result result = returnError("Cannot find organization from given ID.");
-//                configureResponseObserver(responseObserver, result);
-//                return;
-//            }
-//
-//            organizationRepository.delete(organizationEntity);
-//        }
-//    }
-
-    private Result returnError(String description) {
-        return Result.newBuilder().setIsOk(false).setDescription(description).build();
-    }
-
-    private Result returnSuccessful(String description) {
-        return Result.newBuilder().setIsOk(true).setDescription(description).build();
-    }
-
-    private <T> void configureResponseObserver(StreamObserver<T> responseObserver, T result) {
-        responseObserver.onNext(result);
-        responseObserver.onCompleted();
     }
 }

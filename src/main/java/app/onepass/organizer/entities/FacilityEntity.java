@@ -6,6 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import app.onepass.apis.Facility;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +20,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FacilityEntity {
+public class FacilityEntity implements BaseEntity<Facility, FacilityEntity> {
 
 	@Id
 	@GeneratedValue
@@ -36,4 +37,9 @@ public class FacilityEntity {
 	private String operating_hours;
 	@NotNull
 	private String description;
+
+	@Override
+	public Facility parseEntity() {
+		return null;
+	}
 }

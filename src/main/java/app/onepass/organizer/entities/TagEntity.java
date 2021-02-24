@@ -7,6 +7,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import app.onepass.apis.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,11 +24,16 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TagEntity {
+public class TagEntity implements BaseEntity<Tag, TagEntity> {
 
 	@Id
 	@GeneratedValue
 	private long id;
 	@NotNull
 	private String name;
+
+	@Override
+	public Tag parseEntity() {
+		return null;
+	}
 }
