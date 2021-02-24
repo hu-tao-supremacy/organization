@@ -1,4 +1,11 @@
 package app.onepass.organizer.messages;
 
-public class FacilityMessage {
+import app.onepass.organizer.entities.FacilityEntity;
+
+public class FacilityMessage implements BaseMessage<FacilityMessage, FacilityEntity> {
+
+	@Override
+	public FacilityEntity parseMessage() {
+		return null;
+	}
 }

@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import app.onepass.apis.Event;
+import app.onepass.organizer.messages.EventMessage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +20,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventEntity implements BaseEntity<Event, EventEntity> {
+public class EventEntity implements BaseEntity<EventMessage, EventEntity> {
 
 	@Id
 	@GeneratedValue
@@ -40,7 +40,7 @@ public class EventEntity implements BaseEntity<Event, EventEntity> {
 	private String contact;
 
 	@Override
-	public Event parseEntity() {
+	public EventMessage parseEntity() {
 		return null;
 	}
 }

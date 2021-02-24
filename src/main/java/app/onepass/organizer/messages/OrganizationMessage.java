@@ -3,7 +3,11 @@ package app.onepass.organizer.messages;
 import app.onepass.apis.Organization;
 import app.onepass.organizer.entities.OrganizationEntity;
 
-public class OrganizationMessage implements BaseMessage<Organization, OrganizationEntity>{
+public class OrganizationMessage implements BaseMessage<OrganizationMessage, OrganizationEntity>{
+
+	public OrganizationMessage(Organization organization) {
+		this.organization = organization;
+	}
 
 	Organization organization;
 

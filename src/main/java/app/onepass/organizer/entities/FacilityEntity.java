@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import app.onepass.apis.Facility;
+import app.onepass.organizer.messages.FacilityMessage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +20,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FacilityEntity implements BaseEntity<Facility, FacilityEntity> {
+public class FacilityEntity implements BaseEntity<FacilityMessage, FacilityEntity> {
 
 	@Id
 	@GeneratedValue
@@ -39,7 +39,7 @@ public class FacilityEntity implements BaseEntity<Facility, FacilityEntity> {
 	private String description;
 
 	@Override
-	public Facility parseEntity() {
+	public FacilityMessage parseEntity() {
 		return null;
 	}
 }
