@@ -23,7 +23,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TagEntity {
+public class TagEntity extends BaseEntity {
 
 	@Id
 	@GeneratedValue

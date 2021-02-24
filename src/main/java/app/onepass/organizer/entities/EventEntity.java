@@ -19,7 +19,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventEntity {
+public class EventEntity extends BaseEntity {
 
 	@Id
 	@GeneratedValue

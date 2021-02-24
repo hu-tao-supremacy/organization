@@ -19,7 +19,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrganizationEntity {
+public class OrganizationEntity extends BaseEntity {
 
 	@Id
 	@GeneratedValue
