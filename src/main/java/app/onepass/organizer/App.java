@@ -1,20 +1,12 @@
 package app.onepass.organizer;
 
-import java.io.IOException;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import io.grpc.Server;
-import io.grpc.ServerBuilder;
+@SpringBootApplication
+public class App {
 
-/**
- * Hello world!
- *
- */
-public class App 
-{
-    public static void main( String[] args ) throws IOException, InterruptedException
-    {
-        Server server = ServerBuilder.forPort(50053).addService(new OrganizerImpl()).build();
-        server.start();
-        server.awaitTermination();
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(App.class, args);
+	}
 }
