@@ -7,8 +7,6 @@ apis:
 	git clone https://github.com/hu-tao-supremacy/api.git apis
 	python3 sym.py
 
-submodule:
+delete:
 	cd $(dirname $0)
 	rm -rf apis
-	git clone https://github.com/hu-tao-supremacy/apis.git
-	python3 sym.py
