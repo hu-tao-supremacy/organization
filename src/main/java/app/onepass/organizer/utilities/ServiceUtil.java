@@ -2,40 +2,40 @@ package app.onepass.organizer.utilities;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.google.protobuf.GeneratedMessageV3;
-import com.sun.xml.bind.v2.model.core.ID;
-
 import app.onepass.apis.Result;
 import app.onepass.organizer.entities.BaseEntity;
-import app.onepass.organizer.entities.OrganizationEntity;
 import app.onepass.organizer.messages.BaseMessage;
 import io.grpc.stub.StreamObserver;
 
 public class ServiceUtil {
 
-	    private <M extends BaseMessage<M, E>, E extends BaseEntity<M, E>> void
+	    public static <M extends BaseMessage<M, E>, E extends BaseEntity<M, E>> boolean
 		saveEntity(BaseMessage<M, E> message, JpaRepository<E, Long> repository) {
 
 			E entity = message.parseMessage();
 
 			repository.save(entity);
+
+			return true;
 	    }
 
-	    private <M extends BaseMessage<M, E>, E extends BaseEntity<M, E>, R extends GeneratedMessageV3> boolean
-		deleteEntity(String entityName, E entity, long id, JpaRepository<E, Long> repository, StreamObserver<R> responseObserver) {
+	    public static <M extends BaseMessage<M, E>, E extends BaseEntity<M, E>> boolean
+		deleteEntity(long id, JpaRepository<E, Long> repository) {
+
+	    	E entity;
 
 			try {
-				organizationEntity = repository
-						.findById(id)
-						.orElseThrow(IllegalArgumentException::new);
+
+				entity = repository.findById(id).orElseThrow(IllegalArgumentException::new);
+
 			} catch (IllegalArgumentException illegalArgumentException) {
-				Result result = returnError("Cannot find ".concat(entityName).concat(" from given ID."));
-				configureResponseObserver(responseObserver, result);
-				return;
+
+				return false;
 			}
 
-			organizationRepository.delete(organizationEntity);
-	        }
+			repository.delete(entity);
+
+			return true;
 	    }
 
 	public static Result returnError(String description) {
@@ -46,7 +46,7 @@ public class ServiceUtil {
 		return Result.newBuilder().setIsOk(true).setDescription(description).build();
 	}
 
-	public static <T> void configureResponseObserver(StreamObserver<T> responseObserver, T result) {
+	public static <R> void configureResponseObserver(StreamObserver<R> responseObserver, R result) {
 		responseObserver.onNext(result);
 		responseObserver.onCompleted();
 	}

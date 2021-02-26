@@ -34,9 +34,12 @@ public class OrganizationEntity implements BaseEntity<OrganizationMessage, Organ
 	@Override
 	public OrganizationMessage parseEntity() {
 
-		return OrganizationMessage..newBuilder()
+		Organization organization = Organization.newBuilder()
 				.setId(this.getId())
 				.setName(this.getName())
-				.setIsVerified(this.is_verified()).build();
+				.setIsVerified(this.is_verified())
+				.build();
+
+		return new OrganizationMessage(organization);
 	}
 }
