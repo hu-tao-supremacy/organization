@@ -30,7 +30,7 @@ import app.onepass.apis.UserRequest;
 import io.grpc.stub.StreamObserver;
 
 @GRpcService
-public class BaseService extends OrganizationServiceGrpc.OrganizationServiceImplBase {
+public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Autowired
 	OrganizationService organizationService;
