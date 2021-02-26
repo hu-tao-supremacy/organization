@@ -8,18 +8,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static app.onepass.organizer.utilities.EntityParser.parseOrganization;
 
-import app.onepass.apis.CreateOrganizationReq;
-import app.onepass.apis.DeleteOrganizationReq;
+import app.onepass.apis.CreateOrganizationRequest;
+import app.onepass.apis.DeleteOrganizationRequest;
 import app.onepass.apis.Organization;
 import app.onepass.apis.OrganizationServiceGrpc;
 import app.onepass.apis.ReadOrganizationRes;
+import app.onepass.apis.ReadOrganizationResult;
 import app.onepass.apis.Result;
-import app.onepass.apis.UpdateOrganizationReq;
-import app.onepass.apis.UserReq;
+import app.onepass.apis.UpdateOrganizationRequest;
+import app.onepass.apis.UserRequest;
 import app.onepass.organizer.entities.OrganizationEntity;
+import app.onepass.organizer.messages.OrganizationMessage;
 import app.onepass.organizer.repositories.OrganizationRepository;
 import app.onepass.organizer.services.OrganizationService;
-import app.onepass.organizer.utilities.EntityParser;
 import app.onepass.organizer.utilities.ServiceUtil;
 import io.grpc.stub.StreamObserver;
 
@@ -33,37 +34,37 @@ public class OrganizationImpl extends OrganizationServiceGrpc.OrganizationServic
     private OrganizationRepository organizationRepository;
 
     @Override
-    public void createOrganization(CreateOrganizationReq request, StreamObserver<Result> responseObserver) {
+    public void createOrganization(CreateOrganizationRequest request, StreamObserver<Result> responseObserver) {
 
-        Organization organization = request.getOrganization();
+        OrganizationMessage organizationMessage = new OrganizationMessage(request.getOrganization());
 
-        OrganizationEntity organizationEntity = OrganizationEntity.builder().build().parseInto(organization);
+        OrganizationEntity organizationEntity = organizationMessage.parseMessage();
 
         organizationRepository.save(organizationEntity);
 
         Result result = ServiceUtil.returnSuccessful("Organization creation successful.");
 
-        configureResponseObserver(responseObserver, result);
+        ServiceUtil.configureResponseObserver(responseObserver, result);
     }
 
     @Override
-    public void readOrganization(UserReq request, StreamObserver<ReadOrganizationRes> responseObserver) {
+    public void readOrganization(UserRequest request, StreamObserver<ReadOrganizationResult> responseObserver) {
 
         List<OrganizationEntity> allOrganizationEntities = organizationService.getAllOrganizations();
 
         List<Organization> allOrganizations = allOrganizationEntities.stream()
-                .map(EntityParser::parseOrganizationEntity)
+                .map(organizationEntity -> organizationEntity.parseEntity().getOrganization())
                 .collect(Collectors.toList());
 
-        ReadOrganizationRes readOrganizationRes = ReadOrganizationRes.newBuilder()
+        ReadOrganizationResult readOrganizationRes = ReadOrganizationResult.newBuilder()
                 .addAllOrganizations(allOrganizations).build();
 
-        configureResponseObserver(responseObserver, readOrganizationRes);
+        ServiceUtil.configureResponseObserver(responseObserver, readOrganizationRes);
 
     }
 
     @Override
-    public void updateOrganization(UpdateOrganizationReq request, StreamObserver<Result> responseObserver) {
+    public void updateOrganization(UpdateOrganizationRequest request, StreamObserver<Result> responseObserver) {
 
         long organizationId = request.getOrganizationId();
 
@@ -74,8 +75,8 @@ public class OrganizationImpl extends OrganizationServiceGrpc.OrganizationServic
                     .findById(organizationId)
                     .orElseThrow(IllegalArgumentException::new);
         } catch (IllegalArgumentException illegalArgumentException) {
-            Result result = returnError("Cannot find organization from given ID.");
-            configureResponseObserver(responseObserver, result);
+            Result result = ServiceUtil.returnError("Cannot find organization from given ID.");
+            ServiceUtil.configureResponseObserver(responseObserver, result);
             return;
         }
 
@@ -93,7 +94,7 @@ public class OrganizationImpl extends OrganizationServiceGrpc.OrganizationServic
     }
 
     @Override
-    public void deleteOrganization(DeleteOrganizationReq request, StreamObserver<Result> responseObserver) {
+    public void deleteOrganization(DeleteOrganizationRequest request, StreamObserver<Result> responseObserver) {
 
         long organizationId = request.getOrganizationId();
 

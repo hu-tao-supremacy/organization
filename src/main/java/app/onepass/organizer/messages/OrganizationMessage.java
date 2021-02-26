@@ -2,6 +2,7 @@ package app.onepass.organizer.messages;
 
 import app.onepass.apis.Organization;
 import app.onepass.organizer.entities.OrganizationEntity;
+import lombok.Getter;
 
 public class OrganizationMessage implements BaseMessage<OrganizationMessage, OrganizationEntity>{
 
@@ -9,6 +10,7 @@ public class OrganizationMessage implements BaseMessage<OrganizationMessage, Org
 		this.organization = organization;
 	}
 
+	@Getter
 	Organization organization;
 
 	@Override

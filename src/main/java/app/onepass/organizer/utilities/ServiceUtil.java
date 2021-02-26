@@ -2,6 +2,7 @@ package app.onepass.organizer.utilities;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.google.protobuf.GeneratedMessageV3;
 import com.sun.xml.bind.v2.model.core.ID;
 
 import app.onepass.apis.Result;
@@ -20,10 +21,8 @@ public class ServiceUtil {
 			repository.save(entity);
 	    }
 
-	    private <M extends BaseMessage<M, E>, E extends BaseEntity<M, E> boolean
-		deleteEntity(String entityName, Object entity, long id, JpaRepository<E, Long> repository, String entityName, responseObserver) {
-
-			OrganizationEntity organizationEntity;
+	    private <M extends BaseMessage<M, E>, E extends BaseEntity<M, E>, R extends GeneratedMessageV3> boolean
+		deleteEntity(String entityName, E entity, long id, JpaRepository<E, Long> repository, StreamObserver<R> responseObserver) {
 
 			try {
 				organizationEntity = repository
