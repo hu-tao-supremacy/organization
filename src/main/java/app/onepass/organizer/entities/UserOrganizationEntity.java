@@ -2,6 +2,7 @@ package app.onepass.organizer.entities;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -24,7 +25,7 @@ import lombok.Setter;
 public class UserOrganizationEntity implements BaseEntity<UserOrganizationMessage, UserOrganizationEntity> {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	@NotNull
 	private long userId;
