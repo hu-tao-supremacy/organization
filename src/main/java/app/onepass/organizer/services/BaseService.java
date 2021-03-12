@@ -10,7 +10,7 @@ import app.onepass.apis.CreateOrganizationRequest;
 import app.onepass.apis.DeleteEventRequest;
 import app.onepass.apis.DeleteOrganizationRequest;
 import app.onepass.apis.HasEventRequest;
-import app.onepass.apis.OrganizationServiceGrpc;
+import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.ReadByIdRequest;
 import app.onepass.apis.ReadEventByIdResult;
 import app.onepass.apis.ReadEventResult;

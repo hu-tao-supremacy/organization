@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import app.onepass.apis.CreateOrganizationRequest;
 import app.onepass.apis.DeleteOrganizationRequest;
 import app.onepass.apis.Organization;
-import app.onepass.apis.OrganizationServiceGrpc;
+import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.ReadByIdRequest;
 import app.onepass.apis.ReadOrganizationByIdResult;
 import app.onepass.apis.ReadOrganizationResult;
@@ -18,12 +18,19 @@ import app.onepass.apis.UpdateOrganizationRequest;
 import app.onepass.apis.UserRequest;
 import app.onepass.organizer.entities.OrganizationEntity;
 import app.onepass.organizer.messages.OrganizationMessage;
+import app.onepass.organizer.repositories.EventRepository;
 import app.onepass.organizer.repositories.OrganizationRepository;
 import app.onepass.organizer.utilities.ServiceUtil;
 import io.grpc.stub.StreamObserver;
 
 @Service
-public class OrganizationService extends OrganizationServiceGrpc.OrganizationServiceImplBase {
+public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
+
+    
+    @Autowired
+    private EventRepository eventRepository;
+
+    String a = eventRepository
 
     @Autowired
     private OrganizationRepository organizationRepository;
