@@ -33,7 +33,17 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         OrganizationMessage organizationMessage = new OrganizationMessage(request.getOrganization());
 
-        ServiceUtil.saveEntity(organizationMessage, organizationRepository);
+        boolean saveSuccessful = ServiceUtil.saveEntity(organizationMessage, organizationRepository);
+
+        if (!saveSuccessful) {
+
+            Result result = ServiceUtil.returnError("Unable to create organization.");
+
+            ServiceUtil.configureResponseObserver(responseObserver, result);
+
+            return;
+
+        }
 
         Result result = ServiceUtil.returnSuccessful("Organization creation successful.");
 
@@ -67,7 +77,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
                     .findById(request.getReadId())
                     .orElseThrow(IllegalArgumentException::new);
 
-        } catch (IllegalArgumentException illegalArgumentException) {
+        } catch (IllegalArgumentException exception) {
 
             ReadOrganizationByIdResult result = ReadOrganizationByIdResult
                     .newBuilder()

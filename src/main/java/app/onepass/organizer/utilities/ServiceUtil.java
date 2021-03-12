@@ -1,5 +1,6 @@
 package app.onepass.organizer.utilities;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import app.onepass.apis.Result;
@@ -14,13 +15,17 @@ public class ServiceUtil {
 
 			E entity = message.parseMessage();
 
-			repository.save(entity);
+			try {
+				repository.save(entity);
+			} catch (DataAccessException exception) {
+				return false;
+			}
 
 			return true;
 	    }
 
 	    public static <M extends BaseMessage<M, E>, E extends BaseEntity<M, E>> boolean
-		deleteEntity(long id, JpaRepository<E, Long> repository) {
+		deleteEntity(long id, JpaRepository<E, Long> repository) throws DataAccessException {
 
 	    	E entity;
 
@@ -28,7 +33,7 @@ public class ServiceUtil {
 
 				entity = repository.findById(id).orElseThrow(IllegalArgumentException::new);
 
-			} catch (IllegalArgumentException illegalArgumentException) {
+			} catch (IllegalArgumentException exception) {
 
 				return false;
 			}
