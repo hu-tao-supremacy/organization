@@ -18,21 +18,11 @@ public class EventDurationMessage implements BaseMessage<EventDurationMessage, E
 	@Override
 	public EventDurationEntity parseMessage() {
 
-		java.sql.Timestamp start = java.sql.Timestamp.from(
-				Instant.ofEpochSecond(
-						eventDuration.getStart().getSeconds(),
-						eventDuration.getStart().getNanos()));
-
-		java.sql.Timestamp finish = java.sql.Timestamp.from(
-				Instant.ofEpochSecond(
-						eventDuration.getFinish().getSeconds(),
-						eventDuration.getFinish().getNanos()));
-
 		return EventDurationEntity.builder()
 				.id(eventDuration.getId())
 				.eventId(eventDuration.getEventId())
-				.start(start)
-				.finish(finish)
+				.start(eventDuration.getStart())
+				.finish(eventDuration.getFinish())
 				.build();
 	}
 }
