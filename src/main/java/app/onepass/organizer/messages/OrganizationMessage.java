@@ -18,7 +18,7 @@ public class OrganizationMessage implements BaseMessage<OrganizationMessage, Org
 		return OrganizationEntity.builder()
 				.id(organization.getId())
 				.name(organization.getName())
-				.is_verified(organization.getIsVerified())
+				.isVerified(organization.getIsVerified())
 				.build();
 	}
 }

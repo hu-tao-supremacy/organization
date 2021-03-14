@@ -40,8 +40,8 @@ public class EventDurationEntity implements BaseEntity<EventDurationMessage, Eve
 	public EventDurationMessage parseEntity() {
 
 		EventDuration eventDuration = EventDuration.newBuilder()
-				.setId(this.getId())
-				.setEventId(this.getEventId())
+				.setId(id)
+				.setEventId(eventId)
 				.setStart(start)
 				.setFinish(finish)
 				.build();

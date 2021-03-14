@@ -8,6 +8,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import app.onepass.apis.Tag;
 import app.onepass.organizer.messages.TagMessage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,6 +36,12 @@ public class TagEntity implements BaseEntity<TagMessage, TagEntity> {
 
 	@Override
 	public TagMessage parseEntity() {
-		return null;
+
+		Tag tag = Tag.newBuilder()
+				.setId(id)
+				.setName(name)
+				.build();
+
+		return new TagMessage(tag);
 	}
 }

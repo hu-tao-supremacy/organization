@@ -11,11 +11,11 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 //	private EventRepository eventRepository;
 //
 //	@Override
-//	public void createOrganization(CreateOrganizationRequest request, StreamObserver<Result> responseObserver) {
+//	public void createEvent(CreateEventRequest request, StreamObserver<Result> responseObserver) {
 //
-//		OrganizationMessage organizationMessage = new OrganizationMessage(request.getOrganization());
+//		EventMessage eventMessage = new EventMessage(request.getEvent());
 //
-//		ServiceUtil.saveEntity(organizationMessage, organizationRepository);
+//		ServiceUtil.saveEntity(eventMessage, eventRepository);
 //
 //		Result result = ServiceUtil.returnSuccessful("Organization creation successful.");
 //

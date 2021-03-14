@@ -36,9 +36,9 @@ public class UserOrganizationEntity implements BaseEntity<UserOrganizationMessag
 	public UserOrganizationMessage parseEntity() {
 
 		UserOrganization userOrganization = UserOrganization.newBuilder()
-				.setId(this.getId())
-				.setUserId(this.getUserId())
-				.setOrganizationId(this.getOrganizationId())
+				.setId(id)
+				.setUserId(userId)
+				.setOrganizationId(organizationId)
 				.build();
 
 		return new UserOrganizationMessage(userOrganization);
