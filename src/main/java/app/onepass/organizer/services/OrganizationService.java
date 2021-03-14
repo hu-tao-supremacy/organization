@@ -49,10 +49,10 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
                 .map(organizationEntity -> organizationEntity.parseEntity().getOrganization())
                 .collect(Collectors.toList());
 
-        ReadOrganizationResult readOrganizationRes = ReadOrganizationResult.newBuilder()
+        ReadOrganizationResult readOrganizationResult = ReadOrganizationResult.newBuilder()
                 .addAllOrganizations(allOrganizations).build();
 
-        ServiceUtil.configureResponseObserver(responseObserver, readOrganizationRes);
+        ServiceUtil.configureResponseObserver(responseObserver, readOrganizationResult);
 
     }
 
