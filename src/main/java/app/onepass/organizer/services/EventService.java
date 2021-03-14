@@ -7,13 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import app.onepass.apis.CreateEventRequest;
-import app.onepass.apis.DeleteEventRequest;
 import app.onepass.apis.Event;
+import app.onepass.apis.GetByIdRequest;
+import app.onepass.apis.GetEventByIdResponse;
+import app.onepass.apis.GetEventResponse;
 import app.onepass.apis.HasEventRequest;
 import app.onepass.apis.OrganizerServiceGrpc;
-import app.onepass.apis.ReadByIdRequest;
-import app.onepass.apis.ReadEventByIdResult;
-import app.onepass.apis.ReadEventResult;
+import app.onepass.apis.RemoveEventRequest;
 import app.onepass.apis.Result;
 import app.onepass.apis.UpdateEventDurationRequest;
 import app.onepass.apis.UpdateEventFacilityRequest;
@@ -45,7 +45,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	}
 
 	@Override
-	public void readEvent(UserRequest request, StreamObserver<ReadEventResult> responseObserver) {
+	public void getEvent(UserRequest request, StreamObserver<GetEventResponse> responseObserver) {
 
 		List<EventEntity> allEventEntities = eventRepository.findAll();
 
@@ -53,14 +53,14 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 				.map(eventEntity -> eventEntity.parseEntity().getEvent())
 				.collect(Collectors.toList());
 
-		ReadEventResult readEventResult = ReadEventResult.newBuilder()
+		GetEventResponse readEventResponse = GetEventResponse.newBuilder()
 				.addAllEvents(allEvents).build();
 
-		ServiceUtil.configureResponseObserver(responseObserver, readEventResult);
+		ServiceUtil.configureResponseObserver(responseObserver, readEventResponse);
 	}
 
 	@Override
-	public void readEventById(ReadByIdRequest request, StreamObserver<ReadEventByIdResult> responseObserver) {
+	public void getEventById(GetByIdRequest request, StreamObserver<GetEventByIdResponse> responseObserver) {
 
 		EventEntity eventEntity;
 
@@ -72,7 +72,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		} catch (IllegalArgumentException illegalArgumentException) {
 
-			ReadEventByIdResult result = ReadEventByIdResult
+			GetEventByIdResponse result = GetEventByIdResponse
 					.newBuilder()
 					.setEvent((Event) null)
 					.build();
@@ -84,12 +84,12 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		Event event = eventEntity.parseEntity().getEvent();
 
-		ReadEventByIdResult readEventByIdResult = ReadEventByIdResult
+		GetEventByIdResponse readEventByIdResponse = GetEventByIdResponse
 				.newBuilder()
 				.setEvent(event)
 				.build();
 
-		ServiceUtil.configureResponseObserver(responseObserver, readEventByIdResult);
+		ServiceUtil.configureResponseObserver(responseObserver, readEventByIdResponse);
 
 	}
 
@@ -120,7 +120,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	}
 
 	@Override
-	public void deleteEvent(DeleteEventRequest request, StreamObserver<Result> responseObserver) {
+	public void removeEvent(RemoveEventRequest request, StreamObserver<Result> responseObserver) {
 
 		long eventId = request.getEventId();
 

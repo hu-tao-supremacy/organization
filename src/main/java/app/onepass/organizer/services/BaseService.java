@@ -7,17 +7,17 @@ import com.google.protobuf.Empty;
 
 import app.onepass.apis.CreateEventRequest;
 import app.onepass.apis.CreateOrganizationRequest;
-import app.onepass.apis.DeleteEventRequest;
-import app.onepass.apis.DeleteOrganizationRequest;
+import app.onepass.apis.GetByIdRequest;
+import app.onepass.apis.GetEventByIdResponse;
+import app.onepass.apis.GetEventResponse;
+import app.onepass.apis.GetOrganizationByIdResponse;
+import app.onepass.apis.GetOrganizationResponse;
+import app.onepass.apis.GetTagByIdResponse;
+import app.onepass.apis.GetTagResponse;
 import app.onepass.apis.HasEventRequest;
 import app.onepass.apis.OrganizerServiceGrpc;
-import app.onepass.apis.ReadByIdRequest;
-import app.onepass.apis.ReadEventByIdResult;
-import app.onepass.apis.ReadEventResult;
-import app.onepass.apis.ReadOrganizationByIdResult;
-import app.onepass.apis.ReadOrganizationResult;
-import app.onepass.apis.ReadTagByIdResult;
-import app.onepass.apis.ReadTagResult;
+import app.onepass.apis.RemoveEventRequest;
+import app.onepass.apis.RemoveOrganizationRequest;
 import app.onepass.apis.Result;
 import app.onepass.apis.UpdateEventDurationRequest;
 import app.onepass.apis.UpdateEventFacilityRequest;
@@ -33,6 +33,9 @@ import io.grpc.stub.StreamObserver;
 public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Autowired
+	EventService eventService;
+
+	@Autowired
 	OrganizationService organizationService;
 
 	@Autowired
@@ -44,13 +47,13 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
-	public void readOrganization(UserRequest request, StreamObserver<ReadOrganizationResult> responseObserver) {
-		organizationService.readOrganization(request, responseObserver);
+	public void getOrganization(UserRequest request, StreamObserver<GetOrganizationResponse> responseObserver) {
+		organizationService.getOrganization(request, responseObserver);
 	}
 
 	@Override
-	public void readOrganizationById(ReadByIdRequest request, StreamObserver<ReadOrganizationByIdResult> responseObserver) {
-		organizationService.readOrganizationById(request, responseObserver);
+	public void getOrganizationById(GetByIdRequest request, StreamObserver<GetOrganizationByIdResponse> responseObserver) {
+		organizationService.getOrganizationById(request, responseObserver);
 	}
 
 	@Override
@@ -59,8 +62,8 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
-	public void deleteOrganization(DeleteOrganizationRequest request, StreamObserver<Result> responseObserver) {
-		organizationService.deleteOrganization(request, responseObserver);
+	public void removeOrganization(RemoveOrganizationRequest request, StreamObserver<Result> responseObserver) {
+		organizationService.removeOrganization(request, responseObserver);
 	}
 
 	@Override
@@ -75,22 +78,22 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	public void createEvent(CreateEventRequest request, StreamObserver<Result> responseObserver) {
-		super.createEvent(request, responseObserver);
+		eventService.createEvent(request, responseObserver);
 	}
 
 	@Override
-	public void readEvent(UserRequest request, StreamObserver<ReadEventResult> responseObserver) {
-		super.readEvent(request, responseObserver);
+	public void getEvent(UserRequest request, StreamObserver<GetEventResponse> responseObserver) {
+		eventService.getEvent(request, responseObserver);
 	}
 
 	@Override
-	public void readEventById(ReadByIdRequest request, StreamObserver<ReadEventByIdResult> responseObserver) {
-		super.readEventById(request, responseObserver);
+	public void getEventById(GetByIdRequest request, StreamObserver<GetEventByIdResponse> responseObserver) {
+		eventService.getEventById(request, responseObserver);
 	}
 
 	@Override
 	public void updateEventInfo(UpdateEventInfoRequest request, StreamObserver<Result> responseObserver) {
-		super.updateEventInfo(request, responseObserver);
+		eventService.updateEventInfo(request, responseObserver);
 	}
 
 	@Override
@@ -104,8 +107,8 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
-	public void deleteEvent(DeleteEventRequest request, StreamObserver<Result> responseObserver) {
-		super.deleteEvent(request, responseObserver);
+	public void removeEvent(RemoveEventRequest request, StreamObserver<Result> responseObserver) {
+		eventService.removeEvent(request, responseObserver);
 	}
 
 	@Override
@@ -124,13 +127,13 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
-	public void readTag(UserRequest request, StreamObserver<ReadTagResult> responseObserver) {
-		super.readTag(request, responseObserver);
+	public void getTag(UserRequest request, StreamObserver<GetTagResponse> responseObserver) {
+		super.getTag(request, responseObserver);
 	}
 
 	@Override
-	public void readTagById(ReadByIdRequest request, StreamObserver<ReadTagByIdResult> responseObserver) {
-		super.readTagById(request, responseObserver);
+	public void getTagById(GetByIdRequest request, StreamObserver<GetTagByIdResponse> responseObserver) {
+		super.getTagById(request, responseObserver);
 	}
 
 	@Override

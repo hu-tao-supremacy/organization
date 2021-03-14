@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import app.onepass.apis.CreateOrganizationRequest;
-import app.onepass.apis.DeleteOrganizationRequest;
+import app.onepass.apis.GetByIdRequest;
+import app.onepass.apis.GetOrganizationByIdResponse;
+import app.onepass.apis.GetOrganizationResponse;
 import app.onepass.apis.Organization;
 import app.onepass.apis.OrganizerServiceGrpc;
-import app.onepass.apis.ReadByIdRequest;
-import app.onepass.apis.ReadOrganizationByIdResult;
-import app.onepass.apis.ReadOrganizationResult;
+import app.onepass.apis.RemoveOrganizationRequest;
 import app.onepass.apis.Result;
 import app.onepass.apis.UpdateOrganizationRequest;
 import app.onepass.apis.UserRequest;
@@ -41,7 +41,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
     }
 
     @Override
-    public void readOrganization(UserRequest request, StreamObserver<ReadOrganizationResult> responseObserver) {
+    public void getOrganization(UserRequest request, StreamObserver<GetOrganizationResponse> responseObserver) {
 
         List<OrganizationEntity> allOrganizationEntities = organizationRepository.findAll();
 
@@ -49,7 +49,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
                 .map(organizationEntity -> organizationEntity.parseEntity().getOrganization())
                 .collect(Collectors.toList());
 
-        ReadOrganizationResult readOrganizationResult = ReadOrganizationResult.newBuilder()
+        GetOrganizationResponse readOrganizationResult = GetOrganizationResponse.newBuilder()
                 .addAllOrganizations(allOrganizations).build();
 
         ServiceUtil.configureResponseObserver(responseObserver, readOrganizationResult);
@@ -57,7 +57,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
     }
 
     @Override
-    public void readOrganizationById(ReadByIdRequest request, StreamObserver<ReadOrganizationByIdResult> responseObserver) {
+    public void getOrganizationById(GetByIdRequest request, StreamObserver<GetOrganizationByIdResponse> responseObserver) {
 
         OrganizationEntity organizationEntity;
 
@@ -69,7 +69,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         } catch (IllegalArgumentException illegalArgumentException) {
 
-            ReadOrganizationByIdResult result = ReadOrganizationByIdResult
+            GetOrganizationByIdResponse result = GetOrganizationByIdResponse
                     .newBuilder()
                     .setOrganization((Organization) null)
                     .build();
@@ -81,7 +81,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         Organization organization = organizationEntity.parseEntity().getOrganization();
 
-        ReadOrganizationByIdResult readOrganizationByIdResult = ReadOrganizationByIdResult
+        GetOrganizationByIdResponse readOrganizationByIdResult = GetOrganizationByIdResponse
                 .newBuilder()
                 .setOrganization(organization)
                 .build();
@@ -117,7 +117,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
     }
 
     @Override
-    public void deleteOrganization(DeleteOrganizationRequest request, StreamObserver<Result> responseObserver) {
+    public void removeOrganization(RemoveOrganizationRequest request, StreamObserver<Result> responseObserver) {
 
         long organizationId = request.getOrganizationId();
 
