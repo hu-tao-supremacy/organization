@@ -7,6 +7,7 @@ import com.google.protobuf.Empty;
 
 import app.onepass.apis.CreateEventRequest;
 import app.onepass.apis.CreateOrganizationRequest;
+import app.onepass.apis.CreateTagRequest;
 import app.onepass.apis.GetByIdRequest;
 import app.onepass.apis.GetEventByIdResponse;
 import app.onepass.apis.GetEventResponse;
@@ -39,6 +40,9 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	OrganizationService organizationService;
 
 	@Autowired
+	TagService tagService;
+
+	@Autowired
 	PingService pingService;
 
 	@Override
@@ -68,12 +72,12 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	public void addUsersToOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Result> responseObserver) {
-		super.addUsersToOrganization(request, responseObserver);
+		organizationService.addUsersToOrganization(request, responseObserver);
 	}
 
 	@Override
 	public void removeUsersFromOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Result> responseObserver) {
-		super.removeUsersFromOrganization(request, responseObserver);
+		organizationService.removeUsersFromOrganization(request, responseObserver);
 	}
 
 	@Override
@@ -98,12 +102,12 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	public void updateEventFacility(UpdateEventFacilityRequest request, StreamObserver<Result> responseObserver) {
-		super.updateEventFacility(request, responseObserver);
+		eventService.updateEventFacility(request, responseObserver);
 	}
 
 	@Override
 	public void updateEventDuration(UpdateEventDurationRequest request, StreamObserver<Result> responseObserver) {
-		super.updateEventDuration(request, responseObserver);
+		eventService.updateEventDuration(request, responseObserver);
 	}
 
 	@Override
@@ -113,32 +117,37 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	public void updateRegistrationRequest(UpdateRegistrationRequestRequest request, StreamObserver<Result> responseObserver) {
-		super.updateRegistrationRequest(request, responseObserver);
+		eventService.updateRegistrationRequest(request, responseObserver);
+	}
+
+	@Override
+	public void createTag(CreateTagRequest request, StreamObserver<Result> responseObserver) {
+		tagService.createTag(request, responseObserver);
 	}
 
 	@Override
 	public void addTag(UpdateTagRequest request, StreamObserver<Result> responseObserver) {
-		super.addTag(request, responseObserver);
+		tagService.addTag(request, responseObserver);
 	}
 
 	@Override
 	public void removeTag(UpdateTagRequest request, StreamObserver<Result> responseObserver) {
-		super.removeTag(request, responseObserver);
+		tagService.removeTag(request, responseObserver);
 	}
 
 	@Override
 	public void getTag(UserRequest request, StreamObserver<GetTagResponse> responseObserver) {
-		super.getTag(request, responseObserver);
+		tagService.getTag(request, responseObserver);
 	}
 
 	@Override
 	public void getTagById(GetByIdRequest request, StreamObserver<GetTagByIdResponse> responseObserver) {
-		super.getTagById(request, responseObserver);
+		tagService.getTagById(request, responseObserver);
 	}
 
 	@Override
 	public void hasEvent(HasEventRequest request, StreamObserver<Result> responseObserver) {
-		super.hasEvent(request, responseObserver);
+		eventService.hasEvent(request, responseObserver);
 	}
 
 	@Override

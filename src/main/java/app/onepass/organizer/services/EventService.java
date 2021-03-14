@@ -159,5 +159,29 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	@Override
 	public void hasEvent(HasEventRequest request, StreamObserver<Result> responseObserver) {
 
+		EventEntity eventEntity;
+
+		try {
+
+			eventEntity = eventRepository
+					.findById(request.getEventId())
+					.orElseThrow(IllegalArgumentException::new);
+
+		} catch (IllegalArgumentException illegalArgumentException) {
+
+			Result result = ServiceUtil.returnError("Cannot find organization from given ID.");
+
+			ServiceUtil.configureResponseObserver(responseObserver, result);
+
+			return;
+		}
+
+		long organizationId = eventEntity.getOrganizationId();
+
+		if (organizationId == request.getOrganizationId()) {
+			ServiceUtil.returnSuccessful("The specified organization has the specified event.");
+		} else {
+			ServiceUtil.returnError("The event is not hosted by this organization");
+		}
 	}
 }

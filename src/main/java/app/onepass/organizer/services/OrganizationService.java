@@ -1,5 +1,6 @@
 package app.onepass.organizer.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,10 +16,13 @@ import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.RemoveOrganizationRequest;
 import app.onepass.apis.Result;
 import app.onepass.apis.UpdateOrganizationRequest;
+import app.onepass.apis.UpdateUsersInOrganizationRequest;
 import app.onepass.apis.UserRequest;
 import app.onepass.organizer.entities.OrganizationEntity;
+import app.onepass.organizer.entities.UserOrganizationEntity;
 import app.onepass.organizer.messages.OrganizationMessage;
 import app.onepass.organizer.repositories.OrganizationRepository;
+import app.onepass.organizer.repositories.UserOrganizationRepository;
 import app.onepass.organizer.utilities.ServiceUtil;
 import io.grpc.stub.StreamObserver;
 
@@ -27,6 +31,9 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
     @Autowired
     private OrganizationRepository organizationRepository;
+
+    @Autowired
+    private UserOrganizationRepository userOrganizationRepository;
 
     @Override
     public void createOrganization(CreateOrganizationRequest request, StreamObserver<Result> responseObserver) {
@@ -136,5 +143,58 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
         Result result = ServiceUtil.returnSuccessful("Organization deletion successful.");
 
         ServiceUtil.configureResponseObserver(responseObserver, result);
+    }
+
+    @Override
+    public void addUsersToOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Result> responseObserver) {
+
+        List<UserOrganizationEntity> userOrganizationEntities = new ArrayList<>();
+
+        for (int index = 0; index < request.getUserIdsCount(); index++) {
+
+            UserOrganizationEntity userOrganizationEntity = UserOrganizationEntity.builder()
+                    .userId(request.getUserIds(index))
+                    .organizationId(request.getOrganizationId())
+                    .build();
+
+            userOrganizationEntities.add(userOrganizationEntity);
+        }
+
+        userOrganizationRepository.saveAll(userOrganizationEntities);
+
+        Result result = ServiceUtil.returnSuccessful("Users added to organization.");
+
+        ServiceUtil.configureResponseObserver(responseObserver, result);
+    }
+
+    @Override
+    public void removeUsersFromOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Result> responseObserver) {
+
+        List<Long> userIds = request.getUserIdsList();
+
+        List<UserOrganizationEntity> userOrganizationEntities = userOrganizationRepository
+                .findByOrganizationId(request.getOrganizationId());
+
+        List<UserOrganizationEntity> entitiesToDelete = new ArrayList<>();
+
+        //TODO: Optimize!
+
+        for (UserOrganizationEntity userOrganizationEntity : userOrganizationEntities) {
+
+            for (Long userId : userIds) {
+
+                if (userOrganizationEntity.getUserId() == userId) {
+
+                    entitiesToDelete.add(userOrganizationEntity);
+                }
+            }
+        }
+
+        userOrganizationRepository.deleteAll(entitiesToDelete);
+
+        Result result = ServiceUtil.returnSuccessful("Users removed from organization.");
+
+        ServiceUtil.configureResponseObserver(responseObserver, result);
+
     }
 }
