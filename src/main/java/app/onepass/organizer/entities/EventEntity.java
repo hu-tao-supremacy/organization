@@ -31,31 +31,36 @@ public class EventEntity implements BaseEntity<EventMessage, EventEntity> {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	private long organizationId;
-	private Int64Value eventLocationId;
+	private Long eventLocationId;
 	@NotNull
 	private String description;
 	@NotNull
 	private String name;
-	private StringValue coverImage;
-	private StringValue coverImageHash;
-	private StringValue posterImage;
-	private StringValue posterImageHash;
+	private String coverImage;
+	private String coverImageHash;
+	private String posterImage;
+	private String posterImageHash;
 	@NotNull
 	private String contact;
 
 	@Override
 	public EventMessage parseEntity() {
 
+		StringValue cover = coverImage == null ? null : StringValue.of(coverImage);
+		StringValue coverHash = coverImageHash == null ? null : StringValue.of(coverImageHash);
+		StringValue poster = posterImage == null ? null : StringValue.of(posterImage);
+		StringValue posterHash = posterImageHash == null ? null : StringValue.of(posterImageHash);
+
 		Event event = Event.newBuilder()
 				.setId(id)
 				.setOrganizationId(organizationId)
-				.setEventLocationId(eventLocationId)
+				.setEventLocationId(Int64Value.of(eventLocationId))
 				.setDescription(description)
 				.setName(name)
-				.setCoverImage(coverImage)
-				.setCoverImageHash(coverImageHash)
-				.setPosterImage(posterImage)
-				.setPosterImageHash(posterImageHash)
+				.setCoverImage(cover)
+				.setCoverImageHash(coverHash)
+				.setPosterImage(poster)
+				.setPosterImageHash(posterHash)
 				.setContact(contact)
 				.build();
 

@@ -19,13 +19,13 @@ public class EventMessage implements BaseMessage<EventMessage, EventEntity> {
 		return EventEntity.builder()
 				.id(event.getId())
 				.organizationId(event.getOrganizationId())
-				.eventLocationId(event.getEventLocationId())
+				.eventLocationId(event.getEventLocationId().getValue())
 				.description(event.getDescription())
 				.name(event.getName())
-				.coverImage(event.getCoverImage())
-				.coverImageHash(event.getCoverImageHash())
-				.posterImage(event.getPosterImage())
-				.posterImageHash(event.getPosterImageHash())
+				.coverImage(event.getCoverImage().getValue())
+				.coverImageHash(event.getCoverImageHash().getValue())
+				.posterImage(event.getPosterImage().getValue())
+				.posterImageHash(event.getPosterImageHash().getValue())
 				.build();
 	}
 }
