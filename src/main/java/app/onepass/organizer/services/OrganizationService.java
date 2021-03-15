@@ -56,10 +56,10 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
                 .map(organizationEntity -> organizationEntity.parseEntity().getOrganization())
                 .collect(Collectors.toList());
 
-        GetOrganizationResponse readOrganizationResult = GetOrganizationResponse.newBuilder()
+        GetOrganizationResponse getOrganizationResult = GetOrganizationResponse.newBuilder()
                 .addAllOrganizations(allOrganizations).build();
 
-        ServiceUtil.configureResponseObserver(responseObserver, readOrganizationResult);
+        ServiceUtil.configureResponseObserver(responseObserver, getOrganizationResult);
 
     }
 
@@ -88,12 +88,12 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         Organization organization = organizationEntity.parseEntity().getOrganization();
 
-        GetOrganizationByIdResponse readOrganizationByIdResult = GetOrganizationByIdResponse
+        GetOrganizationByIdResponse getOrganizationByIdResult = GetOrganizationByIdResponse
                 .newBuilder()
                 .setOrganization(organization)
                 .build();
 
-        ServiceUtil.configureResponseObserver(responseObserver, readOrganizationByIdResult);
+        ServiceUtil.configureResponseObserver(responseObserver, getOrganizationByIdResult);
 
     }
 

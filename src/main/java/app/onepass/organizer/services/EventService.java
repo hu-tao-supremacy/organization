@@ -70,10 +70,10 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 				.map(eventEntity -> eventEntity.parseEntity().getEvent())
 				.collect(Collectors.toList());
 
-		GetEventResponse readEventResponse = GetEventResponse.newBuilder()
+		GetEventResponse getEventResponse = GetEventResponse.newBuilder()
 				.addAllEvents(allEvents).build();
 
-		ServiceUtil.configureResponseObserver(responseObserver, readEventResponse);
+		ServiceUtil.configureResponseObserver(responseObserver, getEventResponse);
 	}
 
 	@Override
@@ -101,12 +101,12 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		Event event = eventEntity.parseEntity().getEvent();
 
-		GetEventByIdResponse readEventByIdResponse = GetEventByIdResponse
+		GetEventByIdResponse getEventByIdResponse = GetEventByIdResponse
 				.newBuilder()
 				.setEvent(event)
 				.build();
 
-		ServiceUtil.configureResponseObserver(responseObserver, readEventByIdResponse);
+		ServiceUtil.configureResponseObserver(responseObserver, getEventByIdResponse);
 
 	}
 
