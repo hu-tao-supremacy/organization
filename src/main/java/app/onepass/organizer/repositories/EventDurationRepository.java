@@ -4,4 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import app.onepass.organizer.entities.EventDurationEntity;
 
-public interface EventDurationRepository extends JpaRepository<EventDurationEntity, Long> { }
+public interface EventDurationRepository extends JpaRepository<EventDurationEntity, Long> {
+
+	long deleteByEventId(long eventId);
+}
