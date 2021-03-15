@@ -5,7 +5,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import app.onepass.apis.UserOrganization;
 import app.onepass.organizer.messages.UserOrganizationMessage;
@@ -27,9 +26,7 @@ public class UserOrganizationEntity implements BaseEntity<UserOrganizationMessag
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	@NotNull
 	private long userId;
-	@NotNull
 	private long organizationId;
 
 	@Override

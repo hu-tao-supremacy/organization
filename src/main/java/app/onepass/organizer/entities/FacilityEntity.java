@@ -1,6 +1,5 @@
 package app.onepass.organizer.entities;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -10,13 +9,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import app.onepass.apis.Facility;
 import app.onepass.apis.OperatingHour;
 import app.onepass.organizer.messages.FacilityMessage;
-import app.onepass.organizer.utilities.OperatingHourWrapper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,34 +30,18 @@ public class FacilityEntity implements BaseEntity<FacilityMessage, FacilityEntit
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	@NotNull
 	private long organizationId;
 	@NotNull
 	private String name;
-	@NotNull
 	private double latitude;
-	@NotNull
 	private double longitude;
 	@NotNull
-	private transient JSONArray operatingHours;
+	private transient List<OperatingHour> operatingHours;
 	@NotNull
 	private String description;
 
 	@Override
 	public FacilityMessage parseEntity() {
-
-		List<OperatingHour> hours = new ArrayList<>();
-
-		for (int index = 0; index < operatingHours.length(); index++) {
-
-			JSONObject operatingHour = operatingHours.getJSONObject(index);
-
-			OperatingHourWrapper operatingHourWrapper = new OperatingHourWrapper(operatingHour);
-
-			OperatingHour hour = operatingHourWrapper.parseOperatingHour();
-
-			hours.add(hour);
-		}
 
 		Facility facility = Facility.newBuilder()
 				.setId(id)
@@ -70,7 +49,7 @@ public class FacilityEntity implements BaseEntity<FacilityMessage, FacilityEntit
 				.setName(name)
 				.setLatitude(latitude)
 				.setLongitude(longitude)
-				.addAllOperatingHours(hours)
+				.addAllOperatingHours(operatingHours)
 				.setDescription(description)
 				.build();
 

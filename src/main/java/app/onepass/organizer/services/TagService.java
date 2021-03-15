@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import app.onepass.apis.CreateTagRequest;
 import app.onepass.apis.GetByIdRequest;
@@ -34,6 +35,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	EventTagRepository eventTagRepository;
 
 	@Override
+	@Transactional
 	public void createTag(CreateTagRequest request, StreamObserver<Result> responseObserver) {
 
 		TagMessage tagMessage = new TagMessage(request.getTag());
@@ -47,6 +49,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
+	@Transactional
 	public void addTag(UpdateTagRequest request, StreamObserver<Result> responseObserver) {
 
 		List<EventTagEntity> eventTagEntities = new ArrayList<>();
@@ -69,6 +72,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
+	@Transactional
 	public void removeTag(UpdateTagRequest request, StreamObserver<Result> responseObserver) {
 
 

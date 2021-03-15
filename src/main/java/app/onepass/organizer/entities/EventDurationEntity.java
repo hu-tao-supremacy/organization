@@ -29,7 +29,6 @@ public class EventDurationEntity implements BaseEntity<EventDurationMessage, Eve
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	@NotNull
 	private long eventId;
 	@NotNull
 	private Timestamp start;

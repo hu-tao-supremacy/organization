@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.google.protobuf.Int64Value;
 import com.google.protobuf.StringValue;
 
 import app.onepass.apis.Event;
@@ -29,17 +30,16 @@ public class EventEntity implements BaseEntity<EventMessage, EventEntity> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	@NotNull
 	private long organizationId;
-	private com.google.protobuf.Int64Value eventLocationId;
+	private Int64Value eventLocationId;
 	@NotNull
 	private String description;
 	@NotNull
 	private String name;
-	private String coverImage;
-	private String coverImageHash;
-	private String posterImage;
-	private String posterImageHash;
+	private StringValue coverImage;
+	private StringValue coverImageHash;
+	private StringValue posterImage;
+	private StringValue posterImageHash;
 	@NotNull
 	private String contact;
 
@@ -52,10 +52,10 @@ public class EventEntity implements BaseEntity<EventMessage, EventEntity> {
 				.setEventLocationId(eventLocationId)
 				.setDescription(description)
 				.setName(name)
-				.setCoverImage(StringValue.of(coverImage))
-				.setCoverImageHash(StringValue.of(coverImageHash))
-				.setPosterImage(StringValue.of(posterImage))
-				.setPosterImageHash(StringValue.of(posterImageHash))
+				.setCoverImage(coverImage)
+				.setCoverImageHash(coverImageHash)
+				.setPosterImage(posterImage)
+				.setPosterImageHash(posterImageHash)
 				.setContact(contact)
 				.build();
 

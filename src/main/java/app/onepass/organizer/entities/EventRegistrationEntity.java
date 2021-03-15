@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "event_duration")
+@Table(name = "event_registration")
 @Getter
 @Setter
 @Builder
@@ -28,9 +28,7 @@ public class EventRegistrationEntity implements BaseEntity<EventRegistrationMess
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	@NotNull
 	private long eventId;
-	@NotNull
 	private long userId;
 	@NotNull
 	private Status status;

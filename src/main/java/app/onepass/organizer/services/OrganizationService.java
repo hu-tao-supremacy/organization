@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import app.onepass.apis.CreateOrganizationRequest;
 import app.onepass.apis.GetByIdRequest;
@@ -36,6 +37,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
     private UserOrganizationRepository userOrganizationRepository;
 
     @Override
+    @Transactional
     public void createOrganization(CreateOrganizationRequest request, StreamObserver<Result> responseObserver) {
 
         OrganizationMessage organizationMessage = new OrganizationMessage(request.getOrganization());
@@ -98,6 +100,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
     }
 
     @Override
+    @Transactional
     public void updateOrganization(UpdateOrganizationRequest request, StreamObserver<Result> responseObserver) {
 
         long organizationId = request.getOrganizationId();
@@ -124,6 +127,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
     }
 
     @Override
+    @Transactional
     public void removeOrganization(RemoveOrganizationRequest request, StreamObserver<Result> responseObserver) {
 
         long organizationId = request.getOrganizationId();
@@ -146,6 +150,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
     }
 
     @Override
+    @Transactional
     public void addUsersToOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Result> responseObserver) {
 
         List<UserOrganizationEntity> userOrganizationEntities = new ArrayList<>();
@@ -168,6 +173,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
     }
 
     @Override
+    @Transactional
     public void removeUsersFromOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Result> responseObserver) {
 
         List<Long> userIds = request.getUserIdsList();

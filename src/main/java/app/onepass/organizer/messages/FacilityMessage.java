@@ -1,7 +1,5 @@
 package app.onepass.organizer.messages;
 
-import org.json.JSONArray;
-
 import app.onepass.apis.Facility;
 import app.onepass.organizer.entities.FacilityEntity;
 import lombok.Getter;
@@ -22,7 +20,7 @@ public class FacilityMessage implements BaseMessage<FacilityMessage, FacilityEnt
 				.name(facility.getName())
 				.latitude(facility.getLatitude())
 				.longitude(facility.getLongitude())
-				.operatingHours(new JSONArray(facility.getOperatingHoursList()))
+				.operatingHours(facility.getOperatingHoursList())
 				.description(facility.getDescription())
 				.build();
 	}

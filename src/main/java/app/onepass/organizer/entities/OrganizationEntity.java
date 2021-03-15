@@ -29,7 +29,6 @@ public class OrganizationEntity implements BaseEntity<OrganizationMessage, Organ
 	private long id;
 	@NotNull
 	private String name;
-	@NotNull
 	private boolean isVerified;
 
 	@Override

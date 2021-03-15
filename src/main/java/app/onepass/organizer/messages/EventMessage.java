@@ -22,10 +22,10 @@ public class EventMessage implements BaseMessage<EventMessage, EventEntity> {
 				.eventLocationId(event.getEventLocationId())
 				.description(event.getDescription())
 				.name(event.getName())
-				.coverImage(String.valueOf(event.getCoverImage()))
-				.coverImageHash(String.valueOf(event.getCoverImageHash()))
-				.posterImage(String.valueOf(event.getPosterImage()))
-				.posterImageHash(String.valueOf(event.getPosterImageHash()))
+				.coverImage(event.getCoverImage())
+				.coverImageHash(event.getCoverImageHash())
+				.posterImage(event.getPosterImage())
+				.posterImageHash(event.getPosterImageHash())
 				.build();
 	}
 }

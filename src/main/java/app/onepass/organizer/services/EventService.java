@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import app.onepass.apis.CreateEventRequest;
 import app.onepass.apis.Duration;
@@ -50,6 +51,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	private EventRegistrationRepository eventRegistrationRepository;
 
 	@Override
+	@Transactional
 	public void createEvent(CreateEventRequest request, StreamObserver<Result> responseObserver) {
 
 		EventMessage eventMessage = new EventMessage(request.getEvent());
@@ -111,6 +113,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	}
 
 	@Override
+	@Transactional
 	public void updateEventInfo(UpdateEventInfoRequest request, StreamObserver<Result> responseObserver) {
 
 		long eventId = request.getEvent().getId();
@@ -137,6 +140,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	}
 
 	@Override
+	@Transactional
 	public void removeEvent(RemoveEventRequest request, StreamObserver<Result> responseObserver) {
 
 		long eventId = request.getEventId();
@@ -159,6 +163,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	}
 
 	@Override
+	@Transactional
 	public void updateEventFacility(UpdateEventFacilityRequest request, StreamObserver<Result> responseObserver) {
 
 		long facilityId = request.getFacility().getId();
@@ -185,6 +190,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	}
 
 	@Override
+	@Transactional
 	public void updateEventDuration(UpdateEventDurationRequest request, StreamObserver<Result> responseObserver) {
 
 		long eventId = request.getEventId();
@@ -215,6 +221,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	}
 
 	@Override
+	@Transactional
 	public void updateRegistrationRequest(UpdateRegistrationRequestRequest request, StreamObserver<Result> responseObserver) {
 
 		eventRegistrationRepository.deleteByEventIdAndUserId(request.getRegisteredEventId(), request.getRegisteredUserId());
