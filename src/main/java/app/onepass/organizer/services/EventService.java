@@ -261,7 +261,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		} catch (IllegalArgumentException illegalArgumentException) {
 
-			Result result = ServiceUtil.returnError("Cannot find organization from given ID.");
+			Result result = ServiceUtil.returnSuccessful("The event does not exist.");
 
 			ServiceUtil.configureResponseObserver(responseObserver, result);
 
@@ -270,10 +270,18 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		long organizationId = eventEntity.getOrganizationId();
 
+		Result result;
+
 		if (organizationId == request.getOrganizationId()) {
-			ServiceUtil.returnSuccessful("The specified organization has the specified event.");
+
+			result = ServiceUtil.returnSuccessful("The specified organization has the specified event.");
+
 		} else {
-			ServiceUtil.returnError("The event is not hosted by this organization");
+
+			result = ServiceUtil.returnSuccessful("The event is not hosted by this organization");
+
 		}
+
+		ServiceUtil.configureResponseObserver(responseObserver, result);
 	}
 }

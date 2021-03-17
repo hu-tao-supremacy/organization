@@ -107,7 +107,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 		eventTagRepository.deleteAll(entitiesToDelete);
 
-		Result result = ServiceUtil.returnSuccessful("Tags removed from event.");
+		Result result = ServiceUtil.returnSuccessful("Existing tags removed from event.");
 
 		ServiceUtil.configureResponseObserver(responseObserver, result);
 

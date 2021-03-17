@@ -201,7 +201,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         userOrganizationRepository.deleteAll(entitiesToDelete);
 
-        Result result = ServiceUtil.returnSuccessful("Users removed from organization.");
+        Result result = ServiceUtil.returnSuccessful("Existing users removed from organization.");
 
         ServiceUtil.configureResponseObserver(responseObserver, result);
 
