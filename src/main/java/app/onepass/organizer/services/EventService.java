@@ -33,6 +33,7 @@ import app.onepass.organizer.repositories.EventRegistrationRepository;
 import app.onepass.organizer.repositories.EventRepository;
 import app.onepass.organizer.repositories.FacilityRepository;
 import app.onepass.organizer.utilities.ServiceUtil;
+import app.onepass.organizer.utilities.TimeUtil;
 import io.grpc.stub.StreamObserver;
 
 @Service
@@ -53,6 +54,15 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	@Override
 	@Transactional
 	public void createEvent(CreateEventRequest request, StreamObserver<Result> responseObserver) {
+
+		if (eventRepository.findById(request.getEvent().getId()).isPresent()) {
+
+			Result result = ServiceUtil.returnError("An event with this ID already exists.");
+
+			ServiceUtil.configureResponseObserver(responseObserver, result);
+
+			return;
+		}
 
 		EventMessage eventMessage = new EventMessage(request.getEvent());
 
@@ -93,7 +103,6 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 			GetEventByIdResponse result = GetEventByIdResponse
 					.newBuilder()
-					.setEvent((Event) null)
 					.build();
 
 			ServiceUtil.configureResponseObserver(responseObserver, result);
@@ -116,18 +125,13 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	@Transactional
 	public void updateEventInfo(UpdateEventInfoRequest request, StreamObserver<Result> responseObserver) {
 
-		long eventId = request.getEvent().getId();
+		if (!eventRepository.findById(request.getEvent().getId()).isPresent()) {
 
-		boolean deleteSuccessful = ServiceUtil.deleteEntity(eventId, eventRepository);
-
-		if (!deleteSuccessful) {
-
-			Result result = ServiceUtil.returnError("Cannot find event from given ID.");
+			Result result = ServiceUtil.returnError("An event with this ID does not exist.");
 
 			ServiceUtil.configureResponseObserver(responseObserver, result);
 
 			return;
-
 		}
 
 		EventMessage eventMessage = new EventMessage(request.getEvent());
@@ -166,18 +170,13 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	@Transactional
 	public void updateEventFacility(UpdateEventFacilityRequest request, StreamObserver<Result> responseObserver) {
 
-		long facilityId = request.getFacility().getId();
+		if (!facilityRepository.findById(request.getFacility().getId()).isPresent()) {
 
-		boolean deleteSuccessful = ServiceUtil.deleteEntity(facilityId, facilityRepository);
-
-		if (!deleteSuccessful) {
-
-			Result result = ServiceUtil.returnError("Cannot find facility from given ID.");
+			Result result = ServiceUtil.returnError("A facility with this ID does not exist.");
 
 			ServiceUtil.configureResponseObserver(responseObserver, result);
 
 			return;
-
 		}
 
 		FacilityMessage facilityMessage = new FacilityMessage(request.getFacility());
@@ -205,8 +204,8 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 			EventDurationEntity eventDurationEntity = EventDurationEntity.builder()
 					.eventId(eventId)
-					.start(duration.getStart())
-					.finish(duration.getFinish())
+					.start(TimeUtil.toSqlTimestamp(duration.getStart()))
+					.finish(TimeUtil.toSqlTimestamp(duration.getFinish()))
 					.build();
 
 			entitiesToAdd.add(eventDurationEntity);
@@ -224,13 +223,23 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	@Transactional
 	public void updateRegistrationRequest(UpdateRegistrationRequestRequest request, StreamObserver<Result> responseObserver) {
 
-		eventRegistrationRepository.deleteByEventIdAndUserId(request.getRegisteredEventId(), request.getRegisteredUserId());
+		EventRegistrationEntity eventRegistrationEntity;
 
-		EventRegistrationEntity eventRegistrationEntity = EventRegistrationEntity.builder()
-				.eventId(request.getRegisteredEventId())
-				.userId(request.getRegisteredUserId())
-				.status(request.getStatus())
-				.build();
+		try {
+			eventRegistrationEntity = eventRegistrationRepository
+					.findByEventIdAndUserId(request.getRegisteredEventId(), request.getRegisteredUserId())
+					.orElseThrow(IllegalArgumentException::new);
+
+		} catch (IllegalArgumentException exception) {
+
+			Result result = ServiceUtil.returnError("There is no request associated with this event and user.");
+
+			ServiceUtil.configureResponseObserver(responseObserver, result);
+
+			return;
+		}
+
+		eventRegistrationEntity.setStatus(request.getStatus().toString());
 
 		eventRegistrationRepository.save(eventRegistrationEntity);
 

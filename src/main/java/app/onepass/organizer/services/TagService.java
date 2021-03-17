@@ -38,6 +38,15 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	@Transactional
 	public void createTag(CreateTagRequest request, StreamObserver<Result> responseObserver) {
 
+		if (tagRepository.findById(request.getTag().getId()).isPresent()) {
+
+			Result result = ServiceUtil.returnError("A tag with this ID already exists.");
+
+			ServiceUtil.configureResponseObserver(responseObserver, result);
+
+			return;
+		}
+
 		TagMessage tagMessage = new TagMessage(request.getTag());
 
 		ServiceUtil.saveEntity(tagMessage, tagRepository);
@@ -134,7 +143,6 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 			GetTagByIdResponse result = GetTagByIdResponse
 					.newBuilder()
-					.setTag((Tag) null)
 					.build();
 
 			ServiceUtil.configureResponseObserver(responseObserver, result);

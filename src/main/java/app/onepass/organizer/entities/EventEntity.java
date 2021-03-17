@@ -52,6 +52,7 @@ public class EventEntity implements BaseEntity<EventMessage, EventEntity> {
 				.setEventLocationId(Int64Value.of(eventLocationId))
 				.setDescription(description)
 				.setName(name)
+				.setContact(contact)
 				.build();
 
 		if (coverImage != null) {

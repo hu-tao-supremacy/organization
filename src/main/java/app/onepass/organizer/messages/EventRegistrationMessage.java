@@ -18,7 +18,7 @@ public class EventRegistrationMessage implements BaseMessage<EventRegistrationMe
 				.id(eventRegistration.getId())
 				.eventId(eventRegistration.getEventId())
 				.userId(eventRegistration.getUserId())
-				.status(eventRegistration.getStatus())
+				.status(eventRegistration.getStatus().toString())
 				.build();
 	}
 }

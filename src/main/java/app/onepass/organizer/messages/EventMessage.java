@@ -26,6 +26,7 @@ public class EventMessage implements BaseMessage<EventMessage, EventEntity> {
 				.coverImageHash(event.getCoverImageHash().getValue())
 				.posterImage(event.getPosterImage().getValue())
 				.posterImageHash(event.getPosterImageHash().getValue())
+				.contact(event.getContact())
 				.build();
 	}
 }

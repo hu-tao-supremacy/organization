@@ -40,6 +40,15 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
     @Transactional
     public void createOrganization(CreateOrganizationRequest request, StreamObserver<Result> responseObserver) {
 
+        if (organizationRepository.findById(request.getOrganization().getId()).isPresent()) {
+
+            Result result = ServiceUtil.returnError("An organization with this ID already exists.");
+
+            ServiceUtil.configureResponseObserver(responseObserver, result);
+
+            return;
+        }
+
         OrganizationMessage organizationMessage = new OrganizationMessage(request.getOrganization());
 
         ServiceUtil.saveEntity(organizationMessage, organizationRepository);
@@ -80,7 +89,6 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
             GetOrganizationByIdResponse result = GetOrganizationByIdResponse
                     .newBuilder()
-                    .setOrganization((Organization) null)
                     .build();
 
             ServiceUtil.configureResponseObserver(responseObserver, result);
@@ -103,18 +111,13 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
     @Transactional
     public void updateOrganization(UpdateOrganizationRequest request, StreamObserver<Result> responseObserver) {
 
-        long organizationId = request.getOrganizationId();
+        if (!organizationRepository.findById(request.getOrganization().getId()).isPresent()) {
 
-        boolean deleteSuccessful = ServiceUtil.deleteEntity(organizationId, organizationRepository);
-
-        if (!deleteSuccessful) {
-
-            Result result = ServiceUtil.returnError("Cannot find organization from given ID.");
+            Result result = ServiceUtil.returnError("An organization with this ID does not exist.");
 
             ServiceUtil.configureResponseObserver(responseObserver, result);
 
             return;
-
         }
 
         OrganizationMessage organizationMessage = new OrganizationMessage(request.getOrganization());

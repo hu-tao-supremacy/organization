@@ -8,8 +8,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import app.onepass.apis.EventRegistration;
-import app.onepass.apis.Status;
 import app.onepass.organizer.messages.EventRegistrationMessage;
+import app.onepass.organizer.utilities.StatusUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,7 +31,7 @@ public class EventRegistrationEntity implements BaseEntity<EventRegistrationMess
 	private long eventId;
 	private long userId;
 	@NotNull
-	private Status status;
+	private String status;
 
 	@Override
 	public EventRegistrationMessage parseEntity() {
@@ -40,7 +40,7 @@ public class EventRegistrationEntity implements BaseEntity<EventRegistrationMess
 				.setId(id)
 				.setEventId(eventId)
 				.setUserId(userId)
-				.setStatus(status)
+				.setStatus(StatusUtil.toStatus(status))
 				.build();
 
 		return new EventRegistrationMessage(eventRegistration);

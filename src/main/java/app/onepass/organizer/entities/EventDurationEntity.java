@@ -7,10 +7,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import com.google.protobuf.Timestamp;
-
 import app.onepass.apis.EventDuration;
 import app.onepass.organizer.messages.EventDurationMessage;
+import app.onepass.organizer.utilities.TimeUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,18 +30,21 @@ public class EventDurationEntity implements BaseEntity<EventDurationMessage, Eve
 	private long id;
 	private long eventId;
 	@NotNull
-	private Timestamp start;
+	private java.sql.Timestamp start;
 	@NotNull
-	private Timestamp finish;
+	private java.sql.Timestamp finish;
 
 	@Override
 	public EventDurationMessage parseEntity() {
 
+		com.google.protobuf.Timestamp startTime = TimeUtil.toProtobufTimestamp(start);
+		com.google.protobuf.Timestamp finishTime = TimeUtil.toProtobufTimestamp(finish);
+
 		EventDuration eventDuration = EventDuration.newBuilder()
 				.setId(id)
 				.setEventId(eventId)
-				.setStart(start)
-				.setFinish(finish)
+				.setStart(startTime)
+				.setFinish(finishTime)
 				.build();
 
 		return new EventDurationMessage(eventDuration);
