@@ -46,23 +46,29 @@ public class EventEntity implements BaseEntity<EventMessage, EventEntity> {
 	@Override
 	public EventMessage parseEntity() {
 
-		StringValue cover = coverImage == null ? null : StringValue.of(coverImage);
-		StringValue coverHash = coverImageHash == null ? null : StringValue.of(coverImageHash);
-		StringValue poster = posterImage == null ? null : StringValue.of(posterImage);
-		StringValue posterHash = posterImageHash == null ? null : StringValue.of(posterImageHash);
-
 		Event event = Event.newBuilder()
 				.setId(id)
 				.setOrganizationId(organizationId)
 				.setEventLocationId(Int64Value.of(eventLocationId))
 				.setDescription(description)
 				.setName(name)
-				.setCoverImage(cover)
-				.setCoverImageHash(coverHash)
-				.setPosterImage(poster)
-				.setPosterImageHash(posterHash)
-				.setContact(contact)
 				.build();
+
+		if (coverImage != null) {
+			event.toBuilder().setCoverImage(StringValue.of(coverImage)).build();
+		}
+
+		if (coverImageHash != null) {
+			event.toBuilder().setCoverImageHash(StringValue.of(coverImageHash)).build();
+		}
+
+		if (posterImage != null) {
+			event.toBuilder().setPosterImage(StringValue.of(posterImage)).build();
+		}
+
+		if (posterImageHash != null) {
+			event.toBuilder().setPosterImageHash(StringValue.of(posterImageHash)).build();
+		}
 
 		return new EventMessage(event);
 	}
