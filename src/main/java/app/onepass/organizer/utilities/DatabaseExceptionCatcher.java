@@ -4,15 +4,16 @@ import java.util.function.BiConsumer;
 
 import org.springframework.dao.DataAccessException;
 
+import com.google.protobuf.Empty;
 import com.google.protobuf.GeneratedMessageV3;
 
-import app.onepass.apis.Result;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
 public class DatabaseExceptionCatcher {
 
 	public static <M extends GeneratedMessageV3> void
-	catcher(BiConsumer<M, StreamObserver<Result>> consumer, M request, StreamObserver<Result> responseObserver) {
+	catcher(BiConsumer<M, StreamObserver<Empty>> consumer, M request, StreamObserver<Empty> responseObserver) {
 
 		try {
 
@@ -20,9 +21,11 @@ public class DatabaseExceptionCatcher {
 
 		} catch (DataAccessException exception) {
 
-			Result result = ServiceUtil.returnError("Unable to manipulate database.");
+			responseObserver.onError(Status.UNAVAILABLE
+					.withDescription("Unable to manipulate database.")
+					.asException());
 
-			ServiceUtil.configureResponseObserver(responseObserver, result);
+			responseObserver.onCompleted();
 		}
 	}
 }

@@ -8,15 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.protobuf.Empty;
+
 import app.onepass.apis.CreateTagRequest;
 import app.onepass.apis.GetByIdRequest;
 import app.onepass.apis.GetTagByIdResponse;
 import app.onepass.apis.GetTagResponse;
 import app.onepass.apis.OrganizerServiceGrpc;
-import app.onepass.apis.Result;
 import app.onepass.apis.Tag;
 import app.onepass.apis.UpdateTagRequest;
-import app.onepass.apis.UserRequest;
 import app.onepass.organizer.entities.EventTagEntity;
 import app.onepass.organizer.entities.TagEntity;
 import app.onepass.organizer.messages.TagMessage;
@@ -28,6 +28,8 @@ import io.grpc.stub.StreamObserver;
 @Service
 public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
+	
+
 	@Autowired
 	TagRepository tagRepository;
 
@@ -36,13 +38,11 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	@Transactional
-	public void createTag(CreateTagRequest request, StreamObserver<Result> responseObserver) {
+	public void createTag(CreateTagRequest request, StreamObserver<Empty> responseObserver) {
 
 		if (tagRepository.findById(request.getTag().getId()).isPresent()) {
 
-			Result result = ServiceUtil.returnError("A tag with this ID already exists.");
-
-			ServiceUtil.configureResponseObserver(responseObserver, result);
+			ServiceUtil.returnInvalidArgumentError(responseObserver, "A tag with this ID already exists.");
 
 			return;
 		}
@@ -51,15 +51,12 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 		ServiceUtil.saveEntity(tagMessage, tagRepository);
 
-		Result result = ServiceUtil.returnSuccessful("Tag creation successful.");
-
-		ServiceUtil.configureResponseObserver(responseObserver, result);
-
+		responseObserver.onCompleted();
 	}
 
 	@Override
 	@Transactional
-	public void addTag(UpdateTagRequest request, StreamObserver<Result> responseObserver) {
+	public void addTag(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
 
 		List<EventTagEntity> eventTagEntities = new ArrayList<>();
 
@@ -75,15 +72,12 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 		eventTagRepository.saveAll(eventTagEntities);
 
-		Result result = ServiceUtil.returnSuccessful("Tags added to event.");
-
-		ServiceUtil.configureResponseObserver(responseObserver, result);
+		responseObserver.onCompleted();
 	}
 
 	@Override
 	@Transactional
-	public void removeTag(UpdateTagRequest request, StreamObserver<Result> responseObserver) {
-
+	public void removeTag(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
 
 		List<Long> tagIds = request.getTagIdsList();
 
@@ -107,14 +101,11 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 		eventTagRepository.deleteAll(entitiesToDelete);
 
-		Result result = ServiceUtil.returnSuccessful("Existing tags removed from event.");
-
-		ServiceUtil.configureResponseObserver(responseObserver, result);
-
+		responseObserver.onCompleted();
 	}
 
 	@Override
-	public void getTag(UserRequest request, StreamObserver<GetTagResponse> responseObserver) {
+	public void getTag(Empty request, StreamObserver<GetTagResponse> responseObserver) {
 
 		List<TagEntity> allTagEntities = tagRepository.findAll();
 
@@ -125,7 +116,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 		GetTagResponse getTagResponse = GetTagResponse.newBuilder()
 				.addAllTags(allTags).build();
 
-		ServiceUtil.configureResponseObserver(responseObserver, getTagResponse);
+		ServiceUtil.returnObject(responseObserver, getTagResponse);
 	}
 
 	@Override
@@ -136,16 +127,16 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 		try {
 
 			tagEntity = tagRepository
-					.findById(request.getReadId())
+					.findById(request.getId())
 					.orElseThrow(IllegalArgumentException::new);
 
 		} catch (IllegalArgumentException illegalArgumentException) {
 
-			GetTagByIdResponse result = GetTagByIdResponse
+			GetTagByIdResponse getTagByIdResponse = GetTagByIdResponse
 					.newBuilder()
 					.build();
 
-			ServiceUtil.configureResponseObserver(responseObserver, result);
+			ServiceUtil.returnObject(responseObserver, getTagByIdResponse);
 
 			return;
 		}
@@ -157,7 +148,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 				.setTag(tag)
 				.build();
 
-		ServiceUtil.configureResponseObserver(responseObserver, getTagByIdResponse);
+		ServiceUtil.returnObject(responseObserver, getTagByIdResponse);
 
 	}
 }

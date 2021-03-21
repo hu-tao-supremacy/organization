@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.protobuf.Empty;
+
 import app.onepass.apis.CreateOrganizationRequest;
 import app.onepass.apis.GetByIdRequest;
 import app.onepass.apis.GetOrganizationByIdResponse;
@@ -15,10 +17,8 @@ import app.onepass.apis.GetOrganizationResponse;
 import app.onepass.apis.Organization;
 import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.RemoveOrganizationRequest;
-import app.onepass.apis.Result;
 import app.onepass.apis.UpdateOrganizationRequest;
 import app.onepass.apis.UpdateUsersInOrganizationRequest;
-import app.onepass.apis.UserRequest;
 import app.onepass.organizer.entities.OrganizationEntity;
 import app.onepass.organizer.entities.UserOrganizationEntity;
 import app.onepass.organizer.messages.OrganizationMessage;
@@ -38,28 +38,23 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
     @Override
     @Transactional
-    public void createOrganization(CreateOrganizationRequest request, StreamObserver<Result> responseObserver) {
+    public void createOrganization(CreateOrganizationRequest request, StreamObserver<Empty> responseObserver) {
 
         if (organizationRepository.findById(request.getOrganization().getId()).isPresent()) {
 
-            Result result = ServiceUtil.returnError("An organization with this ID already exists.");
+            ServiceUtil.returnInvalidArgumentError(responseObserver, "An organization with this ID already exists.");
 
-            ServiceUtil.configureResponseObserver(responseObserver, result);
-
-            return;
         }
 
         OrganizationMessage organizationMessage = new OrganizationMessage(request.getOrganization());
 
         ServiceUtil.saveEntity(organizationMessage, organizationRepository);
 
-        Result result = ServiceUtil.returnSuccessful("Organization creation successful.");
-
-        ServiceUtil.configureResponseObserver(responseObserver, result);
+        responseObserver.onCompleted();
     }
 
     @Override
-    public void getOrganization(UserRequest request, StreamObserver<GetOrganizationResponse> responseObserver) {
+    public void getOrganization(Empty request, StreamObserver<GetOrganizationResponse> responseObserver) {
 
         List<OrganizationEntity> allOrganizationEntities = organizationRepository.findAll();
 
@@ -70,8 +65,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
         GetOrganizationResponse getOrganizationResult = GetOrganizationResponse.newBuilder()
                 .addAllOrganizations(allOrganizations).build();
 
-        ServiceUtil.configureResponseObserver(responseObserver, getOrganizationResult);
-
+        ServiceUtil.returnObject(responseObserver, getOrganizationResult);
     }
 
     @Override
@@ -82,16 +76,16 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
         try {
 
             organizationEntity = organizationRepository
-                    .findById(request.getReadId())
+                    .findById(request.getId())
                     .orElseThrow(IllegalArgumentException::new);
 
         } catch (IllegalArgumentException illegalArgumentException) {
 
-            GetOrganizationByIdResponse result = GetOrganizationByIdResponse
+            GetOrganizationByIdResponse getOrganizationByIdResponse= GetOrganizationByIdResponse
                     .newBuilder()
                     .build();
 
-            ServiceUtil.configureResponseObserver(responseObserver, result);
+            ServiceUtil.returnObject(responseObserver, getOrganizationByIdResponse);
 
             return;
         }
@@ -103,19 +97,16 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
                 .setOrganization(organization)
                 .build();
 
-        ServiceUtil.configureResponseObserver(responseObserver, getOrganizationByIdResult);
-
+       ServiceUtil.returnObject(responseObserver, getOrganizationByIdResult);
     }
 
     @Override
     @Transactional
-    public void updateOrganization(UpdateOrganizationRequest request, StreamObserver<Result> responseObserver) {
+    public void updateOrganization(UpdateOrganizationRequest request, StreamObserver<Empty> responseObserver) {
 
         if (!organizationRepository.findById(request.getOrganization().getId()).isPresent()) {
 
-            Result result = ServiceUtil.returnError("An organization with this ID does not exist.");
-
-            ServiceUtil.configureResponseObserver(responseObserver, result);
+            ServiceUtil.returnInvalidArgumentError(responseObserver, "An organization with this ID does not exist.");
 
             return;
         }
@@ -124,14 +115,12 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         ServiceUtil.saveEntity(organizationMessage, organizationRepository);
 
-        Result result = ServiceUtil.returnSuccessful("Organization update successful.");
-
-        ServiceUtil.configureResponseObserver(responseObserver, result);
+        responseObserver.onCompleted();
     }
 
     @Override
     @Transactional
-    public void removeOrganization(RemoveOrganizationRequest request, StreamObserver<Result> responseObserver) {
+    public void removeOrganization(RemoveOrganizationRequest request, StreamObserver<Empty> responseObserver) {
 
         long organizationId = request.getOrganizationId();
 
@@ -139,22 +128,17 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         if (!deleteSuccessful) {
 
-            Result result = ServiceUtil.returnError("Cannot find organization from given ID.");
-
-            ServiceUtil.configureResponseObserver(responseObserver, result);
+            ServiceUtil.returnInvalidArgumentError(responseObserver, "Cannot find organization from given ID.");
 
             return;
-
         }
 
-        Result result = ServiceUtil.returnSuccessful("Organization deletion successful.");
-
-        ServiceUtil.configureResponseObserver(responseObserver, result);
+        responseObserver.onCompleted();
     }
 
     @Override
     @Transactional
-    public void addUsersToOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Result> responseObserver) {
+    public void addUsersToOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Empty> responseObserver) {
 
         List<UserOrganizationEntity> userOrganizationEntities = new ArrayList<>();
 
@@ -170,14 +154,12 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         userOrganizationRepository.saveAll(userOrganizationEntities);
 
-        Result result = ServiceUtil.returnSuccessful("Users added to organization.");
-
-        ServiceUtil.configureResponseObserver(responseObserver, result);
+        responseObserver.onCompleted();
     }
 
     @Override
     @Transactional
-    public void removeUsersFromOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Result> responseObserver) {
+    public void removeUsersFromOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Empty> responseObserver) {
 
         List<Long> userIds = request.getUserIdsList();
 
@@ -201,9 +183,6 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         userOrganizationRepository.deleteAll(entitiesToDelete);
 
-        Result result = ServiceUtil.returnSuccessful("Existing users removed from organization.");
-
-        ServiceUtil.configureResponseObserver(responseObserver, result);
-
+        responseObserver.onCompleted();
     }
 }
