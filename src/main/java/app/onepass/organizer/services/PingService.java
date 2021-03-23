@@ -1,5 +1,6 @@
 package app.onepass.organizer.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.protobuf.Empty;
@@ -11,7 +12,15 @@ import io.grpc.stub.StreamObserver;
 @Service
 public class PingService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
+	@Autowired
+	AccountService accountService;
+
 	@Override
 	public void ping(Empty request, StreamObserver<Result> responseObserver) {
+
+		Result result = accountService.ping();
+
+		responseObserver.onNext(result);
+		responseObserver.onCompleted();
 	}
 }

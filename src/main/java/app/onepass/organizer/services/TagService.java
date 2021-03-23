@@ -28,8 +28,6 @@ import io.grpc.stub.StreamObserver;
 @Service
 public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
-	
-
 	@Autowired
 	TagRepository tagRepository;
 

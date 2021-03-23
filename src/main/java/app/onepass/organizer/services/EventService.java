@@ -16,7 +16,7 @@ import app.onepass.apis.HasEventRequest;
 import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.RemoveEventRequest;
 import app.onepass.apis.UpdateEventDurationRequest;
-import app.onepass.apis.UpdateEventInfoRequest;
+import app.onepass.apis.UpdateEventRequest;
 import app.onepass.apis.UpdateRegistrationRequestRequest;
 import app.onepass.organizer.entities.EventDurationEntity;
 import app.onepass.organizer.entities.EventEntity;
@@ -63,7 +63,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 	@Override
 	@Transactional
-	public void updateEventInfo(UpdateEventInfoRequest request, StreamObserver<Empty> responseObserver) {
+	public void updateEvent(UpdateEventRequest request, StreamObserver<Empty> responseObserver) {
 
 		if (!eventRepository.findById(request.getEvent().getId()).isPresent()) {
 
