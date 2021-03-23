@@ -10,11 +10,11 @@
   
 * https://github.com/hu-tao-supremacy/migrations
 
-**2. Setup local [PostgresQL](https://www.postgresql.org/) database.**
+**2. Start docker containers by executing the following on organizer repository:**
 
-Note: Change the *development* database of knexfile.ts in the migrations repository to your local database
-
-Example: `host: "localhost", database: "test", user: "root", password: "root", port: 5432,`
+```
+docker-compose -f docker-compose-local.yaml up -d
+```
 
 **3. Move to the migrations repository and execute the following:**
 
