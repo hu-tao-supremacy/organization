@@ -31,17 +31,20 @@ public class EventEntity implements BaseEntity<EventMessage, EventEntity> {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	private long organizationId;
-	private Long eventLocationId;
+	private Long locationId;
 	@NotNull
 	private String description;
 	@NotNull
 	private String name;
-	private String coverImage;
+	private String coverImageUrl;
 	private String coverImageHash;
-	private String posterImage;
+	private String posterImageUrl;
 	private String posterImageHash;
 	@NotNull
 	private String contact;
+	private String profileImageUrl;
+	private String profileImageHash;
+	private long attendeeLimit;
 
 	@Override
 	public EventMessage parseEntity() {
@@ -49,26 +52,38 @@ public class EventEntity implements BaseEntity<EventMessage, EventEntity> {
 		Event event = Event.newBuilder()
 				.setId(id)
 				.setOrganizationId(organizationId)
-				.setEventLocationId(Int64Value.of(eventLocationId))
 				.setDescription(description)
 				.setName(name)
 				.setContact(contact)
+				.setAttendeeLimit(attendeeLimit)
 				.build();
 
-		if (coverImage != null) {
-			event.toBuilder().setCoverImage(StringValue.of(coverImage)).build();
+		if (locationId != null) {
+			event = event.toBuilder().setLocationId(Int64Value.of(locationId)).build();
+		}
+
+		if (coverImageUrl != null) {
+			event = event.toBuilder().setCoverImageUrl(StringValue.of(coverImageUrl)).build();
 		}
 
 		if (coverImageHash != null) {
-			event.toBuilder().setCoverImageHash(StringValue.of(coverImageHash)).build();
+			event = event.toBuilder().setCoverImageHash(StringValue.of(coverImageHash)).build();
 		}
 
-		if (posterImage != null) {
-			event.toBuilder().setPosterImage(StringValue.of(posterImage)).build();
+		if (posterImageUrl != null) {
+			event = event.toBuilder().setPosterImageUrl(StringValue.of(posterImageUrl)).build();
 		}
 
 		if (posterImageHash != null) {
-			event.toBuilder().setPosterImageHash(StringValue.of(posterImageHash)).build();
+			event = event.toBuilder().setPosterImageHash(StringValue.of(posterImageHash)).build();
+		}
+
+		if (profileImageUrl != null) {
+			event = event.toBuilder().setProfileImageUrl(StringValue.of(profileImageUrl)).build();
+		}
+
+		if (profileImageHash != null) {
+			event = event.toBuilder().setProfileImageHash(StringValue.of(profileImageHash)).build();
 		}
 
 		return new EventMessage(event);
