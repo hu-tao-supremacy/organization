@@ -6,7 +6,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import app.onepass.apis.Question;
 import app.onepass.apis.QuestionGroup;
+import app.onepass.organizer.utilities.QuestionTypeUtil;
 import app.onepass.organizer.utilities.TypeUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,33 +17,37 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "question_group")
+@Table(name = "question")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class QuestionGroupEntity implements BaseEntity<QuestionGroupMessage, QuestionGroupEntity> {
+public class QuestionEntity implements BaseEntity<QuestionMessage, QuestionEntity> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	private long eventId;
-	private String type;
+	private long questionGroupId;
 	private long order;
+	private String answerType;
+	private boolean isOptional;
 	private String title;
+	private String subtitle;
 
 	@Override
-	public QuestionGroupMessage parseEntity() {
+	public QuestionMessage parseEntity() {
 
-		QuestionGroup questionGroup = QuestionGroup.newBuilder()
+		Question question = Question.newBuilder()
 				.setId(id)
-				.setEventId(eventId)
-				.setType(TypeUtil.toQuestionType(type))
+				.setQuestionGroupId(questionGroupId)
 				.setOrder(order)
+				.setAnswerType(TypeUtil.toAnswerType(answerType))
+				.setIsOptional(isOptional)
 				.setTitle(title)
+				.setSubtitle(subtitle)
 				.build();
 
-		return new QuestionGroupMessage(questionGroup);
+		return new QuestionMessage(question);
 	}
 }
