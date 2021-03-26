@@ -13,7 +13,7 @@ import com.google.protobuf.Empty;
 import app.onepass.apis.CreateOrganizationRequest;
 import app.onepass.apis.GetByIdRequest;
 import app.onepass.apis.GetOrganizationByIdResponse;
-import app.onepass.apis.GetOrganizationResponse;
+import app.onepass.apis.GetOrganizationsResponse;
 import app.onepass.apis.Organization;
 import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.RemoveOrganizationRequest;
@@ -54,7 +54,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
     }
 
     @Override
-    public void getOrganization(Empty request, StreamObserver<GetOrganizationResponse> responseObserver) {
+    public void getOrganizations(Empty request, StreamObserver<GetOrganizationsResponse> responseObserver) {
 
         List<OrganizationEntity> allOrganizationEntities = organizationRepository.findAll();
 
@@ -62,7 +62,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
                 .map(organizationEntity -> organizationEntity.parseEntity().getOrganization())
                 .collect(Collectors.toList());
 
-        GetOrganizationResponse getOrganizationResult = GetOrganizationResponse.newBuilder()
+        GetOrganizationsResponse getOrganizationResult = GetOrganizationsResponse.newBuilder()
                 .addAllOrganizations(allOrganizations).build();
 
         ServiceUtil.returnObject(responseObserver, getOrganizationResult);

@@ -20,13 +20,11 @@ import app.onepass.apis.UpdateEventRequest;
 import app.onepass.apis.UpdateRegistrationRequestRequest;
 import app.onepass.organizer.entities.EventDurationEntity;
 import app.onepass.organizer.entities.EventEntity;
-import app.onepass.organizer.entities.EventRegistrationEntity;
 import app.onepass.organizer.messages.EventMessage;
 import app.onepass.organizer.repositories.EventDurationRepository;
-import app.onepass.organizer.repositories.EventRegistrationRepository;
 import app.onepass.organizer.repositories.EventRepository;
 import app.onepass.organizer.utilities.ServiceUtil;
-import app.onepass.organizer.utilities.TimeUtil;
+import app.onepass.organizer.utilities.TypeUtil;
 import io.grpc.stub.StreamObserver;
 
 @Service
@@ -37,9 +35,6 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 	@Autowired
 	private EventDurationRepository eventDurationRepository;
-
-	@Autowired
-	private EventRegistrationRepository eventRegistrationRepository;
 
 	@Override
 	@Transactional
@@ -99,7 +94,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 	@Override
 	@Transactional
-	public void updateEventDuration(UpdateEventDurationRequest request, StreamObserver<Empty> responseObserver) {
+	public void updateEventDurations(UpdateEventDurationRequest request, StreamObserver<Empty> responseObserver) {
 
 		long eventId = request.getEventId();
 
@@ -113,8 +108,8 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 			EventDurationEntity eventDurationEntity = EventDurationEntity.builder()
 					.eventId(eventId)
-					.start(TimeUtil.toSqlTimestamp(duration.getStart()))
-					.finish(TimeUtil.toSqlTimestamp(duration.getFinish()))
+					.start(TypeUtil.toSqlTimestamp(duration.getStart()))
+					.finish(TypeUtil.toSqlTimestamp(duration.getFinish()))
 					.build();
 
 			entitiesToAdd.add(eventDurationEntity);
@@ -128,26 +123,6 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	@Override
 	@Transactional
 	public void updateRegistrationRequest(UpdateRegistrationRequestRequest request, StreamObserver<Empty> responseObserver) {
-
-		EventRegistrationEntity eventRegistrationEntity;
-
-		try {
-			eventRegistrationEntity = eventRegistrationRepository
-					.findByEventIdAndUserId(request.getRegisteredEventId(), request.getRegisteredUserId())
-					.orElseThrow(IllegalArgumentException::new);
-
-		} catch (IllegalArgumentException exception) {
-
-			ServiceUtil.returnInvalidArgumentError(responseObserver, "There is no request associated with this event and user.");
-
-			return;
-		}
-
-		eventRegistrationEntity.setStatus(request.getStatus().toString());
-
-		eventRegistrationRepository.save(eventRegistrationEntity);
-
-		responseObserver.onCompleted();
 	}
 
 	@Override

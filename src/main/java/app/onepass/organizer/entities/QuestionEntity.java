@@ -6,9 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import app.onepass.apis.Question;
-import app.onepass.apis.QuestionGroup;
-import app.onepass.organizer.utilities.QuestionTypeUtil;
+import app.onepass.apis.Question;import app.onepass.organizer.messages.QuestionMessage;
 import app.onepass.organizer.utilities.TypeUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

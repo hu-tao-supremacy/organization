@@ -13,7 +13,7 @@ import com.google.protobuf.Empty;
 import app.onepass.apis.CreateTagRequest;
 import app.onepass.apis.GetByIdRequest;
 import app.onepass.apis.GetTagByIdResponse;
-import app.onepass.apis.GetTagResponse;
+import app.onepass.apis.GetTagsResponse;
 import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.Tag;
 import app.onepass.apis.UpdateTagRequest;
@@ -54,7 +54,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	@Transactional
-	public void addTag(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
+	public void addTags(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
 
 		List<EventTagEntity> eventTagEntities = new ArrayList<>();
 
@@ -75,7 +75,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	@Transactional
-	public void removeTag(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
+	public void removeTags(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
 
 		List<Long> tagIds = request.getTagIdsList();
 
@@ -103,7 +103,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
-	public void getTag(Empty request, StreamObserver<GetTagResponse> responseObserver) {
+	public void getTags(Empty request, StreamObserver<GetTagsResponse> responseObserver) {
 
 		List<TagEntity> allTagEntities = tagRepository.findAll();
 
@@ -111,7 +111,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 				.map(tagEntity -> tagEntity.parseEntity().getTag())
 				.collect(Collectors.toList());
 
-		GetTagResponse getTagResponse = GetTagResponse.newBuilder()
+		GetTagsResponse getTagResponse = GetTagsResponse.newBuilder()
 				.addAllTags(allTags).build();
 
 		ServiceUtil.returnObject(responseObserver, getTagResponse);

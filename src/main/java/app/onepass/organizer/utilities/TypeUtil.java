@@ -3,20 +3,20 @@ package app.onepass.organizer.utilities;
 import java.time.Instant;
 
 import app.onepass.apis.AnswerType;
-import app.onepass.apis.QuestionType;
+import app.onepass.apis.QuestionGroupType;
 
 public class TypeUtil {
 
-	public static QuestionType toQuestionType(String questionType) {
+	public static QuestionGroupType toQuestionGroupType(String questionGroupType) {
 
-		switch (questionType) {
+		switch (questionGroupType) {
 		case "PRE_EVENT":
-			return QuestionType.PRE_EVENT;
+			return QuestionGroupType.PRE_EVENT;
 		case "POSY_EVENT":
-			return QuestionType.POST_EVENT;
+			return QuestionGroupType.POST_EVENT;
 		}
 
-		return QuestionType.POST_EVENT;
+		return QuestionGroupType.POST_EVENT;
 	}
 
 	public static AnswerType toAnswerType(String answerType) {

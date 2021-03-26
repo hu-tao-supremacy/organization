@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import app.onepass.apis.QuestionGroup;
+import app.onepass.organizer.messages.QuestionGroupMessage;
 import app.onepass.organizer.utilities.TypeUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,7 +38,7 @@ public class QuestionGroupEntity implements BaseEntity<QuestionGroupMessage, Que
 		QuestionGroup questionGroup = QuestionGroup.newBuilder()
 				.setId(id)
 				.setEventId(eventId)
-				.setType(TypeUtil.toQuestionType(type))
+				.setType(TypeUtil.toQuestionGroupType(type))
 				.setOrder(order)
 				.setTitle(title)
 				.build();

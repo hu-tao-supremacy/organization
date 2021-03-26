@@ -4,6 +4,7 @@ import org.lognet.springboot.grpc.GRpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.protobuf.BoolValue;
 import com.google.protobuf.Empty;
 
 import app.onepass.apis.CreateEventRequest;
@@ -12,14 +13,13 @@ import app.onepass.apis.CreateTagRequest;
 import app.onepass.apis.Event;
 import app.onepass.apis.GetByIdRequest;
 import app.onepass.apis.GetOrganizationByIdResponse;
-import app.onepass.apis.GetOrganizationResponse;
+import app.onepass.apis.GetOrganizationsResponse;
 import app.onepass.apis.GetTagByIdResponse;
-import app.onepass.apis.GetTagResponse;
+import app.onepass.apis.GetTagsResponse;
 import app.onepass.apis.HasEventRequest;
 import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.RemoveEventRequest;
 import app.onepass.apis.RemoveOrganizationRequest;
-import app.onepass.apis.Result;
 import app.onepass.apis.UpdateEventDurationRequest;
 import app.onepass.apis.UpdateEventRequest;
 import app.onepass.apis.UpdateOrganizationRequest;
@@ -51,8 +51,8 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
-	public void getOrganization(Empty request, StreamObserver<GetOrganizationResponse> responseObserver) {
-		organizationService.getOrganization(request, responseObserver);
+	public void getOrganizations(Empty request, StreamObserver<GetOrganizationsResponse> responseObserver) {
+		organizationService.getOrganizations(request, responseObserver);
 	}
 
 	@Override
@@ -98,8 +98,8 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	@Transactional
-	public void updateEventDuration(UpdateEventDurationRequest request, StreamObserver<Empty> responseObserver) {
-		DatabaseExceptionCatcher.catcher(eventService::updateEventDuration, request, responseObserver);
+	public void updateEventDurations(UpdateEventDurationRequest request, StreamObserver<Empty> responseObserver) {
+		DatabaseExceptionCatcher.catcher(eventService::updateEventDurations, request, responseObserver);
 	}
 
 	@Override
@@ -120,19 +120,19 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
-	public void addTag(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
-		DatabaseExceptionCatcher.catcher(tagService::addTag, request, responseObserver);
+	public void addTags(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
+		DatabaseExceptionCatcher.catcher(tagService::addTags, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
-	public void removeTag(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
-		DatabaseExceptionCatcher.catcher(tagService::removeTag, request, responseObserver);
+	public void removeTags(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
+		DatabaseExceptionCatcher.catcher(tagService::removeTags, request, responseObserver);
 	}
 
 	@Override
-	public void getTag(Empty request, StreamObserver<GetTagResponse> responseObserver) {
-		tagService.getTag(request, responseObserver);
+	public void getTags(Empty request, StreamObserver<GetTagsResponse> responseObserver) {
+		tagService.getTags(request, responseObserver);
 	}
 
 	@Override
@@ -146,7 +146,7 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
-	public void ping(Empty request, StreamObserver<Result> responseObserver) {
+	public void ping(Empty request, StreamObserver<BoolValue> responseObserver) {
 		pingService.ping(request, responseObserver);
 	}
 }
