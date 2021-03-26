@@ -80,7 +80,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 		List<Long> tagIds = request.getTagIdsList();
 
 		List<EventTagEntity> eventTagEntities = eventTagRepository
-				.findByEventId(request.getEventId());
+				.findAllByEventId(request.getEventId());
 
 		List<EventTagEntity> entitiesToDelete = new ArrayList<>();
 

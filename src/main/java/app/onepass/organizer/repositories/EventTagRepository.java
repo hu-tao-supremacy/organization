@@ -8,5 +8,5 @@ import app.onepass.organizer.entities.EventTagEntity;
 
 public interface EventTagRepository extends JpaRepository<EventTagEntity, Long> {
 
-	List<EventTagEntity> findByEventId(long eventId);
+	List<EventTagEntity> findAllByEventId(long eventId);
 }

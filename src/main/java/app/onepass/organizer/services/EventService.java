@@ -103,7 +103,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		long eventId = request.getEventId();
 
-		eventDurationRepository.deleteByEventId(eventId);
+		eventDurationRepository.deleteAllByEventId(eventId);
 
 		List<EventDurationEntity> entitiesToAdd = new ArrayList<>();
 

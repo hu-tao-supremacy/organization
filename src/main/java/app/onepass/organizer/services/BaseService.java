@@ -14,10 +14,14 @@ import app.onepass.apis.Event;
 import app.onepass.apis.GetByIdRequest;
 import app.onepass.apis.GetOrganizationByIdResponse;
 import app.onepass.apis.GetOrganizationsResponse;
+import app.onepass.apis.GetQuestionGroupsByEventIdResponse;
+import app.onepass.apis.GetQuestionsByGroupIdResponse;
 import app.onepass.apis.GetTagByIdResponse;
 import app.onepass.apis.GetTagsResponse;
 import app.onepass.apis.HasEventRequest;
 import app.onepass.apis.OrganizerServiceGrpc;
+import app.onepass.apis.QuestionGroupsRequest;
+import app.onepass.apis.QuestionsRequest;
 import app.onepass.apis.RemoveEventRequest;
 import app.onepass.apis.RemoveOrganizationRequest;
 import app.onepass.apis.UpdateEventDurationRequest;
@@ -143,6 +147,36 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	@Override
 	public void hasEvent(HasEventRequest request, StreamObserver<Event> responseObserver) {
 		eventService.hasEvent(request, responseObserver);
+	}
+
+	@Override
+	public void getQuestionGroupsByEventId(GetByIdRequest request, StreamObserver<GetQuestionGroupsByEventIdResponse> responseObserver) {
+		super.getQuestionGroupsByEventId(request, responseObserver);
+	}
+
+	@Override
+	public void addQuestionGroups(QuestionGroupsRequest request, StreamObserver<Empty> responseObserver) {
+		super.addQuestionGroups(request, responseObserver);
+	}
+
+	@Override
+	public void removeQuestionGroups(QuestionGroupsRequest request, StreamObserver<Empty> responseObserver) {
+		super.removeQuestionGroups(request, responseObserver);
+	}
+
+	@Override
+	public void getQuestionsByGroupId(GetByIdRequest request, StreamObserver<GetQuestionsByGroupIdResponse> responseObserver) {
+		super.getQuestionsByGroupId(request, responseObserver);
+	}
+
+	@Override
+	public void addQuestions(QuestionsRequest request, StreamObserver<Empty> responseObserver) {
+		super.addQuestions(request, responseObserver);
+	}
+
+	@Override
+	public void removeQuestions(QuestionsRequest request, StreamObserver<Empty> responseObserver) {
+		super.removeQuestions(request, responseObserver);
 	}
 
 	@Override

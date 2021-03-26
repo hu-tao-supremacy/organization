@@ -63,10 +63,10 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
                 .map(organizationEntity -> organizationEntity.parseEntity().getOrganization())
                 .collect(Collectors.toList());
 
-        GetOrganizationsResponse getOrganizationResult = GetOrganizationsResponse.newBuilder()
+        GetOrganizationsResponse getOrganizationResponse = GetOrganizationsResponse.newBuilder()
                 .addAllOrganizations(allOrganizations).build();
 
-        ServiceUtil.returnObject(responseObserver, getOrganizationResult);
+        ServiceUtil.returnObject(responseObserver, getOrganizationResponse);
     }
 
     @Override
@@ -93,12 +93,12 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         Organization organization = organizationEntity.parseEntity().getOrganization();
 
-        GetOrganizationByIdResponse getOrganizationByIdResult = GetOrganizationByIdResponse
+        GetOrganizationByIdResponse getOrganizationByIdResponse = GetOrganizationByIdResponse
                 .newBuilder()
                 .setOrganization(organization)
                 .build();
 
-       ServiceUtil.returnObject(responseObserver, getOrganizationByIdResult);
+       ServiceUtil.returnObject(responseObserver, getOrganizationByIdResponse);
     }
 
     @Override
@@ -165,7 +165,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
         List<Long> userIds = request.getUserIdsList();
 
         List<UserOrganizationEntity> userOrganizationEntities = userOrganizationRepository
-                .findByOrganizationId(request.getOrganizationId());
+                .findAllByOrganizationId(request.getOrganizationId());
 
         List<UserOrganizationEntity> entitiesToDelete = new ArrayList<>();
 
