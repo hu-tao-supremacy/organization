@@ -5,11 +5,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
 
-import app.onepass.apis.Tag;
-import app.onepass.organizer.messages.TagMessage;
+import app.onepass.apis.UserOrganization;
+import app.onepass.organizer.messages.UserOrganizationMessage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,31 +15,29 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(
-		name = "tag",
-		uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})}
-)
+@Table(name = "user_organization")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TagEntity implements BaseEntity<TagMessage, TagEntity> {
+public class UserOrganizationEntity implements BaseEntity<UserOrganizationMessage, UserOrganizationEntity> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	@NotNull
-	private String name;
+	private long userId;
+	private long organizationId;
 
 	@Override
-	public TagMessage parseEntity() {
+	public UserOrganizationMessage parseEntity() {
 
-		Tag tag = Tag.newBuilder()
+		UserOrganization userOrganization = UserOrganization.newBuilder()
 				.setId(id)
-				.setName(name)
+				.setUserId(userId)
+				.setOrganizationId(organizationId)
 				.build();
 
-		return new TagMessage(tag);
+		return new UserOrganizationMessage(userOrganization);
 	}
 }

@@ -5,11 +5,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
 
-import app.onepass.apis.Tag;
-import app.onepass.organizer.messages.TagMessage;
+import app.onepass.apis.EventTag;
+import app.onepass.organizer.messages.EventTagMessage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,31 +15,29 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(
-		name = "tag",
-		uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})}
-)
+@Table(name = "event_tag")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TagEntity implements BaseEntity<TagMessage, TagEntity> {
+public class EventTagEntity implements BaseEntity<EventTagMessage, EventTagEntity> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	@NotNull
-	private String name;
+	private long eventId;
+	private long tagId;
 
 	@Override
-	public TagMessage parseEntity() {
+	public EventTagMessage parseEntity() {
 
-		Tag tag = Tag.newBuilder()
+		EventTag eventTag = EventTag.newBuilder()
 				.setId(id)
-				.setName(name)
+				.setEventId(eventId)
+				.setTagId(tagId)
 				.build();
 
-		return new TagMessage(tag);
+		return new EventTagMessage(eventTag);
 	}
 }

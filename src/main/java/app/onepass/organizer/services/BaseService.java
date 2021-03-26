@@ -2,144 +2,151 @@ package app.onepass.organizer.services;
 
 import org.lognet.springboot.grpc.GRpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.google.protobuf.BoolValue;
 import com.google.protobuf.Empty;
 
 import app.onepass.apis.CreateEventRequest;
 import app.onepass.apis.CreateOrganizationRequest;
-import app.onepass.apis.DeleteEventRequest;
-import app.onepass.apis.DeleteOrganizationRequest;
+import app.onepass.apis.CreateTagRequest;
+import app.onepass.apis.Event;
+import app.onepass.apis.GetByIdRequest;
+import app.onepass.apis.GetOrganizationByIdResponse;
+import app.onepass.apis.GetOrganizationsResponse;
+import app.onepass.apis.GetTagByIdResponse;
+import app.onepass.apis.GetTagsResponse;
 import app.onepass.apis.HasEventRequest;
-import app.onepass.apis.OrganizationServiceGrpc;
-import app.onepass.apis.ReadByIdRequest;
-import app.onepass.apis.ReadEventByIdResult;
-import app.onepass.apis.ReadEventResult;
-import app.onepass.apis.ReadOrganizationByIdResult;
-import app.onepass.apis.ReadOrganizationResult;
-import app.onepass.apis.ReadTagByIdResult;
-import app.onepass.apis.ReadTagResult;
-import app.onepass.apis.Result;
+import app.onepass.apis.OrganizerServiceGrpc;
+import app.onepass.apis.RemoveEventRequest;
+import app.onepass.apis.RemoveOrganizationRequest;
 import app.onepass.apis.UpdateEventDurationRequest;
-import app.onepass.apis.UpdateEventFacilityRequest;
-import app.onepass.apis.UpdateEventInfoRequest;
+import app.onepass.apis.UpdateEventRequest;
 import app.onepass.apis.UpdateOrganizationRequest;
 import app.onepass.apis.UpdateRegistrationRequestRequest;
 import app.onepass.apis.UpdateTagRequest;
 import app.onepass.apis.UpdateUsersInOrganizationRequest;
-import app.onepass.apis.UserRequest;
+import app.onepass.organizer.utilities.DatabaseExceptionCatcher;
 import io.grpc.stub.StreamObserver;
 
 @GRpcService
 public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Autowired
+	EventService eventService;
+
+	@Autowired
 	OrganizationService organizationService;
+
+	@Autowired
+	TagService tagService;
 
 	@Autowired
 	PingService pingService;
 
 	@Override
-	public void createOrganization(CreateOrganizationRequest request, StreamObserver<Result> responseObserver) {
-		organizationService.createOrganization(request, responseObserver);
+	@Transactional
+	public void createOrganization(CreateOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+		DatabaseExceptionCatcher.catcher(organizationService::createOrganization, request, responseObserver);
 	}
 
 	@Override
-	public void readOrganization(UserRequest request, StreamObserver<ReadOrganizationResult> responseObserver) {
-		organizationService.readOrganization(request, responseObserver);
+	public void getOrganizations(Empty request, StreamObserver<GetOrganizationsResponse> responseObserver) {
+		organizationService.getOrganizations(request, responseObserver);
 	}
 
 	@Override
-	public void readOrganizationById(ReadByIdRequest request, StreamObserver<ReadOrganizationByIdResult> responseObserver) {
-		organizationService.readOrganizationById(request, responseObserver);
+	public void getOrganizationById(GetByIdRequest request, StreamObserver<GetOrganizationByIdResponse> responseObserver) {
+		organizationService.getOrganizationById(request, responseObserver);
 	}
 
 	@Override
-	public void updateOrganization(UpdateOrganizationRequest request, StreamObserver<Result> responseObserver) {
-		organizationService.updateOrganization(request, responseObserver);
+	@Transactional
+	public void updateOrganization(UpdateOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+		DatabaseExceptionCatcher.catcher(organizationService::updateOrganization, request, responseObserver);
 	}
 
 	@Override
-	public void deleteOrganization(DeleteOrganizationRequest request, StreamObserver<Result> responseObserver) {
-		organizationService.deleteOrganization(request, responseObserver);
+	@Transactional
+	public void removeOrganization(RemoveOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+		DatabaseExceptionCatcher.catcher(organizationService::removeOrganization, request, responseObserver);
 	}
 
 	@Override
-	public void addUsersToOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Result> responseObserver) {
-		super.addUsersToOrganization(request, responseObserver);
+	@Transactional
+	public void addUsersToOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+		DatabaseExceptionCatcher.catcher(organizationService::addUsersToOrganization, request, responseObserver);
 	}
 
 	@Override
-	public void removeUsersFromOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Result> responseObserver) {
-		super.removeUsersFromOrganization(request, responseObserver);
+	@Transactional
+	public void removeUsersFromOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+		DatabaseExceptionCatcher.catcher(organizationService::removeUsersFromOrganization, request, responseObserver);
 	}
 
 	@Override
-	public void createEvent(CreateEventRequest request, StreamObserver<Result> responseObserver) {
-		super.createEvent(request, responseObserver);
+	@Transactional
+	public void createEvent(CreateEventRequest request, StreamObserver<Empty> responseObserver) {
+		DatabaseExceptionCatcher.catcher(eventService::createEvent, request, responseObserver);
 	}
 
 	@Override
-	public void readEvent(UserRequest request, StreamObserver<ReadEventResult> responseObserver) {
-		super.readEvent(request, responseObserver);
+	@Transactional
+	public void updateEvent(UpdateEventRequest request, StreamObserver<Empty> responseObserver) {
+		DatabaseExceptionCatcher.catcher(eventService::updateEvent, request, responseObserver);
 	}
 
 	@Override
-	public void readEventById(ReadByIdRequest request, StreamObserver<ReadEventByIdResult> responseObserver) {
-		super.readEventById(request, responseObserver);
+	@Transactional
+	public void updateEventDurations(UpdateEventDurationRequest request, StreamObserver<Empty> responseObserver) {
+		DatabaseExceptionCatcher.catcher(eventService::updateEventDurations, request, responseObserver);
 	}
 
 	@Override
-	public void updateEventInfo(UpdateEventInfoRequest request, StreamObserver<Result> responseObserver) {
-		super.updateEventInfo(request, responseObserver);
+	@Transactional
+	public void removeEvent(RemoveEventRequest request, StreamObserver<Empty> responseObserver) {
+		DatabaseExceptionCatcher.catcher(eventService::removeEvent, request, responseObserver);
 	}
 
 	@Override
-	public void updateEventFacility(UpdateEventFacilityRequest request, StreamObserver<Result> responseObserver) {
-		super.updateEventFacility(request, responseObserver);
+	public void updateRegistrationRequest(UpdateRegistrationRequestRequest request, StreamObserver<Empty> responseObserver) {
+		DatabaseExceptionCatcher.catcher(eventService::updateRegistrationRequest, request, responseObserver);
 	}
 
 	@Override
-	public void updateEventDuration(UpdateEventDurationRequest request, StreamObserver<Result> responseObserver) {
-		super.updateEventDuration(request, responseObserver);
+	@Transactional
+	public void createTag(CreateTagRequest request, StreamObserver<Empty> responseObserver) {
+		DatabaseExceptionCatcher.catcher(tagService::createTag, request, responseObserver);
 	}
 
 	@Override
-	public void deleteEvent(DeleteEventRequest request, StreamObserver<Result> responseObserver) {
-		super.deleteEvent(request, responseObserver);
+	public void addTags(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
+		DatabaseExceptionCatcher.catcher(tagService::addTags, request, responseObserver);
 	}
 
 	@Override
-	public void updateRegistrationRequest(UpdateRegistrationRequestRequest request, StreamObserver<Result> responseObserver) {
-		super.updateRegistrationRequest(request, responseObserver);
+	@Transactional
+	public void removeTags(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
+		DatabaseExceptionCatcher.catcher(tagService::removeTags, request, responseObserver);
 	}
 
 	@Override
-	public void addTag(UpdateTagRequest request, StreamObserver<Result> responseObserver) {
-		super.addTag(request, responseObserver);
+	public void getTags(Empty request, StreamObserver<GetTagsResponse> responseObserver) {
+		tagService.getTags(request, responseObserver);
 	}
 
 	@Override
-	public void removeTag(UpdateTagRequest request, StreamObserver<Result> responseObserver) {
-		super.removeTag(request, responseObserver);
+	public void getTagById(GetByIdRequest request, StreamObserver<GetTagByIdResponse> responseObserver) {
+		tagService.getTagById(request, responseObserver);
 	}
 
 	@Override
-	public void readTag(UserRequest request, StreamObserver<ReadTagResult> responseObserver) {
-		super.readTag(request, responseObserver);
+	public void hasEvent(HasEventRequest request, StreamObserver<Event> responseObserver) {
+		eventService.hasEvent(request, responseObserver);
 	}
 
 	@Override
-	public void readTagById(ReadByIdRequest request, StreamObserver<ReadTagByIdResult> responseObserver) {
-		super.readTagById(request, responseObserver);
-	}
-
-	@Override
-	public void hasEvent(HasEventRequest request, StreamObserver<Result> responseObserver) {
-		super.hasEvent(request, responseObserver);
-	}
-
-	@Override
-	public void ping(Empty request, StreamObserver<Result> responseObserver) {
+	public void ping(Empty request, StreamObserver<BoolValue> responseObserver) {
 		pingService.ping(request, responseObserver);
 	}
 }

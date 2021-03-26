@@ -2,10 +2,15 @@ package app.onepass.organizer.entities;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.google.protobuf.Int64Value;
+import com.google.protobuf.StringValue;
+
+import app.onepass.apis.Event;
 import app.onepass.organizer.messages.EventMessage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,24 +28,64 @@ import lombok.Setter;
 public class EventEntity implements BaseEntity<EventMessage, EventEntity> {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	@NotNull
-	private long organization_id;
-	private long event_location_id;
+	private long organizationId;
+	private Long locationId;
 	@NotNull
 	private String description;
 	@NotNull
 	private String name;
-	private String cover_image;
-	private String cover_image_hash;
-	private String poster_image;
-	private String poster_image_hash;
+	private String coverImageUrl;
+	private String coverImageHash;
+	private String posterImageUrl;
+	private String posterImageHash;
 	@NotNull
 	private String contact;
+	private String profileImageUrl;
+	private String profileImageHash;
+	private long attendeeLimit;
 
 	@Override
 	public EventMessage parseEntity() {
-		return null;
+
+		Event event = Event.newBuilder()
+				.setId(id)
+				.setOrganizationId(organizationId)
+				.setDescription(description)
+				.setName(name)
+				.setContact(contact)
+				.setAttendeeLimit(attendeeLimit)
+				.build();
+
+		if (locationId != null) {
+			event = event.toBuilder().setLocationId(Int64Value.of(locationId)).build();
+		}
+
+		if (coverImageUrl != null) {
+			event = event.toBuilder().setCoverImageUrl(StringValue.of(coverImageUrl)).build();
+		}
+
+		if (coverImageHash != null) {
+			event = event.toBuilder().setCoverImageHash(StringValue.of(coverImageHash)).build();
+		}
+
+		if (posterImageUrl != null) {
+			event = event.toBuilder().setPosterImageUrl(StringValue.of(posterImageUrl)).build();
+		}
+
+		if (posterImageHash != null) {
+			event = event.toBuilder().setPosterImageHash(StringValue.of(posterImageHash)).build();
+		}
+
+		if (profileImageUrl != null) {
+			event = event.toBuilder().setProfileImageUrl(StringValue.of(profileImageUrl)).build();
+		}
+
+		if (profileImageHash != null) {
+			event = event.toBuilder().setProfileImageHash(StringValue.of(profileImageHash)).build();
+		}
+
+		return new EventMessage(event);
 	}
 }

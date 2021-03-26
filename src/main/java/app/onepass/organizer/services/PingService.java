@@ -1,23 +1,24 @@
 package app.onepass.organizer.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.protobuf.BoolValue;
 import com.google.protobuf.Empty;
 
-import app.onepass.apis.OrganizationServiceGrpc;
-import app.onepass.apis.Result;
+import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.organizer.utilities.ServiceUtil;
 import io.grpc.stub.StreamObserver;
 
 @Service
-public class PingService extends OrganizationServiceGrpc.OrganizationServiceImplBase {
+public class PingService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
+
+	@Autowired
+	AccountService accountService;
 
 	@Override
-	public void ping(Empty request, StreamObserver<Result> responseObserver) {
+	public void ping(Empty request, StreamObserver<BoolValue> responseObserver) {
 
-		Result result = ServiceUtil.returnSuccessful("PONG!");
-
-		ServiceUtil.configureResponseObserver(responseObserver, result);
-
+		ServiceUtil.returnObject(responseObserver, BoolValue.of(true));
 	}
 }
