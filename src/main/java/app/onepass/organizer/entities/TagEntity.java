@@ -5,7 +5,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import app.onepass.apis.Tag;
@@ -17,10 +16,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(
-		name = "tag",
-		uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})}
-)
+@Table(name = "tag")
 @Getter
 @Setter
 @Builder

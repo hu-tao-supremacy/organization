@@ -81,7 +81,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         } catch (IllegalArgumentException illegalArgumentException) {
 
-            GetOrganizationByIdResponse getOrganizationByIdResponse= GetOrganizationByIdResponse
+            GetOrganizationByIdResponse getOrganizationByIdResponse = GetOrganizationByIdResponse
                     .newBuilder()
                     .build();
 

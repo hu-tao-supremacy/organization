@@ -5,8 +5,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-import app.onepass.apis.Question;import app.onepass.organizer.messages.QuestionMessage;
+import app.onepass.apis.Question;
+import app.onepass.organizer.messages.QuestionMessage;
 import app.onepass.organizer.utilities.TypeUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,9 +30,12 @@ public class QuestionEntity implements BaseEntity<QuestionMessage, QuestionEntit
 	private long id;
 	private long questionGroupId;
 	private long order;
+	@NotNull
 	private String answerType;
 	private boolean isOptional;
+	@NotNull
 	private String title;
+	@NotNull
 	private String subtitle;
 
 	@Override
