@@ -43,8 +43,6 @@ public class ServiceUtil {
 	public static <T> void returnInvalidArgumentError(StreamObserver<T> responseObserver, String description) {
 
 		responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(description).asException());
-
-		responseObserver.onCompleted();
 	}
 
 	public static <T> void returnObject(StreamObserver<T> responseObserver, T object) {

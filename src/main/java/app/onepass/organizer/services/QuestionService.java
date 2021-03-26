@@ -2,6 +2,7 @@ package app.onepass.organizer.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,16 +38,16 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 	@Override
 	public void getQuestionGroupsByEventId(GetByIdRequest request, StreamObserver<GetQuestionGroupsByEventIdResponse> responseObserver) {
 
-//		List<QuestionGroupEntity> allQuestionGroupEntities = questionGroupRepository.findAllByEventId(request.getId());
-//
-//		List<QuestionGroup> allQuestionGroups = allQuestionGroupEntities.stream()
-//				.map(questionGroupEntity -> questionGroupEntity.parseEntity().getQuestionGroup())
-//				.collect(Collectors.toList());
-//
-//		GetQuestionGroupsByEventIdResponse getQuestionGroupResult = GetQuestionGroupsByEventIdResponse.newBuilder()
-//				.addAllQuestionGroups(allQuestionGroups).build();
-//
-//		ServiceUtil.returnObject(responseObserver, getQuestionGroupResult);
+		List<QuestionGroupEntity> allQuestionGroupEntities = questionGroupRepository.findAllByEventId(request.getId());
+
+		List<QuestionGroup> allQuestionGroups = allQuestionGroupEntities.stream()
+				.map(questionGroupEntity -> questionGroupEntity.parseEntity().getQuestionGroup())
+				.collect(Collectors.toList());
+
+		GetQuestionGroupsByEventIdResponse getQuestionGroupResult = GetQuestionGroupsByEventIdResponse.newBuilder()
+				.addAllQuestionGroup(allQuestionGroups).build();
+
+		ServiceUtil.returnObject(responseObserver, getQuestionGroupResult);
 	}
 
 	@Override
@@ -98,16 +99,16 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 	@Override
 	public void getQuestionsByGroupId(GetByIdRequest request, StreamObserver<GetQuestionsByGroupIdResponse> responseObserver) {
 
-//		List<QuestionEntity> allQuestionEntities = questionRepository.findAllByQuestionGroupId(request.getId());
-//
-//		List<Question> allQuestions = allQuestionEntities.stream()
-//				.map(questionEntity -> questionEntity.parseEntity().getQuestion())
-//				.collect(Collectors.toList());
-//
-//		GetQuestionsByGroupIdResponse getQuestionResult = GetQuestionsByGroupIdResponse.newBuilder()
-//				.addAllQuestions(allQuestions).build();
-//
-//		ServiceUtil.returnObject(responseObserver, getQuestionResult);
+		List<QuestionEntity> allQuestionEntities = questionRepository.findAllByQuestionGroupId(request.getId());
+
+		List<Question> allQuestions = allQuestionEntities.stream()
+				.map(questionEntity -> questionEntity.parseEntity().getQuestion())
+				.collect(Collectors.toList());
+
+		GetQuestionsByGroupIdResponse getQuestionResult = GetQuestionsByGroupIdResponse.newBuilder()
+				.addAllQuestion(allQuestions).build();
+
+		ServiceUtil.returnObject(responseObserver, getQuestionResult);
 	}
 
 	@Override
