@@ -49,7 +49,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 		ServiceUtil.saveEntity(tagMessage, tagRepository);
 
-		responseObserver.onCompleted();
+		ServiceUtil.returnEmpty(responseObserver);
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 		eventTagRepository.saveAll(eventTagEntities);
 
-		responseObserver.onCompleted();
+		ServiceUtil.returnEmpty(responseObserver);
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 		eventTagRepository.deleteAll(entitiesToDelete);
 
-		responseObserver.onCompleted();
+		ServiceUtil.returnEmpty(responseObserver);
 	}
 
 	@Override

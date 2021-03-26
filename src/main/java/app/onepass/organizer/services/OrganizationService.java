@@ -44,13 +44,14 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
             ServiceUtil.returnInvalidArgumentError(responseObserver, "An organization with this ID already exists.");
 
+            return;
         }
 
         OrganizationMessage organizationMessage = new OrganizationMessage(request.getOrganization());
 
         ServiceUtil.saveEntity(organizationMessage, organizationRepository);
 
-        responseObserver.onCompleted();
+        ServiceUtil.returnEmpty(responseObserver);
     }
 
     @Override
@@ -115,7 +116,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         ServiceUtil.saveEntity(organizationMessage, organizationRepository);
 
-        responseObserver.onCompleted();
+        ServiceUtil.returnEmpty(responseObserver);
     }
 
     @Override
@@ -133,7 +134,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
             return;
         }
 
-        responseObserver.onCompleted();
+        ServiceUtil.returnEmpty(responseObserver);
     }
 
     @Override
@@ -154,7 +155,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         userOrganizationRepository.saveAll(userOrganizationEntities);
 
-        responseObserver.onCompleted();
+        ServiceUtil.returnEmpty(responseObserver);
     }
 
     @Override
@@ -183,6 +184,6 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         userOrganizationRepository.deleteAll(entitiesToDelete);
 
-        responseObserver.onCompleted();
+        ServiceUtil.returnEmpty(responseObserver);
     }
 }

@@ -56,7 +56,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		ServiceUtil.saveEntity(eventMessage, eventRepository);
 
-		responseObserver.onCompleted();
+		ServiceUtil.returnEmpty(responseObserver);
 	}
 
 
@@ -76,7 +76,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		ServiceUtil.saveEntity(eventMessage, eventRepository);
 
-		responseObserver.onCompleted();
+		ServiceUtil.returnEmpty(responseObserver);
 	}
 
 	@Override
@@ -94,7 +94,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 			return;
 		}
 
-		responseObserver.onCompleted();
+		ServiceUtil.returnEmpty(responseObserver);
 	}
 
 	@Override
@@ -122,7 +122,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		eventDurationRepository.saveAll(entitiesToAdd);
 
-		responseObserver.onCompleted();
+		ServiceUtil.returnEmpty(responseObserver);
 	}
 
 	@Override
@@ -135,7 +135,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		userEventRepository.save(userEventEntity);
 
-		responseObserver.onCompleted();
+		ServiceUtil.returnEmpty(responseObserver);
 	}
 
 	@Override
