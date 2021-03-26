@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.protobuf.Empty;
 
@@ -37,7 +36,6 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
     private UserOrganizationRepository userOrganizationRepository;
 
     @Override
-    @Transactional
     public void createOrganization(CreateOrganizationRequest request, StreamObserver<Empty> responseObserver) {
 
         if (organizationRepository.findById(request.getOrganization().getId()).isPresent()) {
@@ -102,7 +100,6 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
     }
 
     @Override
-    @Transactional
     public void updateOrganization(UpdateOrganizationRequest request, StreamObserver<Empty> responseObserver) {
 
         if (!organizationRepository.findById(request.getOrganization().getId()).isPresent()) {
@@ -120,7 +117,6 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
     }
 
     @Override
-    @Transactional
     public void removeOrganization(RemoveOrganizationRequest request, StreamObserver<Empty> responseObserver) {
 
         long organizationId = request.getOrganizationId();
@@ -138,7 +134,6 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
     }
 
     @Override
-    @Transactional
     public void addUsersToOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Empty> responseObserver) {
 
         List<UserOrganizationEntity> userOrganizationEntities = new ArrayList<>();
@@ -159,7 +154,6 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
     }
 
     @Override
-    @Transactional
     public void removeUsersFromOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Empty> responseObserver) {
 
         List<Long> userIds = request.getUserIdsList();

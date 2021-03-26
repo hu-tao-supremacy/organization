@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.protobuf.Empty;
 
@@ -35,7 +34,6 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	EventTagRepository eventTagRepository;
 
 	@Override
-	@Transactional
 	public void createTag(CreateTagRequest request, StreamObserver<Empty> responseObserver) {
 
 		if (tagRepository.findById(request.getTag().getId()).isPresent()) {
@@ -53,7 +51,6 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
-	@Transactional
 	public void addTags(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
 
 		List<EventTagEntity> eventTagEntities = new ArrayList<>();
@@ -74,7 +71,6 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
-	@Transactional
 	public void removeTags(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
 
 		List<Long> tagIds = request.getTagIdsList();

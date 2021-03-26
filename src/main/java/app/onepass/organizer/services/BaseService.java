@@ -46,6 +46,9 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	TagService tagService;
 
 	@Autowired
+	QuestionService questionService;
+
+	@Autowired
 	PingService pingService;
 
 	@Override
@@ -151,32 +154,36 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	public void getQuestionGroupsByEventId(GetByIdRequest request, StreamObserver<GetQuestionGroupsByEventIdResponse> responseObserver) {
-		super.getQuestionGroupsByEventId(request, responseObserver);
+		questionService.getQuestionGroupsByEventId(request, responseObserver);
 	}
 
 	@Override
+	@Transactional
 	public void addQuestionGroups(QuestionGroupsRequest request, StreamObserver<Empty> responseObserver) {
-		super.addQuestionGroups(request, responseObserver);
+		DatabaseExceptionCatcher.catcher(questionService::addQuestionGroups, request, responseObserver);
 	}
 
 	@Override
+	@Transactional
 	public void removeQuestionGroups(QuestionGroupsRequest request, StreamObserver<Empty> responseObserver) {
-		super.removeQuestionGroups(request, responseObserver);
+		DatabaseExceptionCatcher.catcher(questionService::removeQuestionGroups, request, responseObserver);
 	}
 
 	@Override
 	public void getQuestionsByGroupId(GetByIdRequest request, StreamObserver<GetQuestionsByGroupIdResponse> responseObserver) {
-		super.getQuestionsByGroupId(request, responseObserver);
+		questionService.getQuestionsByGroupId(request, responseObserver);
 	}
 
 	@Override
+	@Transactional
 	public void addQuestions(QuestionsRequest request, StreamObserver<Empty> responseObserver) {
-		super.addQuestions(request, responseObserver);
+		DatabaseExceptionCatcher.catcher(questionService::addQuestions, request, responseObserver);
 	}
 
 	@Override
+	@Transactional
 	public void removeQuestions(QuestionsRequest request, StreamObserver<Empty> responseObserver) {
-		super.removeQuestions(request, responseObserver);
+		DatabaseExceptionCatcher.catcher(questionService::removeQuestions, request, responseObserver);
 	}
 
 	@Override

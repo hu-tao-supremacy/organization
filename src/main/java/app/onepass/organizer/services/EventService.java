@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.protobuf.Empty;
 
@@ -42,7 +41,6 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	private UserEventRepository userEventRepository;
 
 	@Override
-	@Transactional
 	public void createEvent(CreateEventRequest request, StreamObserver<Empty> responseObserver) {
 
 		if (eventRepository.findById(request.getEvent().getId()).isPresent()) {
@@ -62,7 +60,6 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 
 	@Override
-	@Transactional
 	public void updateEvent(UpdateEventRequest request, StreamObserver<Empty> responseObserver) {
 
 		if (!eventRepository.findById(request.getEvent().getId()).isPresent()) {
@@ -80,7 +77,6 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	}
 
 	@Override
-	@Transactional
 	public void removeEvent(RemoveEventRequest request, StreamObserver<Empty> responseObserver) {
 
 		long eventId = request.getEventId();
@@ -98,7 +94,6 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	}
 
 	@Override
-	@Transactional
 	public void updateEventDurations(UpdateEventDurationRequest request, StreamObserver<Empty> responseObserver) {
 
 		long eventId = request.getEventId();
@@ -126,7 +121,6 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	}
 
 	@Override
-	@Transactional
 	public void updateRegistrationRequest(UpdateRegistrationRequestRequest request, StreamObserver<Empty> responseObserver) {
 
 		UserEventEntity userEventEntity = userEventRepository.findByUserIdAndEventId(request.getRegisteredUserId(), request.getRegisteredEventId());
