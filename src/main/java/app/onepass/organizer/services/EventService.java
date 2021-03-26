@@ -20,9 +20,11 @@ import app.onepass.apis.UpdateEventRequest;
 import app.onepass.apis.UpdateRegistrationRequestRequest;
 import app.onepass.organizer.entities.EventDurationEntity;
 import app.onepass.organizer.entities.EventEntity;
+import app.onepass.organizer.entities.UserEventEntity;
 import app.onepass.organizer.messages.EventMessage;
 import app.onepass.organizer.repositories.EventDurationRepository;
 import app.onepass.organizer.repositories.EventRepository;
+import app.onepass.organizer.repositories.UserEventRepository;
 import app.onepass.organizer.utilities.ServiceUtil;
 import app.onepass.organizer.utilities.TypeUtil;
 import io.grpc.stub.StreamObserver;
@@ -35,6 +37,9 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 	@Autowired
 	private EventDurationRepository eventDurationRepository;
+
+	@Autowired
+	private UserEventRepository userEventRepository;
 
 	@Override
 	@Transactional
@@ -123,6 +128,14 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	@Override
 	@Transactional
 	public void updateRegistrationRequest(UpdateRegistrationRequestRequest request, StreamObserver<Empty> responseObserver) {
+
+		UserEventEntity userEventEntity = userEventRepository.findByUserIdAndEventId(request.getRegisteredUserId(), request.getRegisteredEventId());
+
+		userEventEntity.setStatus(request.getStatus().toString());
+
+		userEventRepository.save(userEventEntity);
+
+		responseObserver.onCompleted();
 	}
 
 	@Override
