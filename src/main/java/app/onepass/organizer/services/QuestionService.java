@@ -13,6 +13,7 @@ import app.onepass.apis.GetByIdRequest;
 import app.onepass.apis.GetQuestionGroupsByEventIdResponse;
 import app.onepass.apis.GetQuestionsByGroupIdResponse;
 import app.onepass.apis.OrganizerServiceGrpc;
+import app.onepass.apis.Permission;
 import app.onepass.apis.Question;
 import app.onepass.apis.QuestionGroup;
 import app.onepass.apis.QuestionGroupsRequest;
@@ -21,6 +22,7 @@ import app.onepass.organizer.entities.QuestionEntity;
 import app.onepass.organizer.entities.QuestionGroupEntity;
 import app.onepass.organizer.messages.QuestionGroupMessage;
 import app.onepass.organizer.messages.QuestionMessage;
+import app.onepass.organizer.repositories.EventRepository;
 import app.onepass.organizer.repositories.QuestionGroupRepository;
 import app.onepass.organizer.repositories.QuestionRepository;
 import app.onepass.organizer.utilities.ServiceUtil;
@@ -28,6 +30,12 @@ import io.grpc.stub.StreamObserver;
 
 @Service
 public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
+
+	@Autowired
+	AccountService accountService;
+
+	@Autowired
+	EventRepository eventRepository;
 
 	@Autowired
 	QuestionRepository questionRepository;
@@ -53,11 +61,40 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 	@Override
 	public void addQuestionGroups(QuestionGroupsRequest request, StreamObserver<Empty> responseObserver) {
 
+		if (request.getQuestionGroupsCount() == 0) {
+
+			ServiceUtil.returnEmpty(responseObserver);
+
+			return;
+		}
+
+		long eventId = request.getQuestionGroups(0).getEventId();
+
+		if (!ServiceUtil.hasValidParameters(
+				accountService,
+				eventRepository,
+				responseObserver,
+				request.getUserId(),
+				eventId,
+				Permission.EVENT_UPDATE)) {
+
+			return;
+		}
+
 		List<QuestionGroupEntity> questionGroupEntities = new ArrayList<>();
 
 		for (int index = 0; index < request.getQuestionGroupsCount(); index++) {
 
-			QuestionGroupMessage questionGroupMessage = new QuestionGroupMessage(request.getQuestionGroups(index));
+			QuestionGroup questionGroup = request.getQuestionGroups(index);
+
+			if (questionGroup.getEventId() != eventId) {
+
+				ServiceUtil.returnInvalidArgumentError(responseObserver, "Cannot add question groups with different event IDs.");
+
+				return;
+			}
+
+			QuestionGroupMessage questionGroupMessage = new QuestionGroupMessage(questionGroup);
 
 			questionGroupEntities.add(questionGroupMessage.parseMessage());
 		}
@@ -113,6 +150,26 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 
 	@Override
 	public void addQuestions(QuestionsRequest request, StreamObserver<Empty> responseObserver) {
+
+		if (request.getQuestionsCount() == 0) {
+
+			ServiceUtil.returnEmpty(responseObserver);
+
+			return;
+		}
+
+		long eventId = request.getQuestions(0).getQuestionGroupId();
+
+		if (!ServiceUtil.hasValidParameters(
+				accountService,
+				eventRepository,
+				responseObserver,
+				request.getUserId(),
+				eventId,
+				Permission.EVENT_UPDATE)) {
+
+			return;
+		}
 
 		List<QuestionEntity> questionEntities = new ArrayList<>();
 
