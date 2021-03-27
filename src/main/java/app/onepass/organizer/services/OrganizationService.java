@@ -197,23 +197,20 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
             return;
         }
 
-        List<Long> userIds = request.getUserIdsList();
+        long organizationId = request.getOrganizationId();
 
-        List<UserOrganizationEntity> userOrganizationEntities = userOrganizationRepository
-                .findAllByOrganizationId(request.getOrganizationId());
+        List<Long> userIds = request.getUserIdsList();
 
         List<UserOrganizationEntity> entitiesToDelete = new ArrayList<>();
 
-        //TODO: Optimize!
+        for (long userId : userIds) {
 
-        for (UserOrganizationEntity userOrganizationEntity : userOrganizationEntities) {
+            UserOrganizationEntity userOrganizationEntity = userOrganizationRepository
+                    .findByUserIdAndOrganizationId(userId, organizationId);
 
-            for (Long userId : userIds) {
+            if (userOrganizationEntity != null) {
 
-                if (userOrganizationEntity.getUserId() == userId) {
-
-                    entitiesToDelete.add(userOrganizationEntity);
-                }
+                entitiesToDelete.add(userOrganizationEntity);
             }
         }
 

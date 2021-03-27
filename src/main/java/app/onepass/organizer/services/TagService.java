@@ -113,23 +113,20 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 			return;
 		}
 
-		List<Long> tagIds = request.getTagIdsList();
+		long eventId = request.getEventId();
 
-		List<EventTagEntity> eventTagEntities = eventTagRepository
-				.findAllByEventId(request.getEventId());
+		List<Long> tagIds = request.getTagIdsList();
 
 		List<EventTagEntity> entitiesToDelete = new ArrayList<>();
 
-		//TODO: Optimize!
+		for (long tagId : tagIds) {
 
-		for (EventTagEntity eventTagEntity : eventTagEntities) {
+			EventTagEntity eventTagEntity = eventTagRepository
+					.findByEventIdAndTagId(eventId, tagId);
 
-			for (Long tagId : tagIds) {
+			if (eventTagEntity != null) {
 
-				if (eventTagEntity.getTagId() == tagId) {
-
-					entitiesToDelete.add(eventTagEntity);
-				}
+				entitiesToDelete.add(eventTagEntity);
 			}
 		}
 
