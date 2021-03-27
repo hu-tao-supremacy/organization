@@ -12,7 +12,9 @@ import app.onepass.apis.CreateEventRequest;
 import app.onepass.apis.Duration;
 import app.onepass.apis.Event;
 import app.onepass.apis.HasEventRequest;
+import app.onepass.apis.HasPermissionRequest;
 import app.onepass.apis.OrganizerServiceGrpc;
+import app.onepass.apis.Permission;
 import app.onepass.apis.RemoveEventRequest;
 import app.onepass.apis.UpdateEventDurationRequest;
 import app.onepass.apis.UpdateEventRequest;
@@ -32,6 +34,9 @@ import io.grpc.stub.StreamObserver;
 public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Autowired
+	private AccountService accountService;
+
+	@Autowired
 	private EventRepository eventRepository;
 
 	@Autowired
@@ -42,6 +47,10 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 	@Override
 	public void createEvent(CreateEventRequest request, StreamObserver<Empty> responseObserver) {
+
+		HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(), request.getEvent().getOrganizationId(), Permission.EVENT_CREATE);
+
+		ServiceUtil.validatePermission(accountService, responseObserver, hasPermissionRequest);
 
 		if (eventRepository.findById(request.getEvent().getId()).isPresent()) {
 
@@ -57,8 +66,6 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 		ServiceUtil.returnEmpty(responseObserver);
 	}
 
-
-
 	@Override
 	public void updateEvent(UpdateEventRequest request, StreamObserver<Empty> responseObserver) {
 
@@ -67,6 +74,22 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 			ServiceUtil.returnInvalidArgumentError(responseObserver, "An event with this ID does not exist.");
 
 			return;
+		}
+
+		long organizationId = ServiceUtil.getOrganizationIdFromEventId(eventRepository, responseObserver, request.getEvent().getId());
+
+		if (organizationId == -1) {
+			return;
+		}
+
+		if (organizationId == request.getEvent().getOrganizationId()) {
+
+			HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(), organizationId, Permission.EVENT_TAG_UPDATE);
+
+			ServiceUtil.validatePermission(accountService, responseObserver, hasPermissionRequest);
+
+		} else {
+
 		}
 
 		EventMessage eventMessage = new EventMessage(request.getEvent());

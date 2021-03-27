@@ -10,7 +10,6 @@ import app.onepass.organizer.entities.BaseEntity;
 import app.onepass.organizer.entities.EventEntity;
 import app.onepass.organizer.messages.BaseMessage;
 import app.onepass.organizer.repositories.EventRepository;
-import app.onepass.organizer.services.AccountService;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
@@ -50,6 +49,11 @@ public class ServiceUtil {
 		responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(description).asException());
 	}
 
+	public static <T> void returnPermissionDeniedError(StreamObserver<T> responseObserver) {
+
+		responseObserver.onError(Status.PERMISSION_DENIED.withDescription("The user has no permission to execute the specified operation.").asException());
+	}
+
 	public static <T> void returnObject(StreamObserver<T> responseObserver, T object) {
 
 		responseObserver.onNext(object);
@@ -64,18 +68,6 @@ public class ServiceUtil {
         responseObserver.onCompleted();
 	}
 
-	public static void validatePermission(AccountService accountService, StreamObserver<Empty> responseObserver, HasPermissionRequest hasPermissionRequest) {
-
-		boolean hasPermission = accountService.hasPermission(hasPermissionRequest).getValue();
-
-		if (!hasPermission) {
-
-			responseObserver.onError(Status.PERMISSION_DENIED
-					.withDescription("The user has no permission to execute the specified operation.")
-					.asException());
-		}
-	}
-
 	public static HasPermissionRequest createHasPermissionRequest(long userId, long organizationId, Permission permission) {
 
 		return HasPermissionRequest.newBuilder()
@@ -85,22 +77,11 @@ public class ServiceUtil {
 				.build();
 	}
 
-	public static long getOrganizationIdFromEventId(EventRepository eventRepository, StreamObserver<Empty> responseObserver, long eventId) {
+	public static <T> long getOrganizationIdFromEventId(EventRepository eventRepository, StreamObserver<T> responseObserver, long eventId) {
 
 		EventEntity eventEntity;
 
-		try {
-
-			eventEntity = eventRepository
-					.findById(eventId)
-					.orElseThrow(IllegalArgumentException::new);
-
-		} catch (IllegalArgumentException exception) {
-
-			ServiceUtil.returnInvalidArgumentError(responseObserver, "Cannot find event from given ID.");
-
-			return -1;
-		}
+		eventEntity = eventRepository.findById(eventId).orElseThrow(IllegalArgumentException::new);
 
 		return eventEntity.getOrganizationId();
 	}

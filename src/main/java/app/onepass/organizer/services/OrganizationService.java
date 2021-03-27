@@ -109,7 +109,12 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(), request.getOrganization().getId(), Permission.ORGANIZATION_UPDATE);
 
-        ServiceUtil.validatePermission(accountService, responseObserver, hasPermissionRequest);
+        if (!accountService.hasPermission(hasPermissionRequest).getValue()) {
+
+            ServiceUtil.returnPermissionDeniedError(responseObserver);
+
+            return;
+        }
 
         if (!organizationRepository.findById(request.getOrganization().getId()).isPresent()) {
 
@@ -130,7 +135,12 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(), request.getOrganizationId(), Permission.ORGANIZATION_REMOVE);
 
-        ServiceUtil.validatePermission(accountService, responseObserver, hasPermissionRequest);
+        if (!accountService.hasPermission(hasPermissionRequest).getValue()) {
+
+            ServiceUtil.returnPermissionDeniedError(responseObserver);
+
+            return;
+        }
 
         long organizationId = request.getOrganizationId();
 
@@ -151,7 +161,12 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(), request.getOrganizationId(), Permission.ORGANIZATION_MEMBER_ADD);
 
-        ServiceUtil.validatePermission(accountService, responseObserver, hasPermissionRequest);
+        if (!accountService.hasPermission(hasPermissionRequest).getValue()) {
+
+            ServiceUtil.returnPermissionDeniedError(responseObserver);
+
+            return;
+        }
 
         List<UserOrganizationEntity> userOrganizationEntities = new ArrayList<>();
 
@@ -175,7 +190,12 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(), request.getOrganizationId(), Permission.ORGANIZATION_MEMBER_REMOVE);
 
-        ServiceUtil.validatePermission(accountService, responseObserver, hasPermissionRequest);
+        if (!accountService.hasPermission(hasPermissionRequest).getValue()) {
+
+            ServiceUtil.returnPermissionDeniedError(responseObserver);
+
+            return;
+        }
 
         List<Long> userIds = request.getUserIdsList();
 
