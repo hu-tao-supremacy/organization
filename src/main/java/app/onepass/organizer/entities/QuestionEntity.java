@@ -29,7 +29,7 @@ public class QuestionEntity implements BaseEntity<QuestionMessage, QuestionEntit
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	private long questionGroupId;
-	private long order;
+	private long seq;
 	@NotNull
 	private String answerType;
 	private boolean isOptional;
@@ -44,7 +44,7 @@ public class QuestionEntity implements BaseEntity<QuestionMessage, QuestionEntit
 		Question question = Question.newBuilder()
 				.setId(id)
 				.setQuestionGroupId(questionGroupId)
-				.setOrder(order)
+				.setSeq(seq)
 				.setAnswerType(TypeUtil.toAnswerType(answerType))
 				.setIsOptional(isOptional)
 				.setTitle(title)

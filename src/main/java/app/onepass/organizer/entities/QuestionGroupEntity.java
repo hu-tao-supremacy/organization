@@ -31,7 +31,7 @@ public class QuestionGroupEntity implements BaseEntity<QuestionGroupMessage, Que
 	private long eventId;
 	@NotNull
 	private String type;
-	private long order;
+	private long seq;
 	@NotNull
 	private String title;
 
@@ -42,7 +42,7 @@ public class QuestionGroupEntity implements BaseEntity<QuestionGroupMessage, Que
 				.setId(id)
 				.setEventId(eventId)
 				.setType(TypeUtil.toQuestionGroupType(type))
-				.setOrder(order)
+				.setSeq(seq)
 				.setTitle(title)
 				.build();
 

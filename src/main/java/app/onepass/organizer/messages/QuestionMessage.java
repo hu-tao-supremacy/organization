@@ -1,9 +1,7 @@
 package app.onepass.organizer.messages;
 
 import app.onepass.apis.Question;
-import app.onepass.apis.Tag;
 import app.onepass.organizer.entities.QuestionEntity;
-import app.onepass.organizer.entities.TagEntity;
 import lombok.Getter;
 
 public class QuestionMessage implements BaseMessage<QuestionMessage, QuestionEntity> {
@@ -21,7 +19,7 @@ public class QuestionMessage implements BaseMessage<QuestionMessage, QuestionEnt
 		return QuestionEntity.builder()
 				.id(question.getId())
 				.questionGroupId(question.getQuestionGroupId())
-				.order(question.getOrder())
+				.seq(question.getSeq())
 				.answerType(question.getAnswerType().toString())
 				.isOptional(question.getIsOptional())
 				.title(question.getTitle())
