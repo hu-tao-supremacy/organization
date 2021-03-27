@@ -2,6 +2,8 @@ package app.onepass.organizer.utilities;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.google.protobuf.Empty;
+
 import app.onepass.organizer.entities.BaseEntity;
 import app.onepass.organizer.messages.BaseMessage;
 import io.grpc.Status;
@@ -41,8 +43,6 @@ public class ServiceUtil {
 	public static <T> void returnInvalidArgumentError(StreamObserver<T> responseObserver, String description) {
 
 		responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(description).asException());
-
-		responseObserver.onCompleted();
 	}
 
 	public static <T> void returnObject(StreamObserver<T> responseObserver, T object) {
@@ -50,5 +50,12 @@ public class ServiceUtil {
 		responseObserver.onNext(object);
 
 		responseObserver.onCompleted();
+	}
+
+	public static void returnEmpty(StreamObserver<Empty> responseObserver) {
+
+		responseObserver.onNext(Empty.newBuilder().build());
+
+        responseObserver.onCompleted();
 	}
 }

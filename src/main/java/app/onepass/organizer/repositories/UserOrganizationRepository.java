@@ -8,5 +8,5 @@ import app.onepass.organizer.entities.UserOrganizationEntity;
 
 public interface UserOrganizationRepository  extends JpaRepository<UserOrganizationEntity, Long> {
 
-	List<UserOrganizationEntity> findByOrganizationId(long organizationId);
+	List<UserOrganizationEntity> findAllByOrganizationId(long organizationId);
 }

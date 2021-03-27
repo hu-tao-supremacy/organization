@@ -5,8 +5,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-import app.onepass.apis.Question;import app.onepass.organizer.messages.QuestionMessage;
+import app.onepass.apis.Question;
+import app.onepass.organizer.messages.QuestionMessage;
 import app.onepass.organizer.utilities.TypeUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,10 +29,13 @@ public class QuestionEntity implements BaseEntity<QuestionMessage, QuestionEntit
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	private long questionGroupId;
-	private long order;
+	private long seq;
+	@NotNull
 	private String answerType;
 	private boolean isOptional;
+	@NotNull
 	private String title;
+	@NotNull
 	private String subtitle;
 
 	@Override
@@ -39,7 +44,7 @@ public class QuestionEntity implements BaseEntity<QuestionMessage, QuestionEntit
 		Question question = Question.newBuilder()
 				.setId(id)
 				.setQuestionGroupId(questionGroupId)
-				.setOrder(order)
+				.setSeq(seq)
 				.setAnswerType(TypeUtil.toAnswerType(answerType))
 				.setIsOptional(isOptional)
 				.setTitle(title)

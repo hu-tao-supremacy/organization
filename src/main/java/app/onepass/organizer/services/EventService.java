@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.protobuf.Empty;
 
@@ -20,9 +19,11 @@ import app.onepass.apis.UpdateEventRequest;
 import app.onepass.apis.UpdateRegistrationRequestRequest;
 import app.onepass.organizer.entities.EventDurationEntity;
 import app.onepass.organizer.entities.EventEntity;
+import app.onepass.organizer.entities.UserEventEntity;
 import app.onepass.organizer.messages.EventMessage;
 import app.onepass.organizer.repositories.EventDurationRepository;
 import app.onepass.organizer.repositories.EventRepository;
+import app.onepass.organizer.repositories.UserEventRepository;
 import app.onepass.organizer.utilities.ServiceUtil;
 import app.onepass.organizer.utilities.TypeUtil;
 import io.grpc.stub.StreamObserver;
@@ -36,8 +37,10 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	@Autowired
 	private EventDurationRepository eventDurationRepository;
 
+	@Autowired
+	private UserEventRepository userEventRepository;
+
 	@Override
-	@Transactional
 	public void createEvent(CreateEventRequest request, StreamObserver<Empty> responseObserver) {
 
 		if (eventRepository.findById(request.getEvent().getId()).isPresent()) {
@@ -51,13 +54,12 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		ServiceUtil.saveEntity(eventMessage, eventRepository);
 
-		responseObserver.onCompleted();
+		ServiceUtil.returnEmpty(responseObserver);
 	}
 
 
 
 	@Override
-	@Transactional
 	public void updateEvent(UpdateEventRequest request, StreamObserver<Empty> responseObserver) {
 
 		if (!eventRepository.findById(request.getEvent().getId()).isPresent()) {
@@ -71,11 +73,10 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		ServiceUtil.saveEntity(eventMessage, eventRepository);
 
-		responseObserver.onCompleted();
+		ServiceUtil.returnEmpty(responseObserver);
 	}
 
 	@Override
-	@Transactional
 	public void removeEvent(RemoveEventRequest request, StreamObserver<Empty> responseObserver) {
 
 		long eventId = request.getEventId();
@@ -89,16 +90,15 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 			return;
 		}
 
-		responseObserver.onCompleted();
+		ServiceUtil.returnEmpty(responseObserver);
 	}
 
 	@Override
-	@Transactional
 	public void updateEventDurations(UpdateEventDurationRequest request, StreamObserver<Empty> responseObserver) {
 
 		long eventId = request.getEventId();
 
-		eventDurationRepository.deleteByEventId(eventId);
+		eventDurationRepository.deleteAllByEventId(eventId);
 
 		List<EventDurationEntity> entitiesToAdd = new ArrayList<>();
 
@@ -117,12 +117,19 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		eventDurationRepository.saveAll(entitiesToAdd);
 
-		responseObserver.onCompleted();
+		ServiceUtil.returnEmpty(responseObserver);
 	}
 
 	@Override
-	@Transactional
 	public void updateRegistrationRequest(UpdateRegistrationRequestRequest request, StreamObserver<Empty> responseObserver) {
+
+		UserEventEntity userEventEntity = userEventRepository.findByUserIdAndEventId(request.getRegisteredUserId(), request.getRegisteredEventId());
+
+		userEventEntity.setStatus(request.getStatus().toString());
+
+		userEventRepository.save(userEventEntity);
+
+		ServiceUtil.returnEmpty(responseObserver);
 	}
 
 	@Override

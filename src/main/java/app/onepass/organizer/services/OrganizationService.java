@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.protobuf.Empty;
 
@@ -37,20 +36,20 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
     private UserOrganizationRepository userOrganizationRepository;
 
     @Override
-    @Transactional
     public void createOrganization(CreateOrganizationRequest request, StreamObserver<Empty> responseObserver) {
 
         if (organizationRepository.findById(request.getOrganization().getId()).isPresent()) {
 
             ServiceUtil.returnInvalidArgumentError(responseObserver, "An organization with this ID already exists.");
 
+            return;
         }
 
         OrganizationMessage organizationMessage = new OrganizationMessage(request.getOrganization());
 
         ServiceUtil.saveEntity(organizationMessage, organizationRepository);
 
-        responseObserver.onCompleted();
+        ServiceUtil.returnEmpty(responseObserver);
     }
 
     @Override
@@ -62,10 +61,10 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
                 .map(organizationEntity -> organizationEntity.parseEntity().getOrganization())
                 .collect(Collectors.toList());
 
-        GetOrganizationsResponse getOrganizationResult = GetOrganizationsResponse.newBuilder()
+        GetOrganizationsResponse getOrganizationResponse = GetOrganizationsResponse.newBuilder()
                 .addAllOrganizations(allOrganizations).build();
 
-        ServiceUtil.returnObject(responseObserver, getOrganizationResult);
+        ServiceUtil.returnObject(responseObserver, getOrganizationResponse);
     }
 
     @Override
@@ -81,7 +80,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         } catch (IllegalArgumentException illegalArgumentException) {
 
-            GetOrganizationByIdResponse getOrganizationByIdResponse= GetOrganizationByIdResponse
+            GetOrganizationByIdResponse getOrganizationByIdResponse = GetOrganizationByIdResponse
                     .newBuilder()
                     .build();
 
@@ -92,16 +91,15 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         Organization organization = organizationEntity.parseEntity().getOrganization();
 
-        GetOrganizationByIdResponse getOrganizationByIdResult = GetOrganizationByIdResponse
+        GetOrganizationByIdResponse getOrganizationByIdResponse = GetOrganizationByIdResponse
                 .newBuilder()
                 .setOrganization(organization)
                 .build();
 
-       ServiceUtil.returnObject(responseObserver, getOrganizationByIdResult);
+       ServiceUtil.returnObject(responseObserver, getOrganizationByIdResponse);
     }
 
     @Override
-    @Transactional
     public void updateOrganization(UpdateOrganizationRequest request, StreamObserver<Empty> responseObserver) {
 
         if (!organizationRepository.findById(request.getOrganization().getId()).isPresent()) {
@@ -115,11 +113,10 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         ServiceUtil.saveEntity(organizationMessage, organizationRepository);
 
-        responseObserver.onCompleted();
+        ServiceUtil.returnEmpty(responseObserver);
     }
 
     @Override
-    @Transactional
     public void removeOrganization(RemoveOrganizationRequest request, StreamObserver<Empty> responseObserver) {
 
         long organizationId = request.getOrganizationId();
@@ -133,11 +130,10 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
             return;
         }
 
-        responseObserver.onCompleted();
+        ServiceUtil.returnEmpty(responseObserver);
     }
 
     @Override
-    @Transactional
     public void addUsersToOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Empty> responseObserver) {
 
         List<UserOrganizationEntity> userOrganizationEntities = new ArrayList<>();
@@ -154,17 +150,16 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         userOrganizationRepository.saveAll(userOrganizationEntities);
 
-        responseObserver.onCompleted();
+        ServiceUtil.returnEmpty(responseObserver);
     }
 
     @Override
-    @Transactional
     public void removeUsersFromOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Empty> responseObserver) {
 
         List<Long> userIds = request.getUserIdsList();
 
         List<UserOrganizationEntity> userOrganizationEntities = userOrganizationRepository
-                .findByOrganizationId(request.getOrganizationId());
+                .findAllByOrganizationId(request.getOrganizationId());
 
         List<UserOrganizationEntity> entitiesToDelete = new ArrayList<>();
 
@@ -183,6 +178,6 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
         userOrganizationRepository.deleteAll(entitiesToDelete);
 
-        responseObserver.onCompleted();
+        ServiceUtil.returnEmpty(responseObserver);
     }
 }

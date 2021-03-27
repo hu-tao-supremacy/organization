@@ -7,13 +7,13 @@ apis:
 	git clone https://github.com/hu-tao-supremacy/api.git apis
 	python3 sym.py
 
-apis-restart:
+apis-update:
 	cd $(dirname $0)
 	rm -rf apis
 	git clone https://github.com/hu-tao-supremacy/api.git apis
 	python3 sym.py
 
-apis-update:
+apis-process:
 	cd $(dirname $0)
 	rm -rf apis
 	git clone https://github.com/hu-tao-supremacy/api.git apis

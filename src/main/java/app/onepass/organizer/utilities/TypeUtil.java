@@ -4,6 +4,7 @@ import java.time.Instant;
 
 import app.onepass.apis.AnswerType;
 import app.onepass.apis.QuestionGroupType;
+import app.onepass.apis.Status;
 
 public class TypeUtil {
 
@@ -29,6 +30,20 @@ public class TypeUtil {
 		}
 
 		return AnswerType.TEXT;
+	}
+
+	public static Status toStatus(String status) {
+
+		switch (status) {
+		case "PENDING":
+			return Status.PENDING;
+		case "APPROVED":
+			return Status.APPROVED;
+		case "REJECTED":
+			return Status.REJECTED;
+		}
+
+		return Status.PENDING;
 	}
 
 	public static java.sql.Timestamp toSqlTimestamp(com.google.protobuf.Timestamp timestamp) {

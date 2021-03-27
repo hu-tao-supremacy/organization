@@ -24,8 +24,6 @@ public class DatabaseExceptionCatcher {
 			responseObserver.onError(Status.UNAVAILABLE
 					.withDescription("Unable to manipulate database.")
 					.asException());
-
-			responseObserver.onCompleted();
 		}
 	}
 }
