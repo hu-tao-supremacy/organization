@@ -13,12 +13,15 @@ import app.onepass.apis.CreateTagRequest;
 import app.onepass.apis.GetByIdRequest;
 import app.onepass.apis.GetTagByIdResponse;
 import app.onepass.apis.GetTagsResponse;
+import app.onepass.apis.HasPermissionRequest;
 import app.onepass.apis.OrganizerServiceGrpc;
+import app.onepass.apis.Permission;
 import app.onepass.apis.Tag;
 import app.onepass.apis.UpdateTagRequest;
 import app.onepass.organizer.entities.EventTagEntity;
 import app.onepass.organizer.entities.TagEntity;
 import app.onepass.organizer.messages.TagMessage;
+import app.onepass.organizer.repositories.EventRepository;
 import app.onepass.organizer.repositories.EventTagRepository;
 import app.onepass.organizer.repositories.TagRepository;
 import app.onepass.organizer.utilities.ServiceUtil;
@@ -28,6 +31,12 @@ import io.grpc.stub.StreamObserver;
 public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Autowired
+	AccountService accountService;
+
+	@Autowired
+	EventRepository eventRepository;
+
+	@Autowired
 	TagRepository tagRepository;
 
 	@Autowired
@@ -35,6 +44,10 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	public void createTag(CreateTagRequest request, StreamObserver<Empty> responseObserver) {
+
+		HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(), request.getOrganizationId(), Permission.TAG_CREATE);
+
+		ServiceUtil.validatePermission(accountService, responseObserver, hasPermissionRequest);
 
 		if (tagRepository.findById(request.getTag().getId()).isPresent()) {
 
@@ -52,6 +65,16 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	public void addTags(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
+
+		long organizationId = ServiceUtil.getOrganizationIdFromEventId(eventRepository, responseObserver, request.getEventId());
+
+		if (organizationId == -1) {
+			return;
+		}
+
+		HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(), organizationId, Permission.EVENT_TAG_UPDATE);
+
+		ServiceUtil.validatePermission(accountService, responseObserver, hasPermissionRequest);
 
 		List<EventTagEntity> eventTagEntities = new ArrayList<>();
 
@@ -72,6 +95,16 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	public void removeTags(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
+
+		long organizationId = ServiceUtil.getOrganizationIdFromEventId(eventRepository, responseObserver, request.getEventId());
+
+		if (organizationId == -1) {
+			return;
+		}
+
+		HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(), organizationId, Permission.EVENT_TAG_UPDATE);
+
+		ServiceUtil.validatePermission(accountService, responseObserver, hasPermissionRequest);
 
 		List<Long> tagIds = request.getTagIdsList();
 

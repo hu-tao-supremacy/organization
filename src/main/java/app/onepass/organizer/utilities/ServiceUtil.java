@@ -7,7 +7,9 @@ import com.google.protobuf.Empty;
 import app.onepass.apis.HasPermissionRequest;
 import app.onepass.apis.Permission;
 import app.onepass.organizer.entities.BaseEntity;
+import app.onepass.organizer.entities.EventEntity;
 import app.onepass.organizer.messages.BaseMessage;
+import app.onepass.organizer.repositories.EventRepository;
 import app.onepass.organizer.services.AccountService;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
@@ -81,5 +83,25 @@ public class ServiceUtil {
 				.setOrganizationId(organizationId)
 				.setPermissionName(permission)
 				.build();
+	}
+
+	public static long getOrganizationIdFromEventId(EventRepository eventRepository, StreamObserver<Empty> responseObserver, long eventId) {
+
+		EventEntity eventEntity;
+
+		try {
+
+			eventEntity = eventRepository
+					.findById(eventId)
+					.orElseThrow(IllegalArgumentException::new);
+
+		} catch (IllegalArgumentException exception) {
+
+			ServiceUtil.returnInvalidArgumentError(responseObserver, "Cannot find event from given ID.");
+
+			return -1;
+		}
+
+		return eventEntity.getOrganizationId();
 	}
 }
