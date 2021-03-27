@@ -50,7 +50,12 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(), request.getEvent().getOrganizationId(), Permission.EVENT_CREATE);
 
-		ServiceUtil.validatePermission(accountService, responseObserver, hasPermissionRequest);
+		if (!accountService.hasPermission(hasPermissionRequest).getValue()) {
+
+			ServiceUtil.returnPermissionDeniedError(responseObserver);
+
+			return;
+		}
 
 		if (eventRepository.findById(request.getEvent().getId()).isPresent()) {
 
@@ -69,27 +74,33 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	@Override
 	public void updateEvent(UpdateEventRequest request, StreamObserver<Empty> responseObserver) {
 
+		long storedOrganizationId = ServiceUtil.getOrganizationIdFromEventId(eventRepository, responseObserver, request.getEvent().getId()));
+
+		long requestedOrganizationId = request.getEvent().getOrganizationId();
+
+		if (storedOrganizationId != requestedOrganizationId) {
+
+			ServiceUtil.returnInvalidArgumentError(responseObserver, "Cannot change organization ID in an event update.");
+
+			return;
+		}
+
+		if (!ServiceUtil.hasValidParameters(
+				accountService,
+				eventRepository,
+				responseObserver,
+				request.getUserId(),
+				request.getEvent().getId(),
+				Permission.EVENT_UPDATE)) {
+
+			return;
+		}
+
 		if (!eventRepository.findById(request.getEvent().getId()).isPresent()) {
 
 			ServiceUtil.returnInvalidArgumentError(responseObserver, "An event with this ID does not exist.");
 
 			return;
-		}
-
-		long organizationId = ServiceUtil.getOrganizationIdFromEventId(eventRepository, responseObserver, request.getEvent().getId());
-
-		if (organizationId == -1) {
-			return;
-		}
-
-		if (organizationId == request.getEvent().getOrganizationId()) {
-
-			HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(), organizationId, Permission.EVENT_TAG_UPDATE);
-
-			ServiceUtil.validatePermission(accountService, responseObserver, hasPermissionRequest);
-
-		} else {
-
 		}
 
 		EventMessage eventMessage = new EventMessage(request.getEvent());
@@ -101,6 +112,17 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 	@Override
 	public void removeEvent(RemoveEventRequest request, StreamObserver<Empty> responseObserver) {
+
+		if (!ServiceUtil.hasValidParameters(
+				accountService,
+				eventRepository,
+				responseObserver,
+				request.getUserId(),
+				request.getEventId(),
+				Permission.EVENT_REMOVE)) {
+
+			return;
+		}
 
 		long eventId = request.getEventId();
 
@@ -118,6 +140,17 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 	@Override
 	public void updateEventDurations(UpdateEventDurationRequest request, StreamObserver<Empty> responseObserver) {
+
+		if (!ServiceUtil.hasValidParameters(
+				accountService,
+				eventRepository,
+				responseObserver,
+				request.getUserId(),
+				request.getEventId(),
+				Permission.EVENT_UPDATE)) {
+
+			return;
+		}
 
 		long eventId = request.getEventId();
 
@@ -145,6 +178,17 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 	@Override
 	public void updateRegistrationRequest(UpdateRegistrationRequestRequest request, StreamObserver<Empty> responseObserver) {
+
+		if (!ServiceUtil.hasValidParameters(
+				accountService,
+				eventRepository,
+				responseObserver,
+				request.getUserId(),
+				request.getRegisteredEventId(),
+				Permission.EVENT_UPDATE)) {
+
+			return;
+		}
 
 		UserEventEntity userEventEntity = userEventRepository.findByUserIdAndEventId(request.getRegisteredUserId(), request.getRegisteredEventId());
 

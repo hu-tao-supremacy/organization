@@ -10,6 +10,7 @@ import app.onepass.organizer.entities.BaseEntity;
 import app.onepass.organizer.entities.EventEntity;
 import app.onepass.organizer.messages.BaseMessage;
 import app.onepass.organizer.repositories.EventRepository;
+import app.onepass.organizer.services.AccountService;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
@@ -84,5 +85,32 @@ public class ServiceUtil {
 		eventEntity = eventRepository.findById(eventId).orElseThrow(IllegalArgumentException::new);
 
 		return eventEntity.getOrganizationId();
+	}
+
+	public static <T> boolean hasValidParameters(AccountService accountService, EventRepository eventRepository, StreamObserver<T> responseObserver, long userId, long eventId, Permission permission) {
+
+		long organizationId;
+
+		try {
+
+			organizationId = ServiceUtil.getOrganizationIdFromEventId(eventRepository, responseObserver, eventId);
+
+		} catch (IllegalArgumentException exception) {
+
+			ServiceUtil.returnInvalidArgumentError(responseObserver, "Cannot find event from given ID.");
+
+			return false;
+		}
+
+		HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(userId, organizationId, permission);
+
+		if (!accountService.hasPermission(hasPermissionRequest).getValue()) {
+
+			ServiceUtil.returnPermissionDeniedError(responseObserver);
+
+			return false;
+		}
+
+		return true;
 	}
 }

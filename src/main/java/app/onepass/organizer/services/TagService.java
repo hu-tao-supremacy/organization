@@ -71,7 +71,14 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	@Override
 	public void addTags(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
 
-		if (hasValidUpdateTagParameters(request, responseObserver)) {
+		if (!ServiceUtil.hasValidParameters(
+				accountService,
+				eventRepository,
+				responseObserver,
+				request.getUserId(),
+				request.getEventId(),
+				Permission.EVENT_TAG_UPDATE)) {
+
 			return;
 		}
 
@@ -95,7 +102,14 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	@Override
 	public void removeTags(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
 
-		if (hasValidUpdateTagParameters(request, responseObserver)) {
+		if (!ServiceUtil.hasValidParameters(
+				accountService,
+				eventRepository,
+				responseObserver,
+				request.getUserId(),
+				request.getEventId(),
+				Permission.EVENT_TAG_UPDATE)) {
+
 			return;
 		}
 
@@ -170,32 +184,5 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 		ServiceUtil.returnObject(responseObserver, getTagByIdResponse);
 
-	}
-
-	private boolean hasValidUpdateTagParameters(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
-
-		long organizationId;
-
-		try {
-
-			organizationId = ServiceUtil.getOrganizationIdFromEventId(eventRepository, responseObserver, request.getEventId());
-
-		} catch (IllegalArgumentException exception) {
-
-			ServiceUtil.returnInvalidArgumentError(responseObserver, "Cannot find event from given ID.");
-
-			return true;
-		}
-
-		HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(), organizationId, Permission.EVENT_TAG_UPDATE);
-
-		if (!accountService.hasPermission(hasPermissionRequest).getValue()) {
-
-			ServiceUtil.returnPermissionDeniedError(responseObserver);
-
-			return true;
-		}
-
-		return false;
 	}
 }
