@@ -13,8 +13,10 @@ import app.onepass.apis.CreateOrganizationRequest;
 import app.onepass.apis.GetByIdRequest;
 import app.onepass.apis.GetOrganizationByIdResponse;
 import app.onepass.apis.GetOrganizationsResponse;
+import app.onepass.apis.HasPermissionRequest;
 import app.onepass.apis.Organization;
 import app.onepass.apis.OrganizerServiceGrpc;
+import app.onepass.apis.Permission;
 import app.onepass.apis.RemoveOrganizationRequest;
 import app.onepass.apis.UpdateOrganizationRequest;
 import app.onepass.apis.UpdateUsersInOrganizationRequest;
@@ -28,6 +30,9 @@ import io.grpc.stub.StreamObserver;
 
 @Service
 public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
+
+    @Autowired
+    private AccountService accountService;
 
     @Autowired
     private OrganizationRepository organizationRepository;
@@ -102,6 +107,10 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
     @Override
     public void updateOrganization(UpdateOrganizationRequest request, StreamObserver<Empty> responseObserver) {
 
+        HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(), request.getOrganization().getId(), Permission.ORGANIZATION_UPDATE);
+
+        ServiceUtil.validatePermission(accountService, responseObserver, hasPermissionRequest);
+
         if (!organizationRepository.findById(request.getOrganization().getId()).isPresent()) {
 
             ServiceUtil.returnInvalidArgumentError(responseObserver, "An organization with this ID does not exist.");
@@ -119,6 +128,10 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
     @Override
     public void removeOrganization(RemoveOrganizationRequest request, StreamObserver<Empty> responseObserver) {
 
+        HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(), request.getOrganizationId(), Permission.ORGANIZATION_REMOVE);
+
+        ServiceUtil.validatePermission(accountService, responseObserver, hasPermissionRequest);
+
         long organizationId = request.getOrganizationId();
 
         boolean deleteSuccessful = ServiceUtil.deleteEntity(organizationId, organizationRepository);
@@ -135,6 +148,10 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
     @Override
     public void addUsersToOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+
+        HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(), request.getOrganizationId(), Permission.ORGANIZATION_MEMBER_ADD);
+
+        ServiceUtil.validatePermission(accountService, responseObserver, hasPermissionRequest);
 
         List<UserOrganizationEntity> userOrganizationEntities = new ArrayList<>();
 
@@ -155,6 +172,10 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
     @Override
     public void removeUsersFromOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+
+        HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(), request.getOrganizationId(), Permission.ORGANIZATION_MEMBER_REMOVE);
+
+        ServiceUtil.validatePermission(accountService, responseObserver, hasPermissionRequest);
 
         List<Long> userIds = request.getUserIdsList();
 

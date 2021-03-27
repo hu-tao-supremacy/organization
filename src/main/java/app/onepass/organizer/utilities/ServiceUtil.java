@@ -4,8 +4,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.google.protobuf.Empty;
 
+import app.onepass.apis.HasPermissionRequest;
+import app.onepass.apis.Permission;
 import app.onepass.organizer.entities.BaseEntity;
 import app.onepass.organizer.messages.BaseMessage;
+import app.onepass.organizer.services.AccountService;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
@@ -57,5 +60,26 @@ public class ServiceUtil {
 		responseObserver.onNext(Empty.newBuilder().build());
 
         responseObserver.onCompleted();
+	}
+
+	public static void validatePermission(AccountService accountService, StreamObserver<Empty> responseObserver, HasPermissionRequest hasPermissionRequest) {
+
+		boolean hasPermission = accountService.hasPermission(hasPermissionRequest).getValue();
+
+		if (!hasPermission) {
+
+			responseObserver.onError(Status.PERMISSION_DENIED
+					.withDescription("The user has no permission to execute the specified operation.")
+					.asException());
+		}
+	}
+
+	public static HasPermissionRequest createHasPermissionRequest(long userId, long organizationId, Permission permission) {
+
+		return HasPermissionRequest.newBuilder()
+				.setUserId(userId)
+				.setOrganizationId(organizationId)
+				.setPermissionName(permission)
+				.build();
 	}
 }
