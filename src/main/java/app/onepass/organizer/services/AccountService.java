@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class AccountService {
 
-	@Value("${GRPC_HOST}")
-	String host;
+// 	@Value("${GRPC_HOST}")
+// 	String host;
 
-	@Value("${HTS_SVC_ACCOUNT}")
-	int port;
+// 	@Value("${HTS_SVC_ACCOUNT}")
+// 	int port;
 
 //	public Result ping() {
 //		ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
