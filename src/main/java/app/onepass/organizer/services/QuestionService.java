@@ -2,6 +2,7 @@ package app.onepass.organizer.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.google.protobuf.Empty;
 
+import app.onepass.apis.AddQuestionGroupsRequest;
+import app.onepass.apis.AddQuestionsRequest;
 import app.onepass.apis.GetByIdRequest;
 import app.onepass.apis.GetQuestionGroupsByEventIdResponse;
 import app.onepass.apis.GetQuestionsByGroupIdResponse;
@@ -16,8 +19,8 @@ import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.Permission;
 import app.onepass.apis.Question;
 import app.onepass.apis.QuestionGroup;
-import app.onepass.apis.QuestionGroupsRequest;
-import app.onepass.apis.QuestionsRequest;
+import app.onepass.apis.RemoveQuestionGroupsRequest;
+import app.onepass.apis.RemoveQuestionsRequest;
 import app.onepass.organizer.entities.QuestionEntity;
 import app.onepass.organizer.entities.QuestionGroupEntity;
 import app.onepass.organizer.messages.QuestionGroupMessage;
@@ -114,7 +117,24 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 			return;
 		}
 
-		long eventId = request.getQuestionGroups(0).getEventId();
+		long firstQuestionGroupId = request.getQuestionGroupIds(0);
+
+		long eventId;
+
+		try {
+
+			QuestionGroupEntity questionGroupEntity = questionGroupRepository
+					.findById(firstQuestionGroupId)
+					.orElseThrow(IllegalArgumentException::new);
+
+			eventId = questionGroupEntity.getEventId();
+
+		} catch (IllegalArgumentException exception) {
+
+			ServiceUtil.returnInvalidArgumentError(responseObserver, "The first question group ID does not exist.");
+
+			return;
+		}
 
 		if (!ServiceUtil.hasValidParameters(
 				accountService,
@@ -131,37 +151,22 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 
 		List<QuestionGroupEntity> entitiesToDelete = new ArrayList<>();
 
-		for (QuestionGroup questionGroupId : questionGroupIds) {
+		for (long questionGroupId : questionGroupIds) {
 
-			QuestionGroupEntity questionGroupEntity = questionGroupRepository.findById(questionGroupId);
+			Optional<QuestionGroupEntity> questionGroupEntity = questionGroupRepository.findById(questionGroupId);
 
-			if (questionGroupEntity != null) {
+			if (questionGroupEntity.isPresent()) {
 
-				if (questionGroup.getEventId() != eventId) {
+				if (questionGroupEntity.get().getEventId() != eventId) {
 
-					ServiceUtil.returnInvalidArgumentError(responseObserver, "Cannot add question groups with different event IDs.");
+					ServiceUtil.returnInvalidArgumentError(responseObserver, "Cannot delete question groups with different event ID.");
 
 					return;
 				}
 
-				entitiesToDelete.add(questionGroupEntity);
+				entitiesToDelete.add(questionGroupEntity.get());
 			}
 
-		}
-
-		//TODO: Optimize!
-
-		for (QuestionGroupEntity questionGroupEntity : questionGroupEntities) {
-
-			for (QuestionGroup questionGroup : questionGroups) {
-
-				QuestionGroupEntity entity = (new QuestionGroupMessage(questionGroup)).parseMessage();
-
-				if (questionGroupEntity.equals(entity)) {
-
-					entitiesToDelete.add(questionGroupEntity);
-				}
-			}
 		}
 
 		questionGroupRepository.deleteAll(entitiesToDelete);
@@ -224,25 +229,80 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 	@Override
 	public void removeQuestions(RemoveQuestionsRequest request, StreamObserver<Empty> responseObserver) {
 
-		List<Question> questions = request.getQuestionsList();
+		if (request.getQuestionIdsCount() == 0) {
 
-		List<QuestionEntity> questionEntities = questionRepository.findAll();
+			ServiceUtil.returnEmpty(responseObserver);
+
+			return;
+		}
+
+		long firstQuestionId = request.getQuestionIds(0);
+
+		long questionGroupId;
+
+		try {
+
+			QuestionEntity questionEntity = questionRepository
+					.findById(firstQuestionId)
+					.orElseThrow(IllegalArgumentException::new);
+
+			questionGroupId = questionEntity.getQuestionGroupId();
+
+		} catch (IllegalArgumentException exception) {
+
+			ServiceUtil.returnInvalidArgumentError(responseObserver, "The first question ID does not exist.");
+
+			return;
+		}
+
+		long eventId;
+
+		try {
+
+			QuestionGroupEntity questionGroupEntity = questionGroupRepository
+					.findById(questionGroupId)
+					.orElseThrow(IllegalArgumentException::new);
+
+			eventId = questionGroupEntity.getEventId();
+
+		} catch (IllegalArgumentException exception) {
+
+			ServiceUtil.returnInvalidArgumentError(responseObserver, "The first question ID does not refer to the existing question groups.");
+
+			return;
+		}
+
+		if (!ServiceUtil.hasValidParameters(
+				accountService,
+				eventRepository,
+				responseObserver,
+				request.getUserId(),
+				eventId,
+				Permission.EVENT_UPDATE)) {
+
+			return;
+		}
+
+		List<Long> questionIds = request.getQuestionIdsList();
 
 		List<QuestionEntity> entitiesToDelete = new ArrayList<>();
 
-		//TODO: Optimize!
+		for (long questionId : questionIds) {
 
-		for (QuestionEntity questionEntity : questionEntities) {
+			Optional<QuestionEntity> questionEntity = questionRepository.findById(questionId);
 
-			for (Question question : questions) {
+			if (questionEntity.isPresent()) {
 
-				QuestionEntity entity = (new QuestionMessage(question)).parseMessage();
+				if (questionEntity.get().getQuestionGroupId() != questionGroupId) {
 
-				if (questionEntity.equals(entity)) {
+					ServiceUtil.returnInvalidArgumentError(responseObserver, "Cannot delete questions with different question group ID.");
 
-					entitiesToDelete.add(questionEntity);
+					return;
 				}
+
+				entitiesToDelete.add(questionEntity.get());
 			}
+
 		}
 
 		questionRepository.deleteAll(entitiesToDelete);
