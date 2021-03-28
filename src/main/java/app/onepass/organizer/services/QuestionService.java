@@ -59,7 +59,7 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 	}
 
 	@Override
-	public void addQuestionGroups(QuestionGroupsRequest request, StreamObserver<Empty> responseObserver) {
+	public void addQuestionGroups(AddQuestionGroupsRequest request, StreamObserver<Empty> responseObserver) {
 
 		if (request.getQuestionGroupsCount() == 0) {
 
@@ -105,13 +105,49 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 	}
 
 	@Override
-	public void removeQuestionGroups(QuestionGroupsRequest request, StreamObserver<Empty> responseObserver) {
+	public void removeQuestionGroups(RemoveQuestionGroupsRequest request, StreamObserver<Empty> responseObserver) {
 
-		List<QuestionGroup> questionGroups = request.getQuestionGroupsList();
+		if (request.getQuestionGroupIdsCount() == 0) {
 
-		List<QuestionGroupEntity> questionGroupEntities = questionGroupRepository.findAll();
+			ServiceUtil.returnEmpty(responseObserver);
+
+			return;
+		}
+
+		long eventId = request.getQuestionGroups(0).getEventId();
+
+		if (!ServiceUtil.hasValidParameters(
+				accountService,
+				eventRepository,
+				responseObserver,
+				request.getUserId(),
+				eventId,
+				Permission.EVENT_UPDATE)) {
+
+			return;
+		}
+
+		List<Long> questionGroupIds = request.getQuestionGroupIdsList();
 
 		List<QuestionGroupEntity> entitiesToDelete = new ArrayList<>();
+
+		for (QuestionGroup questionGroupId : questionGroupIds) {
+
+			QuestionGroupEntity questionGroupEntity = questionGroupRepository.findById(questionGroupId);
+
+			if (questionGroupEntity != null) {
+
+				if (questionGroup.getEventId() != eventId) {
+
+					ServiceUtil.returnInvalidArgumentError(responseObserver, "Cannot add question groups with different event IDs.");
+
+					return;
+				}
+
+				entitiesToDelete.add(questionGroupEntity);
+			}
+
+		}
 
 		//TODO: Optimize!
 
@@ -149,7 +185,7 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 	}
 
 	@Override
-	public void addQuestions(QuestionsRequest request, StreamObserver<Empty> responseObserver) {
+	public void addQuestions(AddQuestionsRequest request, StreamObserver<Empty> responseObserver) {
 
 		if (request.getQuestionsCount() == 0) {
 
@@ -186,7 +222,7 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 	}
 
 	@Override
-	public void removeQuestions(QuestionsRequest request, StreamObserver<Empty> responseObserver) {
+	public void removeQuestions(RemoveQuestionsRequest request, StreamObserver<Empty> responseObserver) {
 
 		List<Question> questions = request.getQuestionsList();
 
