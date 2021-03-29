@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import com.google.protobuf.Empty;
 
 import app.onepass.apis.CreateOrganizationRequest;
-import app.onepass.apis.GetByIdRequest;
+import app.onepass.apis.GetObjectByIdRequest;
 import app.onepass.apis.GetOrganizationByIdResponse;
 import app.onepass.apis.GetOrganizationsResponse;
 import app.onepass.apis.HasPermissionRequest;
@@ -73,7 +73,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
     }
 
     @Override
-    public void getOrganizationById(GetByIdRequest request, StreamObserver<GetOrganizationByIdResponse> responseObserver) {
+    public void getOrganizationById(GetObjectByIdRequest request, StreamObserver<GetOrganizationByIdResponse> responseObserver) {
 
         OrganizationEntity organizationEntity;
 

@@ -13,7 +13,7 @@ import app.onepass.apis.CreateEventRequest;
 import app.onepass.apis.CreateOrganizationRequest;
 import app.onepass.apis.CreateTagRequest;
 import app.onepass.apis.Event;
-import app.onepass.apis.GetByIdRequest;
+import app.onepass.apis.GetObjectByIdRequest;
 import app.onepass.apis.GetOrganizationByIdResponse;
 import app.onepass.apis.GetOrganizationsResponse;
 import app.onepass.apis.GetQuestionGroupsByEventIdResponse;
@@ -65,7 +65,7 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
-	public void getOrganizationById(GetByIdRequest request, StreamObserver<GetOrganizationByIdResponse> responseObserver) {
+	public void getOrganizationById(GetObjectByIdRequest request, StreamObserver<GetOrganizationByIdResponse> responseObserver) {
 		organizationService.getOrganizationById(request, responseObserver);
 	}
 
@@ -145,7 +145,7 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
-	public void getTagById(GetByIdRequest request, StreamObserver<GetTagByIdResponse> responseObserver) {
+	public void getTagById(GetObjectByIdRequest request, StreamObserver<GetTagByIdResponse> responseObserver) {
 		tagService.getTagById(request, responseObserver);
 	}
 
@@ -155,7 +155,7 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
-	public void getQuestionGroupsByEventId(GetByIdRequest request, StreamObserver<GetQuestionGroupsByEventIdResponse> responseObserver) {
+	public void getQuestionGroupsByEventId(GetObjectByIdRequest request, StreamObserver<GetQuestionGroupsByEventIdResponse> responseObserver) {
 		questionService.getQuestionGroupsByEventId(request, responseObserver);
 	}
 
@@ -172,7 +172,7 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
-	public void getQuestionsByGroupId(GetByIdRequest request, StreamObserver<GetQuestionsByGroupIdResponse> responseObserver) {
+	public void getQuestionsByGroupId(GetObjectByIdRequest request, StreamObserver<GetQuestionsByGroupIdResponse> responseObserver) {
 		questionService.getQuestionsByGroupId(request, responseObserver);
 	}
 

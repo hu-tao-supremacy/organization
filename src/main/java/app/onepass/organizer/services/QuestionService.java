@@ -12,7 +12,7 @@ import com.google.protobuf.Empty;
 
 import app.onepass.apis.AddQuestionGroupsRequest;
 import app.onepass.apis.AddQuestionsRequest;
-import app.onepass.apis.GetByIdRequest;
+import app.onepass.apis.GetObjectByIdRequest;
 import app.onepass.apis.GetQuestionGroupsByEventIdResponse;
 import app.onepass.apis.GetQuestionsByGroupIdResponse;
 import app.onepass.apis.OrganizerServiceGrpc;
@@ -47,7 +47,8 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 	QuestionGroupRepository questionGroupRepository;
 
 	@Override
-	public void getQuestionGroupsByEventId(GetByIdRequest request, StreamObserver<GetQuestionGroupsByEventIdResponse> responseObserver) {
+	public void getQuestionGroupsByEventId(
+			GetObjectByIdRequest request, StreamObserver<GetQuestionGroupsByEventIdResponse> responseObserver) {
 
 		List<QuestionGroupEntity> allQuestionGroupEntities = questionGroupRepository.findAllByEventId(request.getId());
 
@@ -175,7 +176,7 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 	}
 
 	@Override
-	public void getQuestionsByGroupId(GetByIdRequest request, StreamObserver<GetQuestionsByGroupIdResponse> responseObserver) {
+	public void getQuestionsByGroupId(GetObjectByIdRequest request, StreamObserver<GetQuestionsByGroupIdResponse> responseObserver) {
 
 		List<QuestionEntity> allQuestionEntities = questionRepository.findAllByQuestionGroupId(request.getId());
 

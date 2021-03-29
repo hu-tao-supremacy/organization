@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import com.google.protobuf.Empty;
 
 import app.onepass.apis.CreateTagRequest;
-import app.onepass.apis.GetByIdRequest;
+import app.onepass.apis.GetObjectByIdRequest;
 import app.onepass.apis.GetTagByIdResponse;
 import app.onepass.apis.GetTagsResponse;
 import app.onepass.apis.HasPermissionRequest;
@@ -151,7 +151,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
-	public void getTagById(GetByIdRequest request, StreamObserver<GetTagByIdResponse> responseObserver) {
+	public void getTagById(GetObjectByIdRequest request, StreamObserver<GetTagByIdResponse> responseObserver) {
 
 		TagEntity tagEntity;
 
