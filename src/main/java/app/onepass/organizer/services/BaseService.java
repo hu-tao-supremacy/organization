@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.protobuf.BoolValue;
 import com.google.protobuf.Empty;
 
+import app.onepass.apis.AddQuestionGroupsRequest;
+import app.onepass.apis.AddQuestionsRequest;
 import app.onepass.apis.CreateEventRequest;
 import app.onepass.apis.CreateOrganizationRequest;
 import app.onepass.apis.CreateTagRequest;
@@ -20,10 +22,10 @@ import app.onepass.apis.GetTagByIdResponse;
 import app.onepass.apis.GetTagsResponse;
 import app.onepass.apis.HasEventRequest;
 import app.onepass.apis.OrganizerServiceGrpc;
-import app.onepass.apis.QuestionGroupsRequest;
-import app.onepass.apis.QuestionsRequest;
 import app.onepass.apis.RemoveEventRequest;
 import app.onepass.apis.RemoveOrganizationRequest;
+import app.onepass.apis.RemoveQuestionGroupsRequest;
+import app.onepass.apis.RemoveQuestionsRequest;
 import app.onepass.apis.UpdateEventDurationRequest;
 import app.onepass.apis.UpdateEventRequest;
 import app.onepass.apis.UpdateOrganizationRequest;
@@ -159,13 +161,13 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	@Transactional
-	public void addQuestionGroups(QuestionGroupsRequest request, StreamObserver<Empty> responseObserver) {
+	public void addQuestionGroups(AddQuestionGroupsRequest request, StreamObserver<Empty> responseObserver) {
 		DatabaseExceptionCatcher.catcher(questionService::addQuestionGroups, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
-	public void removeQuestionGroups(QuestionGroupsRequest request, StreamObserver<Empty> responseObserver) {
+	public void removeQuestionGroups(RemoveQuestionGroupsRequest request, StreamObserver<Empty> responseObserver) {
 		DatabaseExceptionCatcher.catcher(questionService::removeQuestionGroups, request, responseObserver);
 	}
 
@@ -176,13 +178,13 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	@Transactional
-	public void addQuestions(QuestionsRequest request, StreamObserver<Empty> responseObserver) {
+	public void addQuestions(AddQuestionsRequest request, StreamObserver<Empty> responseObserver) {
 		DatabaseExceptionCatcher.catcher(questionService::addQuestions, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
-	public void removeQuestions(QuestionsRequest request, StreamObserver<Empty> responseObserver) {
+	public void removeQuestions(RemoveQuestionsRequest request, StreamObserver<Empty> responseObserver) {
 		DatabaseExceptionCatcher.catcher(questionService::removeQuestions, request, responseObserver);
 	}
 

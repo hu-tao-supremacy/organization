@@ -74,7 +74,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	@Override
 	public void updateEvent(UpdateEventRequest request, StreamObserver<Empty> responseObserver) {
 
-		long storedOrganizationId = ServiceUtil.getOrganizationIdFromEventId(eventRepository, responseObserver, request.getEvent().getId());
+		long storedOrganizationId = ServiceUtil.getOrganizationIdFromEventId(eventRepository, request.getEvent().getId());
 
 		long requestedOrganizationId = request.getEvent().getOrganizationId();
 

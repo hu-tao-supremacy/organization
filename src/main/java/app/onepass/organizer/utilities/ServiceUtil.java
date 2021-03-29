@@ -78,7 +78,7 @@ public class ServiceUtil {
 				.build();
 	}
 
-	public static <T> long getOrganizationIdFromEventId(EventRepository eventRepository, StreamObserver<T> responseObserver, long eventId) {
+	public static <T> long getOrganizationIdFromEventId(EventRepository eventRepository, long eventId) {
 
 		EventEntity eventEntity;
 
@@ -93,7 +93,7 @@ public class ServiceUtil {
 
 		try {
 
-			organizationId = ServiceUtil.getOrganizationIdFromEventId(eventRepository, responseObserver, eventId);
+			organizationId = ServiceUtil.getOrganizationIdFromEventId(eventRepository, eventId);
 
 		} catch (IllegalArgumentException exception) {
 
