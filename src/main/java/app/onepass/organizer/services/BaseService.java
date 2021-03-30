@@ -32,7 +32,7 @@ import app.onepass.apis.UpdateOrganizationRequest;
 import app.onepass.apis.UpdateRegistrationRequestRequest;
 import app.onepass.apis.UpdateTagRequest;
 import app.onepass.apis.UpdateUsersInOrganizationRequest;
-import app.onepass.organizer.utilities.DatabaseExceptionCatcher;
+import app.onepass.organizer.utilities.ExceptionCatcher;
 import io.grpc.stub.StreamObserver;
 
 @GRpcService
@@ -56,7 +56,7 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	@Override
 	@Transactional
 	public void createOrganization(CreateOrganizationRequest request, StreamObserver<Empty> responseObserver) {
-		DatabaseExceptionCatcher.catcher(organizationService::createOrganization, request, responseObserver);
+		ExceptionCatcher.catcher(organizationService::createOrganization, request, responseObserver);
 	}
 
 	@Override
@@ -72,71 +72,71 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	@Override
 	@Transactional
 	public void updateOrganization(UpdateOrganizationRequest request, StreamObserver<Empty> responseObserver) {
-		DatabaseExceptionCatcher.catcher(organizationService::updateOrganization, request, responseObserver);
+		ExceptionCatcher.catcher(organizationService::updateOrganization, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
 	public void removeOrganization(RemoveOrganizationRequest request, StreamObserver<Empty> responseObserver) {
-		DatabaseExceptionCatcher.catcher(organizationService::removeOrganization, request, responseObserver);
+		ExceptionCatcher.catcher(organizationService::removeOrganization, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
 	public void addUsersToOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Empty> responseObserver) {
-		DatabaseExceptionCatcher.catcher(organizationService::addUsersToOrganization, request, responseObserver);
+		ExceptionCatcher.catcher(organizationService::addUsersToOrganization, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
 	public void removeUsersFromOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Empty> responseObserver) {
-		DatabaseExceptionCatcher.catcher(organizationService::removeUsersFromOrganization, request, responseObserver);
+		ExceptionCatcher.catcher(organizationService::removeUsersFromOrganization, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
 	public void createEvent(CreateEventRequest request, StreamObserver<Empty> responseObserver) {
-		DatabaseExceptionCatcher.catcher(eventService::createEvent, request, responseObserver);
+		ExceptionCatcher.catcher(eventService::createEvent, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
 	public void updateEvent(UpdateEventRequest request, StreamObserver<Empty> responseObserver) {
-		DatabaseExceptionCatcher.catcher(eventService::updateEvent, request, responseObserver);
+		ExceptionCatcher.catcher(eventService::updateEvent, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
 	public void updateEventDurations(UpdateEventDurationRequest request, StreamObserver<Empty> responseObserver) {
-		DatabaseExceptionCatcher.catcher(eventService::updateEventDurations, request, responseObserver);
+		ExceptionCatcher.catcher(eventService::updateEventDurations, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
 	public void removeEvent(RemoveEventRequest request, StreamObserver<Empty> responseObserver) {
-		DatabaseExceptionCatcher.catcher(eventService::removeEvent, request, responseObserver);
+		ExceptionCatcher.catcher(eventService::removeEvent, request, responseObserver);
 	}
 
 	@Override
 	public void updateRegistrationRequest(UpdateRegistrationRequestRequest request, StreamObserver<Empty> responseObserver) {
-		DatabaseExceptionCatcher.catcher(eventService::updateRegistrationRequest, request, responseObserver);
+		ExceptionCatcher.catcher(eventService::updateRegistrationRequest, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
 	public void createTag(CreateTagRequest request, StreamObserver<Empty> responseObserver) {
-		DatabaseExceptionCatcher.catcher(tagService::createTag, request, responseObserver);
+		ExceptionCatcher.catcher(tagService::createTag, request, responseObserver);
 	}
 
 	@Override
 	public void addTags(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
-		DatabaseExceptionCatcher.catcher(tagService::addTags, request, responseObserver);
+		ExceptionCatcher.catcher(tagService::addTags, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
 	public void removeTags(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
-		DatabaseExceptionCatcher.catcher(tagService::removeTags, request, responseObserver);
+		ExceptionCatcher.catcher(tagService::removeTags, request, responseObserver);
 	}
 
 	@Override
@@ -163,13 +163,13 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	@Override
 	@Transactional
 	public void addQuestionGroups(AddQuestionGroupsRequest request, StreamObserver<Empty> responseObserver) {
-		DatabaseExceptionCatcher.catcher(questionService::addQuestionGroups, request, responseObserver);
+		ExceptionCatcher.catcher(questionService::addQuestionGroups, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
 	public void removeQuestionGroups(RemoveQuestionGroupsRequest request, StreamObserver<Empty> responseObserver) {
-		DatabaseExceptionCatcher.catcher(questionService::removeQuestionGroups, request, responseObserver);
+		ExceptionCatcher.catcher(questionService::removeQuestionGroups, request, responseObserver);
 	}
 
 	@Override
@@ -181,13 +181,13 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	@Override
 	@Transactional
 	public void addQuestions(AddQuestionsRequest request, StreamObserver<Empty> responseObserver) {
-		DatabaseExceptionCatcher.catcher(questionService::addQuestions, request, responseObserver);
+		ExceptionCatcher.catcher(questionService::addQuestions, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
 	public void removeQuestions(RemoveQuestionsRequest request, StreamObserver<Empty> responseObserver) {
-		DatabaseExceptionCatcher.catcher(questionService::removeQuestions, request, responseObserver);
+		ExceptionCatcher.catcher(questionService::removeQuestions, request, responseObserver);
 	}
 
 	@Override
