@@ -50,11 +50,7 @@ public class OrganizationEntity implements BaseEntity<OrganizationMessage, Organ
 	@Override
 	public OrganizationMessage parseEntity() {
 
-		Organization organization = Organization.newBuilder()
-				.setId(id)
-				.setName(name)
-				.setIsVerified(isVerified)
-				.build();
+		Organization organization = Organization.newBuilder().setId(id).setName(name).setIsVerified(isVerified).build();
 
 		if (abbreviation != null) {
 			organization = organization.toBuilder().setAbbreviation(StringValue.of(abbreviation)).build();

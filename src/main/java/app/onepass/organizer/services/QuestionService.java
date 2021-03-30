@@ -47,8 +47,8 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 	QuestionGroupRepository questionGroupRepository;
 
 	@Override
-	public void getQuestionGroupsByEventId(
-			GetObjectByIdRequest request, StreamObserver<GetQuestionGroupsByEventIdResponse> responseObserver) {
+	public void getQuestionGroupsByEventId(GetObjectByIdRequest request,
+			StreamObserver<GetQuestionGroupsByEventIdResponse> responseObserver) {
 
 		List<QuestionGroupEntity> allQuestionGroupEntities = questionGroupRepository.findAllByEventId(request.getId());
 
@@ -57,7 +57,8 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 				.collect(Collectors.toList());
 
 		GetQuestionGroupsByEventIdResponse getQuestionGroupResult = GetQuestionGroupsByEventIdResponse.newBuilder()
-				.addAllQuestionGroup(allQuestionGroups).build();
+				.addAllQuestionGroup(allQuestionGroups)
+				.build();
 
 		ServiceUtil.returnObject(responseObserver, getQuestionGroupResult);
 	}
@@ -74,12 +75,7 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 
 		long eventId = request.getQuestionGroups(0).getEventId();
 
-		if (!ServiceUtil.hasValidParameters(
-				accountService,
-				eventRepository,
-				responseObserver,
-				request.getUserId(),
-				eventId,
+		if (!ServiceUtil.hasValidParameters(accountService, eventRepository, responseObserver, request.getUserId(), eventId,
 				Permission.EVENT_UPDATE)) {
 
 			return;
@@ -124,8 +120,7 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 
 		try {
 
-			QuestionGroupEntity questionGroupEntity = questionGroupRepository
-					.findById(firstQuestionGroupId)
+			QuestionGroupEntity questionGroupEntity = questionGroupRepository.findById(firstQuestionGroupId)
 					.orElseThrow(IllegalArgumentException::new);
 
 			eventId = questionGroupEntity.getEventId();
@@ -137,12 +132,7 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 			return;
 		}
 
-		if (!ServiceUtil.hasValidParameters(
-				accountService,
-				eventRepository,
-				responseObserver,
-				request.getUserId(),
-				eventId,
+		if (!ServiceUtil.hasValidParameters(accountService, eventRepository, responseObserver, request.getUserId(), eventId,
 				Permission.EVENT_UPDATE)) {
 
 			return;
@@ -160,7 +150,8 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 
 				if (questionGroupEntity.get().getEventId() != eventId) {
 
-					ServiceUtil.returnInvalidArgumentError(responseObserver, "Cannot delete question groups with different event ID.");
+					ServiceUtil.returnInvalidArgumentError(responseObserver,
+							"Cannot delete question groups with different event ID.");
 
 					return;
 				}
@@ -176,7 +167,8 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 	}
 
 	@Override
-	public void getQuestionsByGroupId(GetObjectByIdRequest request, StreamObserver<GetQuestionsByGroupIdResponse> responseObserver) {
+	public void getQuestionsByGroupId(GetObjectByIdRequest request,
+			StreamObserver<GetQuestionsByGroupIdResponse> responseObserver) {
 
 		List<QuestionEntity> allQuestionEntities = questionRepository.findAllByQuestionGroupId(request.getId());
 
@@ -185,7 +177,8 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 				.collect(Collectors.toList());
 
 		GetQuestionsByGroupIdResponse getQuestionResult = GetQuestionsByGroupIdResponse.newBuilder()
-				.addAllQuestion(allQuestions).build();
+				.addAllQuestion(allQuestions)
+				.build();
 
 		ServiceUtil.returnObject(responseObserver, getQuestionResult);
 	}
@@ -202,12 +195,7 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 
 		long eventId = request.getQuestions(0).getQuestionGroupId();
 
-		if (!ServiceUtil.hasValidParameters(
-				accountService,
-				eventRepository,
-				responseObserver,
-				request.getUserId(),
-				eventId,
+		if (!ServiceUtil.hasValidParameters(accountService, eventRepository, responseObserver, request.getUserId(), eventId,
 				Permission.EVENT_UPDATE)) {
 
 			return;
@@ -243,8 +231,7 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 
 		try {
 
-			QuestionEntity questionEntity = questionRepository
-					.findById(firstQuestionId)
+			QuestionEntity questionEntity = questionRepository.findById(firstQuestionId)
 					.orElseThrow(IllegalArgumentException::new);
 
 			questionGroupId = questionEntity.getQuestionGroupId();
@@ -260,25 +247,20 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 
 		try {
 
-			QuestionGroupEntity questionGroupEntity = questionGroupRepository
-					.findById(questionGroupId)
+			QuestionGroupEntity questionGroupEntity = questionGroupRepository.findById(questionGroupId)
 					.orElseThrow(IllegalArgumentException::new);
 
 			eventId = questionGroupEntity.getEventId();
 
 		} catch (IllegalArgumentException exception) {
 
-			ServiceUtil.returnInvalidArgumentError(responseObserver, "The first question ID does not refer to the existing question groups.");
+			ServiceUtil.returnInvalidArgumentError(responseObserver,
+					"The first question ID does not refer to the existing question groups.");
 
 			return;
 		}
 
-		if (!ServiceUtil.hasValidParameters(
-				accountService,
-				eventRepository,
-				responseObserver,
-				request.getUserId(),
-				eventId,
+		if (!ServiceUtil.hasValidParameters(accountService, eventRepository, responseObserver, request.getUserId(), eventId,
 				Permission.EVENT_UPDATE)) {
 
 			return;
@@ -296,7 +278,8 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 
 				if (questionEntity.get().getQuestionGroupId() != questionGroupId) {
 
-					ServiceUtil.returnInvalidArgumentError(responseObserver, "Cannot delete questions with different question group ID.");
+					ServiceUtil.returnInvalidArgumentError(responseObserver,
+							"Cannot delete questions with different question group ID.");
 
 					return;
 				}

@@ -53,9 +53,6 @@ public class TypeUtil {
 
 	public static com.google.protobuf.Timestamp toProtobufTimestamp(java.sql.Timestamp timestamp) {
 
-		return com.google.protobuf.Timestamp.newBuilder()
-				.setSeconds(timestamp.getTime())
-				.setNanos(timestamp.getNanos())
-				.build();
+		return com.google.protobuf.Timestamp.newBuilder().setSeconds(timestamp.getTime()).setNanos(timestamp.getNanos()).build();
 	}
 }

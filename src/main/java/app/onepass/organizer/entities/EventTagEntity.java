@@ -32,11 +32,7 @@ public class EventTagEntity implements BaseEntity<EventTagMessage, EventTagEntit
 	@Override
 	public EventTagMessage parseEntity() {
 
-		EventTag eventTag = EventTag.newBuilder()
-				.setId(id)
-				.setEventId(eventId)
-				.setTagId(tagId)
-				.build();
+		EventTag eventTag = EventTag.newBuilder().setId(id).setEventId(eventId).setTagId(tagId).build();
 
 		return new EventTagMessage(eventTag);
 	}

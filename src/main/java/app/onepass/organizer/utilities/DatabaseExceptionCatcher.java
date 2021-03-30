@@ -12,8 +12,8 @@ import io.grpc.stub.StreamObserver;
 
 public class DatabaseExceptionCatcher {
 
-	public static <M extends GeneratedMessageV3> void
-	catcher(BiConsumer<M, StreamObserver<Empty>> consumer, M request, StreamObserver<Empty> responseObserver) {
+	public static <M extends GeneratedMessageV3> void catcher(BiConsumer<M, StreamObserver<Empty>> consumer, M request,
+			StreamObserver<Empty> responseObserver) {
 
 		try {
 
@@ -21,9 +21,7 @@ public class DatabaseExceptionCatcher {
 
 		} catch (DataAccessException exception) {
 
-			responseObserver.onError(Status.UNAVAILABLE
-					.withDescription("Unable to manipulate database.")
-					.asException());
+			responseObserver.onError(Status.UNAVAILABLE.withDescription("Unable to manipulate database.").asException());
 		}
 	}
 }

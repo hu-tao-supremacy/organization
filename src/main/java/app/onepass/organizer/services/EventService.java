@@ -48,7 +48,8 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	@Override
 	public void createEvent(CreateEventRequest request, StreamObserver<Empty> responseObserver) {
 
-		HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(), request.getEvent().getOrganizationId(), Permission.EVENT_CREATE);
+		HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(),
+				request.getEvent().getOrganizationId(), Permission.EVENT_CREATE);
 
 		if (!accountService.hasPermission(hasPermissionRequest).getValue()) {
 
@@ -85,13 +86,8 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 			return;
 		}
 
-		if (!ServiceUtil.hasValidParameters(
-				accountService,
-				eventRepository,
-				responseObserver,
-				request.getUserId(),
-				request.getEvent().getId(),
-				Permission.EVENT_UPDATE)) {
+		if (!ServiceUtil.hasValidParameters(accountService, eventRepository, responseObserver, request.getUserId(),
+				request.getEvent().getId(), Permission.EVENT_UPDATE)) {
 
 			return;
 		}
@@ -113,13 +109,8 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	@Override
 	public void removeEvent(RemoveEventRequest request, StreamObserver<Empty> responseObserver) {
 
-		if (!ServiceUtil.hasValidParameters(
-				accountService,
-				eventRepository,
-				responseObserver,
-				request.getUserId(),
-				request.getEventId(),
-				Permission.EVENT_REMOVE)) {
+		if (!ServiceUtil.hasValidParameters(accountService, eventRepository, responseObserver, request.getUserId(),
+				request.getEventId(), Permission.EVENT_REMOVE)) {
 
 			return;
 		}
@@ -141,13 +132,8 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	@Override
 	public void updateEventDurations(UpdateEventDurationRequest request, StreamObserver<Empty> responseObserver) {
 
-		if (!ServiceUtil.hasValidParameters(
-				accountService,
-				eventRepository,
-				responseObserver,
-				request.getUserId(),
-				request.getEventId(),
-				Permission.EVENT_UPDATE)) {
+		if (!ServiceUtil.hasValidParameters(accountService, eventRepository, responseObserver, request.getUserId(),
+				request.getEventId(), Permission.EVENT_UPDATE)) {
 
 			return;
 		}
@@ -179,18 +165,14 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	@Override
 	public void updateRegistrationRequest(UpdateRegistrationRequestRequest request, StreamObserver<Empty> responseObserver) {
 
-		if (!ServiceUtil.hasValidParameters(
-				accountService,
-				eventRepository,
-				responseObserver,
-				request.getUserId(),
-				request.getRegisteredEventId(),
-				Permission.EVENT_UPDATE)) {
+		if (!ServiceUtil.hasValidParameters(accountService, eventRepository, responseObserver, request.getUserId(),
+				request.getRegisteredEventId(), Permission.EVENT_UPDATE)) {
 
 			return;
 		}
 
-		UserEventEntity userEventEntity = userEventRepository.findByUserIdAndEventId(request.getRegisteredUserId(), request.getRegisteredEventId());
+		UserEventEntity userEventEntity = userEventRepository.findByUserIdAndEventId(request.getRegisteredUserId(),
+				request.getRegisteredEventId());
 
 		userEventEntity.setStatus(request.getStatus().toString());
 
@@ -206,9 +188,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		try {
 
-			eventEntity = eventRepository
-					.findById(request.getEventId())
-					.orElseThrow(IllegalArgumentException::new);
+			eventEntity = eventRepository.findById(request.getEventId()).orElseThrow(IllegalArgumentException::new);
 
 		} catch (IllegalArgumentException illegalArgumentException) {
 

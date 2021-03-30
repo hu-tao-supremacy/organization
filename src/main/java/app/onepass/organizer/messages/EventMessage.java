@@ -6,12 +6,12 @@ import lombok.Getter;
 
 public class EventMessage implements BaseMessage<EventMessage, EventEntity> {
 
+	@Getter
+	Event event;
+
 	public EventMessage(Event event) {
 		this.event = event;
 	}
-
-	@Getter
-	Event event;
 
 	@Override
 	public EventEntity parseMessage() {

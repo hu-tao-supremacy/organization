@@ -155,7 +155,8 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
-	public void getQuestionGroupsByEventId(GetObjectByIdRequest request, StreamObserver<GetQuestionGroupsByEventIdResponse> responseObserver) {
+	public void getQuestionGroupsByEventId(GetObjectByIdRequest request,
+			StreamObserver<GetQuestionGroupsByEventIdResponse> responseObserver) {
 		questionService.getQuestionGroupsByEventId(request, responseObserver);
 	}
 
@@ -172,7 +173,8 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
-	public void getQuestionsByGroupId(GetObjectByIdRequest request, StreamObserver<GetQuestionsByGroupIdResponse> responseObserver) {
+	public void getQuestionsByGroupId(GetObjectByIdRequest request,
+			StreamObserver<GetQuestionsByGroupIdResponse> responseObserver) {
 		questionService.getQuestionsByGroupId(request, responseObserver);
 	}
 

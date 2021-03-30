@@ -30,156 +30,138 @@ import io.grpc.stub.StreamObserver;
 @Service
 public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
-	@Autowired
-	AccountService accountService;
+    @Autowired
+    AccountService accountService;
 
-	@Autowired
-	EventRepository eventRepository;
+    @Autowired
+    EventRepository eventRepository;
 
-	@Autowired
-	TagRepository tagRepository;
+    @Autowired
+    TagRepository tagRepository;
 
-	@Autowired
-	EventTagRepository eventTagRepository;
+    @Autowired
+    EventTagRepository eventTagRepository;
 
-	@Override
-	public void createTag(CreateTagRequest request, StreamObserver<Empty> responseObserver) {
+    @Override
+    public void createTag(CreateTagRequest request, StreamObserver<Empty> responseObserver) {
 
-		HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(), request.getOrganizationId(), Permission.TAG_CREATE);
+        HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(),
+                request.getOrganizationId(), Permission.TAG_CREATE);
 
-		if (!accountService.hasPermission(hasPermissionRequest).getValue()) {
+        if (!accountService.hasPermission(hasPermissionRequest).getValue()) {
 
-			ServiceUtil.returnPermissionDeniedError(responseObserver);
+            ServiceUtil.returnPermissionDeniedError(responseObserver);
 
-			return;
-		}
+            return;
+        }
 
-		if (tagRepository.findById(request.getTag().getId()).isPresent()) {
+        if (tagRepository.findById(request.getTag().getId()).isPresent()) {
 
-			ServiceUtil.returnInvalidArgumentError(responseObserver, "A tag with this ID already exists.");
+            ServiceUtil.returnInvalidArgumentError(responseObserver, "A tag with this ID already exists.");
 
-			return;
-		}
+            return;
+        }
 
-		TagMessage tagMessage = new TagMessage(request.getTag());
+        TagMessage tagMessage = new TagMessage(request.getTag());
 
-		ServiceUtil.saveEntity(tagMessage, tagRepository);
+        ServiceUtil.saveEntity(tagMessage, tagRepository);
 
-		ServiceUtil.returnEmpty(responseObserver);
-	}
+        ServiceUtil.returnEmpty(responseObserver);
+    }
 
-	@Override
-	public void addTags(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
+    @Override
+    public void addTags(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
 
-		if (!ServiceUtil.hasValidParameters(
-				accountService,
-				eventRepository,
-				responseObserver,
-				request.getUserId(),
-				request.getEventId(),
-				Permission.EVENT_TAG_UPDATE)) {
+        if (!ServiceUtil.hasValidParameters(accountService, eventRepository, responseObserver, request.getUserId(),
+                request.getEventId(), Permission.EVENT_TAG_UPDATE)) {
 
-			return;
-		}
+            return;
+        }
 
-		List<EventTagEntity> eventTagEntities = new ArrayList<>();
+        List<EventTagEntity> eventTagEntities = new ArrayList<>();
 
-		for (int index = 0; index < request.getTagIdsCount(); index++) {
+        for (int index = 0; index < request.getTagIdsCount(); index++) {
 
-			EventTagEntity eventTagEntity = EventTagEntity.builder()
-					.eventId(request.getEventId())
-					.tagId(request.getTagIds(index))
-					.build();
+            EventTagEntity eventTagEntity = EventTagEntity.builder()
+                    .eventId(request.getEventId())
+                    .tagId(request.getTagIds(index))
+                    .build();
 
-			eventTagEntities.add(eventTagEntity);
-		}
+            eventTagEntities.add(eventTagEntity);
+        }
 
-		eventTagRepository.saveAll(eventTagEntities);
+        eventTagRepository.saveAll(eventTagEntities);
 
-		ServiceUtil.returnEmpty(responseObserver);
-	}
+        ServiceUtil.returnEmpty(responseObserver);
+    }
 
-	@Override
-	public void removeTags(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
+    @Override
+    public void removeTags(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
 
-		if (!ServiceUtil.hasValidParameters(
-				accountService,
-				eventRepository,
-				responseObserver,
-				request.getUserId(),
-				request.getEventId(),
-				Permission.EVENT_TAG_UPDATE)) {
+        if (!ServiceUtil.hasValidParameters(accountService, eventRepository, responseObserver, request.getUserId(),
+                request.getEventId(), Permission.EVENT_TAG_UPDATE)) {
 
-			return;
-		}
+            return;
+        }
 
-		long eventId = request.getEventId();
+        long eventId = request.getEventId();
 
-		List<Long> tagIds = request.getTagIdsList();
+        List<Long> tagIds = request.getTagIdsList();
 
-		List<EventTagEntity> entitiesToDelete = new ArrayList<>();
+        List<EventTagEntity> entitiesToDelete = new ArrayList<>();
 
-		for (long tagId : tagIds) {
+        for (long tagId : tagIds) {
 
-			EventTagEntity eventTagEntity = eventTagRepository
-					.findByEventIdAndTagId(eventId, tagId);
+            EventTagEntity eventTagEntity = eventTagRepository.findByEventIdAndTagId(eventId, tagId);
 
-			if (eventTagEntity != null) {
+            if (eventTagEntity != null) {
 
-				entitiesToDelete.add(eventTagEntity);
-			}
-		}
+                entitiesToDelete.add(eventTagEntity);
+            }
+        }
 
-		eventTagRepository.deleteAll(entitiesToDelete);
+        eventTagRepository.deleteAll(entitiesToDelete);
 
-		ServiceUtil.returnEmpty(responseObserver);
-	}
+        ServiceUtil.returnEmpty(responseObserver);
+    }
 
-	@Override
-	public void getTags(Empty request, StreamObserver<GetTagsResponse> responseObserver) {
+    @Override
+    public void getTags(Empty request, StreamObserver<GetTagsResponse> responseObserver) {
 
-		List<TagEntity> allTagEntities = tagRepository.findAll();
+        List<TagEntity> allTagEntities = tagRepository.findAll();
 
-		List<Tag> allTags = allTagEntities.stream()
-				.map(tagEntity -> tagEntity.parseEntity().getTag())
-				.collect(Collectors.toList());
+        List<Tag> allTags = allTagEntities.stream()
+                .map(tagEntity -> tagEntity.parseEntity().getTag())
+                .collect(Collectors.toList());
 
-		GetTagsResponse getTagResponse = GetTagsResponse.newBuilder()
-				.addAllTags(allTags).build();
+        GetTagsResponse getTagResponse = GetTagsResponse.newBuilder().addAllTags(allTags).build();
 
-		ServiceUtil.returnObject(responseObserver, getTagResponse);
-	}
+        ServiceUtil.returnObject(responseObserver, getTagResponse);
+    }
 
-	@Override
-	public void getTagById(GetObjectByIdRequest request, StreamObserver<GetTagByIdResponse> responseObserver) {
+    @Override
+    public void getTagById(GetObjectByIdRequest request, StreamObserver<GetTagByIdResponse> responseObserver) {
 
-		TagEntity tagEntity;
+        TagEntity tagEntity;
 
-		try {
+        try {
 
-			tagEntity = tagRepository
-					.findById(request.getId())
-					.orElseThrow(IllegalArgumentException::new);
+            tagEntity = tagRepository.findById(request.getId()).orElseThrow(IllegalArgumentException::new);
 
-		} catch (IllegalArgumentException illegalArgumentException) {
+        } catch (IllegalArgumentException illegalArgumentException) {
 
-			GetTagByIdResponse getTagByIdResponse = GetTagByIdResponse
-					.newBuilder()
-					.build();
+            GetTagByIdResponse getTagByIdResponse = GetTagByIdResponse.newBuilder().build();
 
-			ServiceUtil.returnObject(responseObserver, getTagByIdResponse);
+            ServiceUtil.returnObject(responseObserver, getTagByIdResponse);
 
-			return;
-		}
+            return;
+        }
 
-		Tag tag = tagEntity.parseEntity().getTag();
+        Tag tag = tagEntity.parseEntity().getTag();
 
-		GetTagByIdResponse getTagByIdResponse = GetTagByIdResponse
-				.newBuilder()
-				.setTag(tag)
-				.build();
+        GetTagByIdResponse getTagByIdResponse = GetTagByIdResponse.newBuilder().setTag(tag).build();
 
-		ServiceUtil.returnObject(responseObserver, getTagByIdResponse);
+        ServiceUtil.returnObject(responseObserver, getTagByIdResponse);
 
-	}
+    }
 }

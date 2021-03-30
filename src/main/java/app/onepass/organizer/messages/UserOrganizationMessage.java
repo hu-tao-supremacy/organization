@@ -6,12 +6,12 @@ import lombok.Getter;
 
 public class UserOrganizationMessage implements BaseMessage<UserOrganizationMessage, UserOrganizationEntity> {
 
+	@Getter
+	UserOrganization userOrganization;
+
 	public UserOrganizationMessage(UserOrganization userOrganization) {
 		this.userOrganization = userOrganization;
 	}
-
-	@Getter
-	UserOrganization userOrganization;
 
 	@Override
 	public UserOrganizationEntity parseMessage() {

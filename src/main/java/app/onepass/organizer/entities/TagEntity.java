@@ -33,10 +33,7 @@ public class TagEntity implements BaseEntity<TagMessage, TagEntity> {
 	@Override
 	public TagMessage parseEntity() {
 
-		Tag tag = Tag.newBuilder()
-				.setId(id)
-				.setName(name)
-				.build();
+		Tag tag = Tag.newBuilder().setId(id).setName(name).build();
 
 		return new TagMessage(tag);
 	}

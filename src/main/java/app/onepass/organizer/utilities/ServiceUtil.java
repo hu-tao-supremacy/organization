@@ -52,7 +52,9 @@ public class ServiceUtil {
 
 	public static <T> void returnPermissionDeniedError(StreamObserver<T> responseObserver) {
 
-		responseObserver.onError(Status.PERMISSION_DENIED.withDescription("The user has no permission to execute the specified operation.").asException());
+		responseObserver.onError(
+				Status.PERMISSION_DENIED.withDescription("The user has no permission to execute the specified operation.")
+						.asException());
 	}
 
 	public static <T> void returnObject(StreamObserver<T> responseObserver, T object) {
@@ -66,7 +68,7 @@ public class ServiceUtil {
 
 		responseObserver.onNext(Empty.newBuilder().build());
 
-        responseObserver.onCompleted();
+		responseObserver.onCompleted();
 	}
 
 	public static HasPermissionRequest createHasPermissionRequest(long userId, long organizationId, Permission permission) {
@@ -87,7 +89,8 @@ public class ServiceUtil {
 		return eventEntity.getOrganizationId();
 	}
 
-	public static <T> boolean hasValidParameters(AccountService accountService, EventRepository eventRepository, StreamObserver<T> responseObserver, long userId, long eventId, Permission permission) {
+	public static <T> boolean hasValidParameters(AccountService accountService, EventRepository eventRepository,
+			StreamObserver<T> responseObserver, long userId, long eventId, Permission permission) {
 
 		long organizationId;
 

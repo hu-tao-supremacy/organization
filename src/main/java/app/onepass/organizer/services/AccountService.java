@@ -29,17 +29,17 @@ public class AccountService {
 		stub = AccountServiceGrpc.newBlockingStub(channel);
 	}
 
-	@PreDestroy
-	public void onDestroy() {
-		channel.shutdown();
-	}
-
 	private static String getHost(String address) {
 		return address.split(":")[0];
 	}
 
 	private static int getPort(String address) {
 		return Integer.parseInt(address.split(":")[1]);
+	}
+
+	@PreDestroy
+	public void onDestroy() {
+		channel.shutdown();
 	}
 
 	public BoolValue ping() {

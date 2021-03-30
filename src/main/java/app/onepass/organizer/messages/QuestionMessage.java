@@ -6,12 +6,12 @@ import lombok.Getter;
 
 public class QuestionMessage implements BaseMessage<QuestionMessage, QuestionEntity> {
 
+	@Getter
+	Question question;
+
 	public QuestionMessage(Question question) {
 		this.question = question;
 	}
-
-	@Getter
-	Question question;
 
 	@Override
 	public QuestionEntity parseMessage() {
