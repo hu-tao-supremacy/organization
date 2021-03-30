@@ -1,5 +1,8 @@
 package app.onepass.organizer.services;
 
+import javax.annotation.PreDestroy;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -14,44 +17,38 @@ import io.grpc.ManagedChannelBuilder;
 @Service
 public class AccountService {
 
-	@Value("${HTS_SVC_ACCOUNT}")
-	String address;
+	ManagedChannel channel;
 
-	private String getHost() {
+	AccountServiceGrpc.AccountServiceBlockingStub stub;
+
+	@Autowired
+	public AccountService(@Value("${HTS_SVC_ACCOUNT}") String address) {
+
+		channel = ManagedChannelBuilder.forAddress(getHost(address), getPort(address)).usePlaintext().build();
+
+		stub = AccountServiceGrpc.newBlockingStub(channel);
+	}
+
+	@PreDestroy
+	public void onDestroy() {
+		channel.shutdown();
+	}
+
+	private static String getHost(String address) {
 		return address.split(":")[0];
 	}
 
-	private int getPort() {
+	private static int getPort(String address) {
 		return Integer.parseInt(address.split(":")[1]);
 	}
 
 	public BoolValue ping() {
 
-		ManagedChannel channel = ManagedChannelBuilder.forAddress(getHost(), getPort())
-				.usePlaintext()
-				.build();
-
-		AccountServiceGrpc.AccountServiceBlockingStub stub = AccountServiceGrpc.newBlockingStub(channel);
-
-		BoolValue response = stub.ping(Empty.newBuilder().build());
-
-		channel.shutdown();
-
-		return response;
+		return stub.ping(Empty.newBuilder().build());
 	}
 
 	public BoolValue hasPermission(HasPermissionRequest hasPermissionRequest) {
 
-		ManagedChannel channel = ManagedChannelBuilder.forAddress(getHost(), getPort())
-				.usePlaintext()
-				.build();
-
-		AccountServiceGrpc.AccountServiceBlockingStub stub = AccountServiceGrpc.newBlockingStub(channel);
-
-		BoolValue response = stub.hasPermission(hasPermissionRequest);
-
-		channel.shutdown();
-
-		return response;
+		return stub.hasPermission(hasPermissionRequest);
 	}
 }
