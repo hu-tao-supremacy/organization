@@ -31,16 +31,16 @@ import io.grpc.stub.StreamObserver;
 public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
     @Autowired
-    AccountService accountService;
+    private AccountService accountService;
 
     @Autowired
-    EventRepository eventRepository;
+    private EventRepository eventRepository;
 
     @Autowired
-    TagRepository tagRepository;
+    private TagRepository tagRepository;
 
     @Autowired
-    EventTagRepository eventTagRepository;
+    private EventTagRepository eventTagRepository;
 
     @Override
     public void createTag(CreateTagRequest request, StreamObserver<Empty> responseObserver) {

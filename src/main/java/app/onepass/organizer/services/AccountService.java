@@ -17,9 +17,9 @@ import io.grpc.ManagedChannelBuilder;
 @Service
 public class AccountService {
 
-	ManagedChannel channel;
+	private final ManagedChannel channel;
 
-	AccountServiceGrpc.AccountServiceBlockingStub stub;
+	private final AccountServiceGrpc.AccountServiceBlockingStub stub;
 
 	@Autowired
 	public AccountService(@Value("${HTS_SVC_ACCOUNT}") String address) {

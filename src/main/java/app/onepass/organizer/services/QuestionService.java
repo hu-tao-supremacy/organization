@@ -34,17 +34,16 @@ import io.grpc.stub.StreamObserver;
 @Service
 public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
-	@Autowired
 	AccountService accountService;
 
 	@Autowired
-	EventRepository eventRepository;
+	private EventRepository eventRepository;
 
 	@Autowired
-	QuestionRepository questionRepository;
+	private QuestionRepository questionRepository;
 
 	@Autowired
-	QuestionGroupRepository questionGroupRepository;
+	private QuestionGroupRepository questionGroupRepository;
 
 	@Override
 	public void getQuestionGroupsByEventId(GetObjectByIdRequest request,
