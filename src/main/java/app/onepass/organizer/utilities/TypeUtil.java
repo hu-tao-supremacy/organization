@@ -13,7 +13,7 @@ public class TypeUtil {
 		switch (questionGroupType) {
 		case "PRE_EVENT":
 			return QuestionGroupType.PRE_EVENT;
-		case "POSY_EVENT":
+		case "POST_EVENT":
 			return QuestionGroupType.POST_EVENT;
 		}
 

@@ -174,7 +174,14 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 		UserEventEntity userEventEntity = userEventRepository.findByUserIdAndEventId(request.getRegisteredUserId(),
 				request.getRegisteredEventId());
 
-		userEventEntity.setStatus(request.getStatus().toString());
+		if (userEventEntity == null) {
+
+			ServiceUtil.returnInvalidArgumentError(responseObserver, "The user has not been registered in this event.");
+
+			return;
+		}
+
+		userEventEntity.setStatus(request.getStatus());
 
 		userEventRepository.save(userEventEntity);
 

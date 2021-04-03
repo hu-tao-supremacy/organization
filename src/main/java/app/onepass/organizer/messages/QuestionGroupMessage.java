@@ -19,7 +19,7 @@ public class QuestionGroupMessage implements BaseMessage<QuestionGroupMessage, Q
 		return QuestionGroupEntity.builder()
 				.id(questionGroup.getId())
 				.eventId(questionGroup.getEventId())
-				.type(questionGroup.getType().toString())
+				.type(questionGroup.getType())
 				.seq(questionGroup.getSeq())
 				.title(questionGroup.getTitle())
 				.build();

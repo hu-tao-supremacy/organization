@@ -29,6 +29,7 @@ import io.grpc.stub.StreamObserver;
 @Service
 public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
+	@Autowired
 	AccountService accountService;
 
 	@Autowired
