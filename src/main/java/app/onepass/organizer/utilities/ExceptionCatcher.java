@@ -4,7 +4,6 @@ import java.util.function.BiConsumer;
 
 import org.springframework.dao.DataAccessException;
 
-import com.google.protobuf.Empty;
 import com.google.protobuf.GeneratedMessageV3;
 
 import io.grpc.Status;
@@ -13,8 +12,8 @@ import io.grpc.stub.StreamObserver;
 
 public class ExceptionCatcher {
 
-	public static <M extends GeneratedMessageV3> void catcher(BiConsumer<M, StreamObserver<Empty>> consumer, M request,
-			StreamObserver<Empty> responseObserver) {
+	public static <M extends GeneratedMessageV3, R extends GeneratedMessageV3> void catcher(BiConsumer<M, StreamObserver<R>> consumer, M request,
+			StreamObserver<R> responseObserver) {
 
 		try {
 

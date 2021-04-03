@@ -13,6 +13,8 @@ import app.onepass.apis.AccountServiceGrpc;
 import app.onepass.apis.HasPermissionRequest;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 
 @Service
 public class AccountService {
@@ -49,6 +51,18 @@ public class AccountService {
 
 	public BoolValue hasPermission(HasPermissionRequest hasPermissionRequest) {
 
-		return stub.hasPermission(hasPermissionRequest);
+		try {
+
+			return stub.hasPermission(hasPermissionRequest);
+
+		} catch (StatusRuntimeException exception) {
+
+			if (exception.getStatus().equals(Status.PERMISSION_DENIED)) {
+
+				return BoolValue.of(false);
+			}
+
+			throw exception;
+		}
 	}
 }

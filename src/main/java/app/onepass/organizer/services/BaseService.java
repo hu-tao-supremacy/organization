@@ -57,12 +57,12 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	public void getOrganizations(Empty request, StreamObserver<GetOrganizationsResponse> responseObserver) {
-		organizationService.getOrganizations(request, responseObserver);
+		ExceptionCatcher.catcher(organizationService::getOrganizations, request, responseObserver);
 	}
 
 	@Override
 	public void getOrganizationById(GetObjectByIdRequest request, StreamObserver<GetOrganizationByIdResponse> responseObserver) {
-		organizationService.getOrganizationById(request, responseObserver);
+		ExceptionCatcher.catcher(organizationService::getOrganizationById, request, responseObserver);
 	}
 
 	@Override
@@ -137,7 +137,7 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	public void hasEvent(HasEventRequest request, StreamObserver<Event> responseObserver) {
-		eventService.hasEvent(request, responseObserver);
+		ExceptionCatcher.catcher(eventService::hasEvent, request, responseObserver);
 	}
 
 	@Override
