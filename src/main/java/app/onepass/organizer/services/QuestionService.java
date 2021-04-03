@@ -94,27 +94,15 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 
 		long firstQuestionGroupId = request.getQuestionGroupIds(0);
 
-		long eventId;
-
-		try {
-
-			QuestionGroupEntity questionGroupEntity = questionGroupRepository.findById(firstQuestionGroupId)
-					.orElseThrow(IllegalArgumentException::new);
-
-			eventId = questionGroupEntity.getEventId();
-
-		} catch (IllegalArgumentException exception) {
-
-			ServiceUtil.returnInvalidArgumentError(responseObserver, "The first question group ID does not exist.");
+		if (!hasValidEventId(responseObserver, firstQuestionGroupId, request.getUserId())) {
 
 			return;
 		}
 
-		if (!ServiceUtil.hasValidParameters(accountService, eventRepository, responseObserver, request.getUserId(), eventId,
-				Permission.EVENT_UPDATE)) {
+		QuestionGroupEntity firstQuestionGroupEntity = questionGroupRepository.findById(firstQuestionGroupId)
+				.orElseThrow(IllegalArgumentException::new);
 
-			return;
-		}
+		long eventId = firstQuestionGroupEntity.getEventId();
 
 		List<Long> questionGroupIds = request.getQuestionGroupIdsList();
 
@@ -156,9 +144,7 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 
 		long questionGroupId = request.getQuestions(0).getQuestionGroupId();
 
-		if (!ServiceUtil.hasValidParameters(accountService, eventRepository, responseObserver, request.getUserId(), eventId,
-				Permission.EVENT_UPDATE)) {
-
+		if (!hasValidEventId(responseObserver, questionGroupId, request.getUserId())) {
 			return;
 		}
 
@@ -204,26 +190,7 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 			return;
 		}
 
-		long eventId;
-
-		try {
-
-			QuestionGroupEntity questionGroupEntity = questionGroupRepository.findById(questionGroupId)
-					.orElseThrow(IllegalArgumentException::new);
-
-			eventId = questionGroupEntity.getEventId();
-
-		} catch (IllegalArgumentException exception) {
-
-			ServiceUtil.returnInvalidArgumentError(responseObserver,
-					"The first question ID does not refer to the existing question groups.");
-
-			return;
-		}
-
-		if (!ServiceUtil.hasValidParameters(accountService, eventRepository, responseObserver, request.getUserId(), eventId,
-				Permission.EVENT_UPDATE)) {
-
+		if (!hasValidEventId(responseObserver, questionGroupId, request.getUserId())) {
 			return;
 		}
 
@@ -253,5 +220,28 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 		questionRepository.deleteAll(entitiesToDelete);
 
 		ServiceUtil.returnEmpty(responseObserver);
+	}
+
+	private boolean hasValidEventId(StreamObserver<Empty> responseObserver, long questionGroupId, long userId) {
+
+		long eventId;
+
+		try {
+
+			QuestionGroupEntity questionGroupEntity = questionGroupRepository.findById(questionGroupId)
+					.orElseThrow(IllegalArgumentException::new);
+
+			eventId = questionGroupEntity.getEventId();
+
+		} catch (IllegalArgumentException exception) {
+
+			ServiceUtil.returnInvalidArgumentError(responseObserver,
+					"The first question ID does not refer to the existing question groups.");
+
+			return false;
+		}
+
+		return ServiceUtil.hasValidParameters(accountService, eventRepository, responseObserver, userId, eventId,
+				Permission.EVENT_UPDATE);
 	}
 }
