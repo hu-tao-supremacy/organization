@@ -3,7 +3,6 @@ package app.onepass.organizer.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,12 +11,8 @@ import com.google.protobuf.Empty;
 
 import app.onepass.apis.AddQuestionGroupsRequest;
 import app.onepass.apis.AddQuestionsRequest;
-import app.onepass.apis.GetObjectByIdRequest;
-import app.onepass.apis.GetQuestionGroupsByEventIdResponse;
-import app.onepass.apis.GetQuestionsByGroupIdResponse;
 import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.Permission;
-import app.onepass.apis.Question;
 import app.onepass.apis.QuestionGroup;
 import app.onepass.apis.RemoveQuestionGroupsRequest;
 import app.onepass.apis.RemoveQuestionsRequest;
@@ -44,23 +39,6 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 
 	@Autowired
 	private QuestionGroupRepository questionGroupRepository;
-
-	@Override
-	public void getQuestionGroupsByEventId(GetObjectByIdRequest request,
-			StreamObserver<GetQuestionGroupsByEventIdResponse> responseObserver) {
-
-		List<QuestionGroupEntity> allQuestionGroupEntities = questionGroupRepository.findAllByEventId(request.getId());
-
-		List<QuestionGroup> allQuestionGroups = allQuestionGroupEntities.stream()
-				.map(questionGroupEntity -> questionGroupEntity.parseEntity().getQuestionGroup())
-				.collect(Collectors.toList());
-
-		GetQuestionGroupsByEventIdResponse getQuestionGroupResult = GetQuestionGroupsByEventIdResponse.newBuilder()
-				.addAllQuestionGroup(allQuestionGroups)
-				.build();
-
-		ServiceUtil.returnObject(responseObserver, getQuestionGroupResult);
-	}
 
 	@Override
 	public void addQuestionGroups(AddQuestionGroupsRequest request, StreamObserver<Empty> responseObserver) {
@@ -163,23 +141,6 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 		questionGroupRepository.deleteAll(entitiesToDelete);
 
 		ServiceUtil.returnEmpty(responseObserver);
-	}
-
-	@Override
-	public void getQuestionsByGroupId(GetObjectByIdRequest request,
-			StreamObserver<GetQuestionsByGroupIdResponse> responseObserver) {
-
-		List<QuestionEntity> allQuestionEntities = questionRepository.findAllByQuestionGroupId(request.getId());
-
-		List<Question> allQuestions = allQuestionEntities.stream()
-				.map(questionEntity -> questionEntity.parseEntity().getQuestion())
-				.collect(Collectors.toList());
-
-		GetQuestionsByGroupIdResponse getQuestionResult = GetQuestionsByGroupIdResponse.newBuilder()
-				.addAllQuestion(allQuestions)
-				.build();
-
-		ServiceUtil.returnObject(responseObserver, getQuestionResult);
 	}
 
 	@Override

@@ -76,7 +76,7 @@ public class ServiceUtil {
 		return HasPermissionRequest.newBuilder()
 				.setUserId(userId)
 				.setOrganizationId(organizationId)
-				.setPermissionName(permission)
+				.setPermissionNameValue(permission.getNumber())
 				.build();
 	}
 

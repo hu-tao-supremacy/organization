@@ -2,7 +2,6 @@ package app.onepass.organizer.services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,16 +9,11 @@ import org.springframework.stereotype.Service;
 import com.google.protobuf.Empty;
 
 import app.onepass.apis.CreateTagRequest;
-import app.onepass.apis.GetObjectByIdRequest;
-import app.onepass.apis.GetTagByIdResponse;
-import app.onepass.apis.GetTagsResponse;
 import app.onepass.apis.HasPermissionRequest;
 import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.Permission;
-import app.onepass.apis.Tag;
 import app.onepass.apis.UpdateTagRequest;
 import app.onepass.organizer.entities.EventTagEntity;
-import app.onepass.organizer.entities.TagEntity;
 import app.onepass.organizer.messages.TagMessage;
 import app.onepass.organizer.repositories.EventRepository;
 import app.onepass.organizer.repositories.EventTagRepository;
@@ -123,45 +117,5 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
         eventTagRepository.deleteAll(entitiesToDelete);
 
         ServiceUtil.returnEmpty(responseObserver);
-    }
-
-    @Override
-    public void getTags(Empty request, StreamObserver<GetTagsResponse> responseObserver) {
-
-        List<TagEntity> allTagEntities = tagRepository.findAll();
-
-        List<Tag> allTags = allTagEntities.stream()
-                .map(tagEntity -> tagEntity.parseEntity().getTag())
-                .collect(Collectors.toList());
-
-        GetTagsResponse getTagResponse = GetTagsResponse.newBuilder().addAllTags(allTags).build();
-
-        ServiceUtil.returnObject(responseObserver, getTagResponse);
-    }
-
-    @Override
-    public void getTagById(GetObjectByIdRequest request, StreamObserver<GetTagByIdResponse> responseObserver) {
-
-        TagEntity tagEntity;
-
-        try {
-
-            tagEntity = tagRepository.findById(request.getId()).orElseThrow(IllegalArgumentException::new);
-
-        } catch (IllegalArgumentException illegalArgumentException) {
-
-            GetTagByIdResponse getTagByIdResponse = GetTagByIdResponse.newBuilder().build();
-
-            ServiceUtil.returnObject(responseObserver, getTagByIdResponse);
-
-            return;
-        }
-
-        Tag tag = tagEntity.parseEntity().getTag();
-
-        GetTagByIdResponse getTagByIdResponse = GetTagByIdResponse.newBuilder().setTag(tag).build();
-
-        ServiceUtil.returnObject(responseObserver, getTagByIdResponse);
-
     }
 }

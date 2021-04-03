@@ -16,10 +16,6 @@ import app.onepass.apis.Event;
 import app.onepass.apis.GetObjectByIdRequest;
 import app.onepass.apis.GetOrganizationByIdResponse;
 import app.onepass.apis.GetOrganizationsResponse;
-import app.onepass.apis.GetQuestionGroupsByEventIdResponse;
-import app.onepass.apis.GetQuestionsByGroupIdResponse;
-import app.onepass.apis.GetTagByIdResponse;
-import app.onepass.apis.GetTagsResponse;
 import app.onepass.apis.HasEventRequest;
 import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.RemoveEventRequest;
@@ -140,24 +136,8 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
-	public void getTags(Empty request, StreamObserver<GetTagsResponse> responseObserver) {
-		tagService.getTags(request, responseObserver);
-	}
-
-	@Override
-	public void getTagById(GetObjectByIdRequest request, StreamObserver<GetTagByIdResponse> responseObserver) {
-		tagService.getTagById(request, responseObserver);
-	}
-
-	@Override
 	public void hasEvent(HasEventRequest request, StreamObserver<Event> responseObserver) {
 		eventService.hasEvent(request, responseObserver);
-	}
-
-	@Override
-	public void getQuestionGroupsByEventId(GetObjectByIdRequest request,
-			StreamObserver<GetQuestionGroupsByEventIdResponse> responseObserver) {
-		questionService.getQuestionGroupsByEventId(request, responseObserver);
 	}
 
 	@Override
@@ -170,12 +150,6 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	@Transactional
 	public void removeQuestionGroups(RemoveQuestionGroupsRequest request, StreamObserver<Empty> responseObserver) {
 		ExceptionCatcher.catcher(questionService::removeQuestionGroups, request, responseObserver);
-	}
-
-	@Override
-	public void getQuestionsByGroupId(GetObjectByIdRequest request,
-			StreamObserver<GetQuestionsByGroupIdResponse> responseObserver) {
-		questionService.getQuestionsByGroupId(request, responseObserver);
 	}
 
 	@Override
