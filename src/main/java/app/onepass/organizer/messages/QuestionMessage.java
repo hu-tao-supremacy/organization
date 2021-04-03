@@ -20,7 +20,7 @@ public class QuestionMessage implements BaseMessage<QuestionMessage, QuestionEnt
 				.id(question.getId())
 				.questionGroupId(question.getQuestionGroupId())
 				.seq(question.getSeq())
-				.answerType(question.getAnswerType())
+				.answerType(question.getAnswerType().toString())
 				.isOptional(question.getIsOptional())
 				.title(question.getTitle())
 				.subtitle(question.getSubtitle())

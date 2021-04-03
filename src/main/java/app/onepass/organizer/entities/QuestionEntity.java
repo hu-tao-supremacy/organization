@@ -1,17 +1,15 @@
 package app.onepass.organizer.entities;
 
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import app.onepass.apis.AnswerType;
 import app.onepass.apis.Question;
 import app.onepass.organizer.messages.QuestionMessage;
+import app.onepass.organizer.utilities.TypeUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,8 +31,7 @@ public class QuestionEntity implements BaseEntity<QuestionMessage, QuestionEntit
 	private long questionGroupId;
 	private long seq;
 	@NotNull
-	@Enumerated(EnumType.STRING)
-	private AnswerType answerType;
+	private String answerType;
 	private boolean isOptional;
 	@NotNull
 	private String title;
@@ -48,7 +45,7 @@ public class QuestionEntity implements BaseEntity<QuestionMessage, QuestionEntit
 				.setId(id)
 				.setQuestionGroupId(questionGroupId)
 				.setSeq(seq)
-				.setAnswerType(answerType)
+				.setAnswerType(TypeUtil.toAnswerType(answerType))
 				.setIsOptional(isOptional)
 				.setTitle(title)
 				.setSubtitle(subtitle)

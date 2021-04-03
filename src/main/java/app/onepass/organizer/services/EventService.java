@@ -181,7 +181,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 			return;
 		}
 
-		userEventEntity.setStatus(request.getStatus());
+		userEventEntity.setStatus(request.getStatus().toString());
 
 		userEventRepository.save(userEventEntity);
 

@@ -154,7 +154,7 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 			return;
 		}
 
-		long eventId = request.getQuestions(0).getQuestionGroupId();
+		long questionGroupId = request.getQuestions(0).getQuestionGroupId();
 
 		if (!ServiceUtil.hasValidParameters(accountService, eventRepository, responseObserver, request.getUserId(), eventId,
 				Permission.EVENT_UPDATE)) {
