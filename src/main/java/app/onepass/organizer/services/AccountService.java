@@ -57,7 +57,7 @@ public class AccountService {
 
 		} catch (StatusRuntimeException exception) {
 
-			if (exception.getStatus().equals(Status.PERMISSION_DENIED)) {
+			if (exception.getStatus().getCode().toStatus().equals(Status.PERMISSION_DENIED)) {
 
 				return BoolValue.of(false);
 			}
