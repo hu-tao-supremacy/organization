@@ -30,12 +30,12 @@
     <start-class>app.onepass.organizer.App</start-class>
   </properties>
 
-<!--  <repositories>-->
-<!--    <repository>-->
-<!--      <id>projectlombok.org</id>-->
-<!--      <url>https://projectlombok.org/edge-releases</url>-->
-<!--    </repository>-->
-<!--  </repositories>-->
+  <repositories>
+    <repository>
+      <id>projectlombok.org</id>
+      <url>https://projectlombok.org/edge-releases</url>
+    </repository>
+  </repositories>
 
   <dependencies>
     <dependency>
