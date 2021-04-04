@@ -14,20 +14,22 @@ import app.onepass.apis.CreateOrganizationRequest;
 import app.onepass.apis.CreateTagRequest;
 import app.onepass.apis.Event;
 import app.onepass.apis.GetObjectByIdRequest;
-import app.onepass.apis.GetOrganizationByIdResponse;
 import app.onepass.apis.GetOrganizationsResponse;
 import app.onepass.apis.HasEventRequest;
+import app.onepass.apis.Organization;
 import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.RemoveEventRequest;
 import app.onepass.apis.RemoveOrganizationRequest;
 import app.onepass.apis.RemoveQuestionGroupsRequest;
 import app.onepass.apis.RemoveQuestionsRequest;
+import app.onepass.apis.Tag;
 import app.onepass.apis.UpdateEventDurationRequest;
 import app.onepass.apis.UpdateEventRequest;
 import app.onepass.apis.UpdateOrganizationRequest;
 import app.onepass.apis.UpdateRegistrationRequestRequest;
 import app.onepass.apis.UpdateTagRequest;
 import app.onepass.apis.UpdateUsersInOrganizationRequest;
+import app.onepass.apis.UserEvent;
 import app.onepass.organizer.utilities.ExceptionCatcher;
 import io.grpc.stub.StreamObserver;
 
@@ -51,7 +53,7 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	@Transactional
-	public void createOrganization(CreateOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+	public void createOrganization(CreateOrganizationRequest request, StreamObserver<Organization> responseObserver) {
 		ExceptionCatcher.catcher(organizationService::createOrganization, request, responseObserver);
 	}
 
@@ -61,19 +63,19 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
-	public void getOrganizationById(GetObjectByIdRequest request, StreamObserver<GetOrganizationByIdResponse> responseObserver) {
+	public void getOrganizationById(GetObjectByIdRequest request, StreamObserver<Organization> responseObserver) {
 		ExceptionCatcher.catcher(organizationService::getOrganizationById, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
-	public void updateOrganization(UpdateOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+	public void updateOrganization(UpdateOrganizationRequest request, StreamObserver<Organization> responseObserver) {
 		ExceptionCatcher.catcher(organizationService::updateOrganization, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
-	public void removeOrganization(RemoveOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+	public void removeOrganization(RemoveOrganizationRequest request, StreamObserver<Organization> responseObserver) {
 		ExceptionCatcher.catcher(organizationService::removeOrganization, request, responseObserver);
 	}
 
@@ -91,13 +93,13 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	@Transactional
-	public void createEvent(CreateEventRequest request, StreamObserver<Empty> responseObserver) {
+	public void createEvent(CreateEventRequest request, StreamObserver<Event> responseObserver) {
 		ExceptionCatcher.catcher(eventService::createEvent, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
-	public void updateEvent(UpdateEventRequest request, StreamObserver<Empty> responseObserver) {
+	public void updateEvent(UpdateEventRequest request, StreamObserver<Event> responseObserver) {
 		ExceptionCatcher.catcher(eventService::updateEvent, request, responseObserver);
 	}
 
@@ -109,18 +111,18 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	@Transactional
-	public void removeEvent(RemoveEventRequest request, StreamObserver<Empty> responseObserver) {
+	public void removeEvent(RemoveEventRequest request, StreamObserver<Event> responseObserver) {
 		ExceptionCatcher.catcher(eventService::removeEvent, request, responseObserver);
 	}
 
 	@Override
-	public void updateRegistrationRequest(UpdateRegistrationRequestRequest request, StreamObserver<Empty> responseObserver) {
+	public void updateRegistrationRequest(UpdateRegistrationRequestRequest request, StreamObserver<UserEvent> responseObserver) {
 		ExceptionCatcher.catcher(eventService::updateRegistrationRequest, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
-	public void createTag(CreateTagRequest request, StreamObserver<Empty> responseObserver) {
+	public void createTag(CreateTagRequest request, StreamObserver<Tag> responseObserver) {
 		ExceptionCatcher.catcher(tagService::createTag, request, responseObserver);
 	}
 

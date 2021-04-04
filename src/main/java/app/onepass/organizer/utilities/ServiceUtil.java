@@ -74,8 +74,8 @@ public class ServiceUtil {
 	public static HasPermissionRequest createHasPermissionRequest(long userId, long organizationId, Permission permission) {
 
 		return HasPermissionRequest.newBuilder()
-				.setUserId(userId)
-				.setOrganizationId(organizationId)
+				.setUserId((int) userId)
+				.setOrganizationId((int) organizationId)
 				.setPermissionNameValue(permission.getNumber())
 				.build();
 	}

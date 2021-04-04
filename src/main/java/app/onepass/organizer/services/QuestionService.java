@@ -104,7 +104,7 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 
 		long eventId = firstQuestionGroupEntity.getEventId();
 
-		List<Long> questionGroupIds = request.getQuestionGroupIdsList();
+		List<Integer> questionGroupIds = request.getQuestionGroupIdsList();
 
 		List<QuestionGroupEntity> entitiesToDelete = new ArrayList<>();
 
@@ -194,7 +194,7 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 			return;
 		}
 
-		List<Long> questionIds = request.getQuestionIdsList();
+		List<Integer> questionIds = request.getQuestionIdsList();
 
 		List<QuestionEntity> entitiesToDelete = new ArrayList<>();
 

@@ -11,7 +11,6 @@ import com.google.protobuf.Empty;
 
 import app.onepass.apis.CreateOrganizationRequest;
 import app.onepass.apis.GetObjectByIdRequest;
-import app.onepass.apis.GetOrganizationByIdResponse;
 import app.onepass.apis.GetOrganizationsResponse;
 import app.onepass.apis.HasPermissionRequest;
 import app.onepass.apis.Organization;
@@ -41,9 +40,9 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 	private UserOrganizationRepository userOrganizationRepository;
 
 	@Override
-	public void createOrganization(CreateOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+	public void createOrganization(CreateOrganizationRequest request, StreamObserver<Organization> responseObserver) {
 
-		if (organizationRepository.findById(request.getOrganization().getId()).isPresent()) {
+		if (organizationRepository.findById((long) request.getOrganization().getId()).isPresent()) {
 
 			ServiceUtil.returnInvalidArgumentError(responseObserver, "An organization with this ID already exists.");
 
@@ -54,7 +53,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
 		ServiceUtil.saveEntity(organizationMessage, organizationRepository);
 
-		ServiceUtil.returnEmpty(responseObserver);
+		ServiceUtil.returnObject(responseObserver, request.getOrganization());
 	}
 
 	@Override
@@ -74,34 +73,28 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 	}
 
 	@Override
-	public void getOrganizationById(GetObjectByIdRequest request, StreamObserver<GetOrganizationByIdResponse> responseObserver) {
+	public void getOrganizationById(GetObjectByIdRequest request, StreamObserver<Organization> responseObserver) {
 
 		OrganizationEntity organizationEntity;
 
 		try {
 
-			organizationEntity = organizationRepository.findById(request.getId()).orElseThrow(IllegalArgumentException::new);
+			organizationEntity = organizationRepository.findById((long) request.getId()).orElseThrow(IllegalArgumentException::new);
 
 		} catch (IllegalArgumentException illegalArgumentException) {
 
-			GetOrganizationByIdResponse getOrganizationByIdResponse = GetOrganizationByIdResponse.newBuilder().build();
-
-			ServiceUtil.returnObject(responseObserver, getOrganizationByIdResponse);
+			ServiceUtil.returnObject(responseObserver, Organization.newBuilder().build());
 
 			return;
 		}
 
 		Organization organization = organizationEntity.parseEntity().getOrganization();
 
-		GetOrganizationByIdResponse getOrganizationByIdResponse = GetOrganizationByIdResponse.newBuilder()
-				.setOrganization(organization)
-				.build();
-
-		ServiceUtil.returnObject(responseObserver, getOrganizationByIdResponse);
+		ServiceUtil.returnObject(responseObserver, organization);
 	}
 
 	@Override
-	public void updateOrganization(UpdateOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+	public void updateOrganization(UpdateOrganizationRequest request, StreamObserver<Organization> responseObserver) {
 
 		HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(),
 				request.getOrganization().getId(), Permission.ORGANIZATION_UPDATE);
@@ -113,7 +106,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 			return;
 		}
 
-		if (!organizationRepository.findById(request.getOrganization().getId()).isPresent()) {
+		if (!organizationRepository.findById((long) request.getOrganization().getId()).isPresent()) {
 
 			ServiceUtil.returnInvalidArgumentError(responseObserver, "An organization with this ID does not exist.");
 
@@ -124,11 +117,11 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
 		ServiceUtil.saveEntity(organizationMessage, organizationRepository);
 
-		ServiceUtil.returnEmpty(responseObserver);
+		ServiceUtil.returnObject(responseObserver, request.getOrganization());
 	}
 
 	@Override
-	public void removeOrganization(RemoveOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+	public void removeOrganization(RemoveOrganizationRequest request, StreamObserver<Organization> responseObserver) {
 
 		HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(),
 				request.getOrganizationId(), Permission.ORGANIZATION_REMOVE);
@@ -142,16 +135,22 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
 		long organizationId = request.getOrganizationId();
 
-		boolean deleteSuccessful = ServiceUtil.deleteEntity(organizationId, organizationRepository);
+		OrganizationEntity organizationEntity;
 
-		if (!deleteSuccessful) {
+		try {
+
+			organizationEntity = organizationRepository.findById(organizationId).orElseThrow(IllegalArgumentException::new);
+
+		} catch (IllegalArgumentException illegalArgumentException) {
 
 			ServiceUtil.returnInvalidArgumentError(responseObserver, "Cannot find organization from given ID.");
 
 			return;
 		}
 
-		ServiceUtil.returnEmpty(responseObserver);
+		organizationRepository.delete(organizationEntity);
+
+		ServiceUtil.returnObject(responseObserver, organizationEntity.parseEntity().getOrganization());
 	}
 
 	@Override
@@ -199,7 +198,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
 		long organizationId = request.getOrganizationId();
 
-		List<Long> userIds = request.getUserIdsList();
+		List<Integer> userIds = request.getUserIdsList();
 
 		List<UserOrganizationEntity> entitiesToDelete = new ArrayList<>();
 

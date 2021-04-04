@@ -12,6 +12,7 @@ import app.onepass.apis.CreateTagRequest;
 import app.onepass.apis.HasPermissionRequest;
 import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.Permission;
+import app.onepass.apis.Tag;
 import app.onepass.apis.UpdateTagRequest;
 import app.onepass.organizer.entities.EventTagEntity;
 import app.onepass.organizer.messages.TagMessage;
@@ -37,7 +38,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
     private EventTagRepository eventTagRepository;
 
     @Override
-    public void createTag(CreateTagRequest request, StreamObserver<Empty> responseObserver) {
+    public void createTag(CreateTagRequest request, StreamObserver<Tag> responseObserver) {
 
         HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(),
                 request.getOrganizationId(), Permission.TAG_CREATE);
@@ -49,7 +50,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
             return;
         }
 
-        if (tagRepository.findById(request.getTag().getId()).isPresent()) {
+        if (tagRepository.findById((long) request.getTag().getId()).isPresent()) {
 
             ServiceUtil.returnInvalidArgumentError(responseObserver, "A tag with this ID already exists.");
 
@@ -60,7 +61,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
         ServiceUtil.saveEntity(tagMessage, tagRepository);
 
-        ServiceUtil.returnEmpty(responseObserver);
+        ServiceUtil.returnObject(responseObserver, request.getTag());
     }
 
     @Override
@@ -100,7 +101,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
         long eventId = request.getEventId();
 
-        List<Long> tagIds = request.getTagIdsList();
+        List<Integer> tagIds = request.getTagIdsList();
 
         List<EventTagEntity> entitiesToDelete = new ArrayList<>();
 

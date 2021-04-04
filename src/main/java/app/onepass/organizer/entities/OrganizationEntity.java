@@ -28,7 +28,7 @@ public class OrganizationEntity implements BaseEntity<OrganizationMessage, Organ
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private int id;
 	@NotNull
 	private String name;
 	private boolean isVerified;

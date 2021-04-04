@@ -26,7 +26,7 @@ public class TagEntity implements BaseEntity<TagMessage, TagEntity> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private int id;
 	@NotNull
 	private String name;
 

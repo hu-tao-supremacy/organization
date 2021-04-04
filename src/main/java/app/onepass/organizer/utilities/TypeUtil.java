@@ -4,7 +4,7 @@ import java.time.Instant;
 
 import app.onepass.apis.AnswerType;
 import app.onepass.apis.QuestionGroupType;
-import app.onepass.apis.Status;
+import app.onepass.apis.UserEvent.Status;
 
 public class TypeUtil {
 

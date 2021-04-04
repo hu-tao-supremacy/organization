@@ -19,6 +19,7 @@ import app.onepass.apis.RemoveEventRequest;
 import app.onepass.apis.UpdateEventDurationRequest;
 import app.onepass.apis.UpdateEventRequest;
 import app.onepass.apis.UpdateRegistrationRequestRequest;
+import app.onepass.apis.UserEvent;
 import app.onepass.organizer.entities.EventDurationEntity;
 import app.onepass.organizer.entities.EventEntity;
 import app.onepass.organizer.entities.UserEventEntity;
@@ -46,7 +47,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	private UserEventRepository userEventRepository;
 
 	@Override
-	public void createEvent(CreateEventRequest request, StreamObserver<Empty> responseObserver) {
+	public void createEvent(CreateEventRequest request, StreamObserver<Event> responseObserver) {
 
 		HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(),
 				request.getEvent().getOrganizationId(), Permission.EVENT_CREATE);
@@ -58,7 +59,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 			return;
 		}
 
-		if (eventRepository.findById(request.getEvent().getId()).isPresent()) {
+		if (eventRepository.findById((long) request.getEvent().getId()).isPresent()) {
 
 			ServiceUtil.returnInvalidArgumentError(responseObserver, "An event with this ID already exists.");
 
@@ -69,11 +70,11 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		ServiceUtil.saveEntity(eventMessage, eventRepository);
 
-		ServiceUtil.returnEmpty(responseObserver);
+		ServiceUtil.returnObject(responseObserver, request.getEvent());
 	}
 
 	@Override
-	public void updateEvent(UpdateEventRequest request, StreamObserver<Empty> responseObserver) {
+	public void updateEvent(UpdateEventRequest request, StreamObserver<Event> responseObserver) {
 
 		long storedOrganizationId = ServiceUtil.getOrganizationIdFromEventId(eventRepository, request.getEvent().getId());
 
@@ -92,7 +93,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 			return;
 		}
 
-		if (!eventRepository.findById(request.getEvent().getId()).isPresent()) {
+		if (!eventRepository.findById((long) request.getEvent().getId()).isPresent()) {
 
 			ServiceUtil.returnInvalidArgumentError(responseObserver, "An event with this ID does not exist.");
 
@@ -103,11 +104,11 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		ServiceUtil.saveEntity(eventMessage, eventRepository);
 
-		ServiceUtil.returnEmpty(responseObserver);
+		ServiceUtil.returnObject(responseObserver, request.getEvent());
 	}
 
 	@Override
-	public void removeEvent(RemoveEventRequest request, StreamObserver<Empty> responseObserver) {
+	public void removeEvent(RemoveEventRequest request, StreamObserver<Event> responseObserver) {
 
 		if (!ServiceUtil.hasValidParameters(accountService, eventRepository, responseObserver, request.getUserId(),
 				request.getEventId(), Permission.EVENT_REMOVE)) {
@@ -117,16 +118,22 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		long eventId = request.getEventId();
 
-		boolean deleteSuccessful = ServiceUtil.deleteEntity(eventId, eventRepository);
+		EventEntity eventEntity;
 
-		if (!deleteSuccessful) {
+		try {
+
+			eventEntity = eventRepository.findById(eventId).orElseThrow(IllegalArgumentException::new);
+
+		} catch (IllegalArgumentException illegalArgumentException) {
 
 			ServiceUtil.returnInvalidArgumentError(responseObserver, "Cannot find event from given ID.");
 
 			return;
 		}
 
-		ServiceUtil.returnEmpty(responseObserver);
+		eventRepository.delete(eventEntity);
+
+		ServiceUtil.returnObject(responseObserver, eventEntity.parseEntity().getEvent());
 	}
 
 	@Override
@@ -163,7 +170,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	}
 
 	@Override
-	public void updateRegistrationRequest(UpdateRegistrationRequestRequest request, StreamObserver<Empty> responseObserver) {
+	public void updateRegistrationRequest(UpdateRegistrationRequestRequest request, StreamObserver<UserEvent> responseObserver) {
 
 		if (!ServiceUtil.hasValidParameters(accountService, eventRepository, responseObserver, request.getUserId(),
 				request.getRegisteredEventId(), Permission.EVENT_UPDATE)) {
@@ -185,7 +192,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		userEventRepository.save(userEventEntity);
 
-		ServiceUtil.returnEmpty(responseObserver);
+		ServiceUtil.returnObject(responseObserver, userEventEntity.parseEntity().getUserEvent());
 	}
 
 	@Override
@@ -195,7 +202,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		try {
 
-			eventEntity = eventRepository.findById(request.getEventId()).orElseThrow(IllegalArgumentException::new);
+			eventEntity = eventRepository.findById((long) request.getEventId()).orElseThrow(IllegalArgumentException::new);
 
 		} catch (IllegalArgumentException illegalArgumentException) {
 
