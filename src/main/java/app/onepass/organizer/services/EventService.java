@@ -156,7 +156,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 		for (Duration duration : durations) {
 
 			EventDurationEntity eventDurationEntity = EventDurationEntity.builder()
-					.eventId(eventId)
+					.eventId((int) eventId)
 					.start(TypeUtil.toSqlTimestamp(duration.getStart()))
 					.finish(TypeUtil.toSqlTimestamp(duration.getFinish()))
 					.build();

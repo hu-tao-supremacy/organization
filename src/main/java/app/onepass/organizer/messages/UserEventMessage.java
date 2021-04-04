@@ -21,7 +21,7 @@ public class UserEventMessage implements BaseMessage<UserEventMessage, UserEvent
 				.userId(userEvent.getUserId())
 				.eventId(userEvent.getEventId())
 				.rating(userEvent.getRating().getValue())
-				.ticket(userEvent.getTicket())
+				.ticket(userEvent.getTicket().getValue())
 				.status(userEvent.getStatus().toString())
 				.build();
 	}
