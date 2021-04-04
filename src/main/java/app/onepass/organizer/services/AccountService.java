@@ -18,7 +18,6 @@ import io.grpc.StatusRuntimeException;
 
 @Service
 public class AccountService {
-
 	private final ManagedChannel channel;
 
 	private final AccountServiceGrpc.AccountServiceBlockingStub stub;
