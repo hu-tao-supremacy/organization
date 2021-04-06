@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.google.protobuf.Empty;
 
-import app.onepass.apis.AssignRoleRequest;
 import app.onepass.apis.CreateOrganizationRequest;
 import app.onepass.apis.GetObjectByIdRequest;
 import app.onepass.apis.GetOrganizationsResponse;
@@ -18,7 +17,6 @@ import app.onepass.apis.Organization;
 import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.Permission;
 import app.onepass.apis.RemoveOrganizationRequest;
-import app.onepass.apis.Role;
 import app.onepass.apis.UpdateOrganizationRequest;
 import app.onepass.apis.UpdateUsersInOrganizationRequest;
 import app.onepass.organizer.entities.OrganizationEntity;
@@ -46,8 +44,6 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
 		int organizationId = request.getOrganization().getId();
 
-		int userId = request.getUserId();
-
 		if (organizationRepository.findById(organizationId).isPresent()) {
 
 			ServiceUtil.returnInvalidArgumentError(responseObserver, "An organization with this ID already exists.");
@@ -59,20 +55,14 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
 		ServiceUtil.saveEntity(organizationMessage, organizationRepository);
 
+		OrganizationEntity savedEntity = organizationRepository.findByName(request.getOrganization().getName());
+
 		UserOrganizationEntity userOrganizationEntity = UserOrganizationEntity.builder()
-				.userId(userId)
-				.organizationId(organizationId)
+				.userId(request.getUserId())
+				.organizationId(savedEntity.getId())
 				.build();
 
 		userOrganizationRepository.save(userOrganizationEntity);
-
-		AssignRoleRequest assignRoleRequest = AssignRoleRequest.newBuilder()
-				.setUserId(userId)
-				.setOrganizationId(organizationId)
-				.setRole(Role.ORGANIZATION_OWNER)
-				.build();
-
-		accountService.assignRole(assignRoleRequest);
 
 		ServiceUtil.returnObject(responseObserver, request.getOrganization());
 	}
