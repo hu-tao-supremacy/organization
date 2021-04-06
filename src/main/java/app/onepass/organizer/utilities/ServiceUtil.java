@@ -17,7 +17,7 @@ import io.grpc.stub.StreamObserver;
 public class ServiceUtil {
 
 	public static <M extends BaseMessage<M, E>, E extends BaseEntity<M, E>> boolean saveEntity(BaseMessage<M, E> message,
-			JpaRepository<E, Long> repository) {
+			JpaRepository<E, Integer> repository) {
 
 		E entity = message.parseMessage();
 
@@ -26,8 +26,8 @@ public class ServiceUtil {
 		return true;
 	}
 
-	public static <M extends BaseMessage<M, E>, E extends BaseEntity<M, E>> boolean deleteEntity(long id,
-			JpaRepository<E, Long> repository) {
+	public static <M extends BaseMessage<M, E>, E extends BaseEntity<M, E>> boolean deleteEntity(int id,
+			JpaRepository<E, Integer> repository) {
 
 		E entity;
 
@@ -71,7 +71,7 @@ public class ServiceUtil {
 		responseObserver.onCompleted();
 	}
 
-	public static HasPermissionRequest createHasPermissionRequest(long userId, long organizationId, Permission permission) {
+	public static HasPermissionRequest createHasPermissionRequest(int userId, int organizationId, Permission permission) {
 
 		return HasPermissionRequest.newBuilder()
 				.setUserId((int) userId)
@@ -80,7 +80,7 @@ public class ServiceUtil {
 				.build();
 	}
 
-	public static <T> long getOrganizationIdFromEventId(EventRepository eventRepository, long eventId) {
+	public static <T> int getOrganizationIdFromEventId(EventRepository eventRepository, int eventId) {
 
 		EventEntity eventEntity;
 
@@ -90,9 +90,9 @@ public class ServiceUtil {
 	}
 
 	public static <T> boolean hasValidParameters(AccountService accountService, EventRepository eventRepository,
-			StreamObserver<T> responseObserver, long userId, long eventId, Permission permission) {
+			StreamObserver<T> responseObserver, int userId, int eventId, Permission permission) {
 
-		long organizationId;
+		int organizationId;
 
 		try {
 

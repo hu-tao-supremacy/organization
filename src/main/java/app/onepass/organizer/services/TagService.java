@@ -50,7 +50,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
             return;
         }
 
-        if (tagRepository.findById((long) request.getTag().getId()).isPresent()) {
+        if (tagRepository.findById(request.getTag().getId()).isPresent()) {
 
             ServiceUtil.returnInvalidArgumentError(responseObserver, "A tag with this ID already exists.");
 
@@ -99,13 +99,13 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
             return;
         }
 
-        long eventId = request.getEventId();
+        int eventId = request.getEventId();
 
         List<Integer> tagIds = request.getTagIdsList();
 
         List<EventTagEntity> entitiesToDelete = new ArrayList<>();
 
-        for (long tagId : tagIds) {
+        for (int tagId : tagIds) {
 
             EventTagEntity eventTagEntity = eventTagRepository.findByEventIdAndTagId(eventId, tagId);
 

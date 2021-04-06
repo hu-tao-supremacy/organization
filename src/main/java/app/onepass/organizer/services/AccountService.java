@@ -10,6 +10,7 @@ import com.google.protobuf.BoolValue;
 import com.google.protobuf.Empty;
 
 import app.onepass.apis.AccountServiceGrpc;
+import app.onepass.apis.AssignRoleRequest;
 import app.onepass.apis.HasPermissionRequest;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -63,5 +64,10 @@ public class AccountService {
 
 			throw exception;
 		}
+	}
+
+	public BoolValue assignRole(AssignRoleRequest assignRoleRequest) {
+
+		return stub.assignRole(assignRoleRequest);
 	}
 }

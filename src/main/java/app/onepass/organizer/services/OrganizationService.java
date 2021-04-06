@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.protobuf.Empty;
 
+import app.onepass.apis.AssignRoleRequest;
 import app.onepass.apis.CreateOrganizationRequest;
 import app.onepass.apis.GetObjectByIdRequest;
 import app.onepass.apis.GetOrganizationsResponse;
@@ -17,6 +18,7 @@ import app.onepass.apis.Organization;
 import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.Permission;
 import app.onepass.apis.RemoveOrganizationRequest;
+import app.onepass.apis.Role;
 import app.onepass.apis.UpdateOrganizationRequest;
 import app.onepass.apis.UpdateUsersInOrganizationRequest;
 import app.onepass.organizer.entities.OrganizationEntity;
@@ -42,7 +44,11 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 	@Override
 	public void createOrganization(CreateOrganizationRequest request, StreamObserver<Organization> responseObserver) {
 
-		if (organizationRepository.findById((long) request.getOrganization().getId()).isPresent()) {
+		int organizationId = request.getOrganization().getId();
+
+		int userId = request.getUserId();
+
+		if (organizationRepository.findById(organizationId).isPresent()) {
 
 			ServiceUtil.returnInvalidArgumentError(responseObserver, "An organization with this ID already exists.");
 
@@ -52,6 +58,21 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 		OrganizationMessage organizationMessage = new OrganizationMessage(request.getOrganization());
 
 		ServiceUtil.saveEntity(organizationMessage, organizationRepository);
+
+		UserOrganizationEntity userOrganizationEntity = UserOrganizationEntity.builder()
+				.userId(userId)
+				.organizationId(organizationId)
+				.build();
+
+		userOrganizationRepository.save(userOrganizationEntity);
+
+		AssignRoleRequest assignRoleRequest = AssignRoleRequest.newBuilder()
+				.setUserId(userId)
+				.setOrganizationId(organizationId)
+				.setRole(Role.ORGANIZATION_OWNER)
+				.build();
+
+		accountService.assignRole(assignRoleRequest);
 
 		ServiceUtil.returnObject(responseObserver, request.getOrganization());
 	}
@@ -79,7 +100,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
 		try {
 
-			organizationEntity = organizationRepository.findById((long) request.getId()).orElseThrow(IllegalArgumentException::new);
+			organizationEntity = organizationRepository.findById(request.getId()).orElseThrow(IllegalArgumentException::new);
 
 		} catch (IllegalArgumentException illegalArgumentException) {
 
@@ -106,7 +127,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 			return;
 		}
 
-		if (!organizationRepository.findById((long) request.getOrganization().getId()).isPresent()) {
+		if (!organizationRepository.findById(request.getOrganization().getId()).isPresent()) {
 
 			ServiceUtil.returnInvalidArgumentError(responseObserver, "An organization with this ID does not exist.");
 
@@ -133,7 +154,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 			return;
 		}
 
-		long organizationId = request.getOrganizationId();
+		int organizationId = request.getOrganizationId();
 
 		OrganizationEntity organizationEntity;
 
@@ -196,13 +217,13 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 			return;
 		}
 
-		long organizationId = request.getOrganizationId();
+		int organizationId = request.getOrganizationId();
 
 		List<Integer> userIds = request.getUserIdsList();
 
 		List<UserOrganizationEntity> entitiesToDelete = new ArrayList<>();
 
-		for (long userId : userIds) {
+		for (int userId : userIds) {
 
 			UserOrganizationEntity userOrganizationEntity = userOrganizationRepository.findByUserIdAndOrganizationId(userId,
 					organizationId);

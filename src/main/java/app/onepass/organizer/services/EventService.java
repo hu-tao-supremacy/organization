@@ -59,7 +59,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 			return;
 		}
 
-		if (eventRepository.findById((long) request.getEvent().getId()).isPresent()) {
+		if (eventRepository.findById(request.getEvent().getId()).isPresent()) {
 
 			ServiceUtil.returnInvalidArgumentError(responseObserver, "An event with this ID already exists.");
 
@@ -76,9 +76,9 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	@Override
 	public void updateEvent(UpdateEventRequest request, StreamObserver<Event> responseObserver) {
 
-		long storedOrganizationId = ServiceUtil.getOrganizationIdFromEventId(eventRepository, request.getEvent().getId());
+		int storedOrganizationId = ServiceUtil.getOrganizationIdFromEventId(eventRepository, request.getEvent().getId());
 
-		long requestedOrganizationId = request.getEvent().getOrganizationId();
+		int requestedOrganizationId = request.getEvent().getOrganizationId();
 
 		if (storedOrganizationId != requestedOrganizationId) {
 
@@ -93,7 +93,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 			return;
 		}
 
-		if (!eventRepository.findById((long) request.getEvent().getId()).isPresent()) {
+		if (!eventRepository.findById(request.getEvent().getId()).isPresent()) {
 
 			ServiceUtil.returnInvalidArgumentError(responseObserver, "An event with this ID does not exist.");
 
@@ -116,7 +116,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 			return;
 		}
 
-		long eventId = request.getEventId();
+		int eventId = request.getEventId();
 
 		EventEntity eventEntity;
 
@@ -145,7 +145,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 			return;
 		}
 
-		long eventId = request.getEventId();
+		int eventId = request.getEventId();
 
 		eventDurationRepository.deleteAllByEventId(eventId);
 
@@ -156,7 +156,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 		for (Duration duration : durations) {
 
 			EventDurationEntity eventDurationEntity = EventDurationEntity.builder()
-					.eventId((int) eventId)
+					.eventId(eventId)
 					.start(TypeUtil.toSqlTimestamp(duration.getStart()))
 					.finish(TypeUtil.toSqlTimestamp(duration.getFinish()))
 					.build();
@@ -202,7 +202,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		try {
 
-			eventEntity = eventRepository.findById((long) request.getEventId()).orElseThrow(IllegalArgumentException::new);
+			eventEntity = eventRepository.findById(request.getEventId()).orElseThrow(IllegalArgumentException::new);
 
 		} catch (IllegalArgumentException illegalArgumentException) {
 
@@ -211,7 +211,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 			return;
 		}
 
-		long organizationId = eventEntity.getOrganizationId();
+		int organizationId = eventEntity.getOrganizationId();
 
 		if (organizationId == request.getOrganizationId()) {
 

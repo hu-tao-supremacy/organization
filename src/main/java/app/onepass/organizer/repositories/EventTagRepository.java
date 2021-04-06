@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import app.onepass.organizer.entities.EventTagEntity;
 
-public interface EventTagRepository extends JpaRepository<EventTagEntity, Long> {
+public interface EventTagRepository extends JpaRepository<EventTagEntity, Integer> {
 
 	EventTagEntity findByEventIdAndTagId(long eventId, long tagId);
 }

@@ -51,7 +51,7 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 			return;
 		}
 
-		long eventId = request.getQuestionGroups(0).getEventId();
+		int eventId = request.getQuestionGroups(0).getEventId();
 
 		if (!ServiceUtil.hasValidParameters(accountService, eventRepository, responseObserver, request.getUserId(), eventId,
 				Permission.EVENT_UPDATE)) {
@@ -92,7 +92,7 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 			return;
 		}
 
-		long firstQuestionGroupId = request.getQuestionGroupIds(0);
+		int firstQuestionGroupId = request.getQuestionGroupIds(0);
 
 		if (!hasValidEventId(responseObserver, firstQuestionGroupId, request.getUserId())) {
 
@@ -102,13 +102,13 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 		QuestionGroupEntity firstQuestionGroupEntity = questionGroupRepository.findById(firstQuestionGroupId)
 				.orElseThrow(IllegalArgumentException::new);
 
-		long eventId = firstQuestionGroupEntity.getEventId();
+		int eventId = firstQuestionGroupEntity.getEventId();
 
 		List<Integer> questionGroupIds = request.getQuestionGroupIdsList();
 
 		List<QuestionGroupEntity> entitiesToDelete = new ArrayList<>();
 
-		for (long questionGroupId : questionGroupIds) {
+		for (int questionGroupId : questionGroupIds) {
 
 			Optional<QuestionGroupEntity> questionGroupEntity = questionGroupRepository.findById(questionGroupId);
 
@@ -142,7 +142,7 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 			return;
 		}
 
-		long questionGroupId = request.getQuestions(0).getQuestionGroupId();
+		int questionGroupId = request.getQuestions(0).getQuestionGroupId();
 
 		if (!hasValidEventId(responseObserver, questionGroupId, request.getUserId())) {
 			return;
@@ -172,9 +172,9 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 			return;
 		}
 
-		long firstQuestionId = request.getQuestionIds(0);
+		int firstQuestionId = request.getQuestionIds(0);
 
-		long questionGroupId;
+		int questionGroupId;
 
 		try {
 
@@ -198,7 +198,7 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 
 		List<QuestionEntity> entitiesToDelete = new ArrayList<>();
 
-		for (long questionId : questionIds) {
+		for (int questionId : questionIds) {
 
 			Optional<QuestionEntity> questionEntity = questionRepository.findById(questionId);
 
@@ -222,9 +222,9 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 		ServiceUtil.returnEmpty(responseObserver);
 	}
 
-	private boolean hasValidEventId(StreamObserver<Empty> responseObserver, long questionGroupId, long userId) {
+	private boolean hasValidEventId(StreamObserver<Empty> responseObserver, int questionGroupId, int userId) {
 
-		long eventId;
+		int eventId;
 
 		try {
 
