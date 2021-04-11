@@ -13,11 +13,15 @@ import app.onepass.apis.CreateEventRequest;
 import app.onepass.apis.CreateOrganizationRequest;
 import app.onepass.apis.CreateTagRequest;
 import app.onepass.apis.Event;
+import app.onepass.apis.EventDurationListResponse;
+import app.onepass.apis.EventTagListResponse;
 import app.onepass.apis.GetObjectByIdRequest;
-import app.onepass.apis.GetOrganizationsResponse;
 import app.onepass.apis.HasEventRequest;
 import app.onepass.apis.Organization;
+import app.onepass.apis.OrganizationListResponse;
 import app.onepass.apis.OrganizerServiceGrpc;
+import app.onepass.apis.QuestionGroupListResponse;
+import app.onepass.apis.QuestionListResponse;
 import app.onepass.apis.RemoveEventRequest;
 import app.onepass.apis.RemoveOrganizationRequest;
 import app.onepass.apis.RemoveQuestionGroupsRequest;
@@ -30,6 +34,7 @@ import app.onepass.apis.UpdateRegistrationRequestRequest;
 import app.onepass.apis.UpdateTagRequest;
 import app.onepass.apis.UpdateUsersInOrganizationRequest;
 import app.onepass.apis.UserEvent;
+import app.onepass.apis.UserOrganizationListResponse;
 import app.onepass.organizer.utilities.ExceptionCatcher;
 import io.grpc.stub.StreamObserver;
 
@@ -58,7 +63,7 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
-	public void getOrganizations(Empty request, StreamObserver<GetOrganizationsResponse> responseObserver) {
+	public void getOrganizations(Empty request, StreamObserver<OrganizationListResponse> responseObserver) {
 		ExceptionCatcher.catcher(organizationService::getOrganizations, request, responseObserver);
 	}
 
@@ -81,13 +86,13 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	@Transactional
-	public void addUsersToOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+	public void addUsersToOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<UserOrganizationListResponse> responseObserver) {
 		ExceptionCatcher.catcher(organizationService::addUsersToOrganization, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
-	public void removeUsersFromOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+	public void removeUsersFromOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<UserOrganizationListResponse> responseObserver) {
 		ExceptionCatcher.catcher(organizationService::removeUsersFromOrganization, request, responseObserver);
 	}
 
@@ -105,7 +110,7 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	@Transactional
-	public void updateEventDurations(UpdateEventDurationRequest request, StreamObserver<Empty> responseObserver) {
+	public void updateEventDurations(UpdateEventDurationRequest request, StreamObserver<EventDurationListResponse> responseObserver) {
 		ExceptionCatcher.catcher(eventService::updateEventDurations, request, responseObserver);
 	}
 
@@ -127,13 +132,13 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
-	public void addTags(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
+	public void addTags(UpdateTagRequest request, StreamObserver<EventTagListResponse> responseObserver) {
 		ExceptionCatcher.catcher(tagService::addTags, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
-	public void removeTags(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
+	public void removeTags(UpdateTagRequest request, StreamObserver<EventTagListResponse> responseObserver) {
 		ExceptionCatcher.catcher(tagService::removeTags, request, responseObserver);
 	}
 
@@ -144,25 +149,25 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	@Transactional
-	public void addQuestionGroups(AddQuestionGroupsRequest request, StreamObserver<Empty> responseObserver) {
+	public void addQuestionGroups(AddQuestionGroupsRequest request, StreamObserver<QuestionGroupListResponse> responseObserver) {
 		ExceptionCatcher.catcher(questionService::addQuestionGroups, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
-	public void removeQuestionGroups(RemoveQuestionGroupsRequest request, StreamObserver<Empty> responseObserver) {
+	public void removeQuestionGroups(RemoveQuestionGroupsRequest request, StreamObserver<QuestionGroupListResponse> responseObserver) {
 		ExceptionCatcher.catcher(questionService::removeQuestionGroups, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
-	public void addQuestions(AddQuestionsRequest request, StreamObserver<Empty> responseObserver) {
+	public void addQuestions(AddQuestionsRequest request, StreamObserver<QuestionListResponse> responseObserver) {
 		ExceptionCatcher.catcher(questionService::addQuestions, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
-	public void removeQuestions(RemoveQuestionsRequest request, StreamObserver<Empty> responseObserver) {
+	public void removeQuestions(RemoveQuestionsRequest request, StreamObserver<QuestionListResponse> responseObserver) {
 		ExceptionCatcher.catcher(questionService::removeQuestions, request, responseObserver);
 	}
 

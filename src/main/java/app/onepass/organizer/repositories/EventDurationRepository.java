@@ -6,5 +6,5 @@ import app.onepass.organizer.entities.EventDurationEntity;
 
 public interface EventDurationRepository extends JpaRepository<EventDurationEntity, Integer> {
 
-	long deleteAllByEventId(long eventId);
+	long deleteAllByEventId(int eventId);
 }
