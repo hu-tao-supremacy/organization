@@ -64,6 +64,8 @@ public class AccountService {
 
 			throw exception;
 		}
+
+//		return BoolValue.of(true);
 	}
 
 	public BoolValue assignRole(AssignRoleRequest assignRoleRequest) {
