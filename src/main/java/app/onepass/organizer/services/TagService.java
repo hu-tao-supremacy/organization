@@ -7,16 +7,13 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.protobuf.Empty;
-
 import app.onepass.apis.CreateTagRequest;
-import app.onepass.apis.EventDurationListResponse;
 import app.onepass.apis.EventTag;
+import app.onepass.apis.EventTagListResponse;
 import app.onepass.apis.HasPermissionRequest;
 import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.Permission;
 import app.onepass.apis.Tag;
-import app.onepass.apis.TagListResponse;
 import app.onepass.apis.UpdateTagRequest;
 import app.onepass.organizer.entities.EventTagEntity;
 import app.onepass.organizer.messages.TagMessage;

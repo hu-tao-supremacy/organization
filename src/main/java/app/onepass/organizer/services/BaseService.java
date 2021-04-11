@@ -14,6 +14,7 @@ import app.onepass.apis.CreateOrganizationRequest;
 import app.onepass.apis.CreateTagRequest;
 import app.onepass.apis.Event;
 import app.onepass.apis.EventDurationListResponse;
+import app.onepass.apis.EventTagListResponse;
 import app.onepass.apis.GetObjectByIdRequest;
 import app.onepass.apis.HasEventRequest;
 import app.onepass.apis.Organization;
@@ -26,7 +27,6 @@ import app.onepass.apis.RemoveOrganizationRequest;
 import app.onepass.apis.RemoveQuestionGroupsRequest;
 import app.onepass.apis.RemoveQuestionsRequest;
 import app.onepass.apis.Tag;
-import app.onepass.apis.TagListResponse;
 import app.onepass.apis.UpdateEventDurationRequest;
 import app.onepass.apis.UpdateEventRequest;
 import app.onepass.apis.UpdateOrganizationRequest;
@@ -132,13 +132,13 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	}
 
 	@Override
-	public void addTags(UpdateTagRequest request, StreamObserver<TagListResponse> responseObserver) {
+	public void addTags(UpdateTagRequest request, StreamObserver<EventTagListResponse> responseObserver) {
 		ExceptionCatcher.catcher(tagService::addTags, request, responseObserver);
 	}
 
 	@Override
 	@Transactional
-	public void removeTags(UpdateTagRequest request, StreamObserver<TagListResponse> responseObserver) {
+	public void removeTags(UpdateTagRequest request, StreamObserver<EventTagListResponse> responseObserver) {
 		ExceptionCatcher.catcher(tagService::removeTags, request, responseObserver);
 	}
 
