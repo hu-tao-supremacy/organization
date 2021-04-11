@@ -2,6 +2,7 @@ package app.onepass.organizer.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,10 +10,13 @@ import org.springframework.stereotype.Service;
 import com.google.protobuf.Empty;
 
 import app.onepass.apis.CreateTagRequest;
+import app.onepass.apis.EventDurationListResponse;
+import app.onepass.apis.EventTag;
 import app.onepass.apis.HasPermissionRequest;
 import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.Permission;
 import app.onepass.apis.Tag;
+import app.onepass.apis.TagListResponse;
 import app.onepass.apis.UpdateTagRequest;
 import app.onepass.organizer.entities.EventTagEntity;
 import app.onepass.organizer.messages.TagMessage;
@@ -65,7 +69,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
     }
 
     @Override
-    public void addTags(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
+    public void addTags(UpdateTagRequest request, StreamObserver<EventTagListResponse> responseObserver) {
 
         if (!ServiceUtil.hasValidParameters(accountService, eventRepository, responseObserver, request.getUserId(),
                 request.getEventId(), Permission.EVENT_TAG_UPDATE)) {
@@ -73,7 +77,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
             return;
         }
 
-        List<EventTagEntity> eventTagEntities = new ArrayList<>();
+        List<EventTagEntity> entitiesToAdd = new ArrayList<>();
 
         for (int index = 0; index < request.getTagIdsCount(); index++) {
 
@@ -82,16 +86,24 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
                     .tagId(request.getTagIds(index))
                     .build();
 
-            eventTagEntities.add(eventTagEntity);
+            entitiesToAdd.add(eventTagEntity);
         }
 
-        eventTagRepository.saveAll(eventTagEntities);
+        eventTagRepository.saveAll(entitiesToAdd);
 
-        ServiceUtil.returnEmpty(responseObserver);
+        List<EventTag> eventTags = entitiesToAdd.stream()
+                .map(eventTagEntity -> eventTagEntity.parseEntity().getEventTag())
+                .collect(Collectors.toList());
+
+        EventTagListResponse eventTagListResponse = EventTagListResponse.newBuilder()
+                .addAllEventTags(eventTags)
+                .build();
+
+        ServiceUtil.returnObject(responseObserver, eventTagListResponse);
     }
 
     @Override
-    public void removeTags(UpdateTagRequest request, StreamObserver<Empty> responseObserver) {
+    public void removeTags(UpdateTagRequest request, StreamObserver<EventTagListResponse> responseObserver) {
 
         if (!ServiceUtil.hasValidParameters(accountService, eventRepository, responseObserver, request.getUserId(),
                 request.getEventId(), Permission.EVENT_TAG_UPDATE)) {
@@ -117,6 +129,14 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
         eventTagRepository.deleteAll(entitiesToDelete);
 
-        ServiceUtil.returnEmpty(responseObserver);
+        List<EventTag> eventTags = entitiesToDelete.stream()
+                .map(eventTagEntity -> eventTagEntity.parseEntity().getEventTag())
+                .collect(Collectors.toList());
+
+        EventTagListResponse eventTagListResponse = EventTagListResponse.newBuilder()
+                .addAllEventTags(eventTags)
+                .build();
+
+        ServiceUtil.returnObject(responseObserver, eventTagListResponse);
     }
 }
