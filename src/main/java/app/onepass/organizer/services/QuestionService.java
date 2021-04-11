@@ -3,17 +3,19 @@ package app.onepass.organizer.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.google.protobuf.Empty;
 
 import app.onepass.apis.AddQuestionGroupsRequest;
 import app.onepass.apis.AddQuestionsRequest;
 import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.Permission;
+import app.onepass.apis.Question;
 import app.onepass.apis.QuestionGroup;
+import app.onepass.apis.QuestionGroupListResponse;
+import app.onepass.apis.QuestionListResponse;
 import app.onepass.apis.RemoveQuestionGroupsRequest;
 import app.onepass.apis.RemoveQuestionsRequest;
 import app.onepass.organizer.entities.QuestionEntity;
@@ -42,11 +44,11 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 	private QuestionGroupRepository questionGroupRepository;
 
 	@Override
-	public void addQuestionGroups(AddQuestionGroupsRequest request, StreamObserver<Empty> responseObserver) {
+	public void addQuestionGroups(AddQuestionGroupsRequest request, StreamObserver<QuestionGroupListResponse> responseObserver) {
 
 		if (request.getQuestionGroupsCount() == 0) {
 
-			ServiceUtil.returnEmpty(responseObserver);
+			ServiceUtil.returnObject(responseObserver, QuestionGroupListResponse.newBuilder().build());
 
 			return;
 		}
@@ -59,7 +61,7 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 			return;
 		}
 
-		List<QuestionGroupEntity> questionGroupEntities = new ArrayList<>();
+		List<QuestionGroupEntity> entitiesToAdd = new ArrayList<>();
 
 		for (int index = 0; index < request.getQuestionGroupsCount(); index++) {
 
@@ -74,20 +76,28 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 
 			QuestionGroupMessage questionGroupMessage = new QuestionGroupMessage(questionGroup);
 
-			questionGroupEntities.add(questionGroupMessage.parseMessage());
+			entitiesToAdd.add(questionGroupMessage.parseMessage());
 		}
 
-		questionGroupRepository.saveAll(questionGroupEntities);
+		questionGroupRepository.saveAll(entitiesToAdd);
 
-		ServiceUtil.returnEmpty(responseObserver);
+		List<QuestionGroup> questionGroups = entitiesToAdd.stream()
+				.map(eventTagEntity -> eventTagEntity.parseEntity().getQuestionGroup())
+				.collect(Collectors.toList());
+
+		QuestionGroupListResponse questionGroupListResponse = QuestionGroupListResponse.newBuilder()
+				.addAllQuestionGroups(questionGroups)
+				.build();
+
+		ServiceUtil.returnObject(responseObserver, questionGroupListResponse);
 	}
 
 	@Override
-	public void removeQuestionGroups(RemoveQuestionGroupsRequest request, StreamObserver<Empty> responseObserver) {
+	public void removeQuestionGroups(RemoveQuestionGroupsRequest request, StreamObserver<QuestionGroupListResponse> responseObserver) {
 
 		if (request.getQuestionGroupIdsCount() == 0) {
 
-			ServiceUtil.returnEmpty(responseObserver);
+			ServiceUtil.returnObject(responseObserver, QuestionGroupListResponse.newBuilder().build());
 
 			return;
 		}
@@ -129,15 +139,23 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 
 		questionGroupRepository.deleteAll(entitiesToDelete);
 
-		ServiceUtil.returnEmpty(responseObserver);
+		List<QuestionGroup> questionGroups = entitiesToDelete.stream()
+				.map(eventTagEntity -> eventTagEntity.parseEntity().getQuestionGroup())
+				.collect(Collectors.toList());
+
+		QuestionGroupListResponse questionGroupListResponse = QuestionGroupListResponse.newBuilder()
+				.addAllQuestionGroups(questionGroups)
+				.build();
+
+		ServiceUtil.returnObject(responseObserver, questionGroupListResponse);
 	}
 
 	@Override
-	public void addQuestions(AddQuestionsRequest request, StreamObserver<Empty> responseObserver) {
+	public void addQuestions(AddQuestionsRequest request, StreamObserver<QuestionListResponse> responseObserver) {
 
 		if (request.getQuestionsCount() == 0) {
 
-			ServiceUtil.returnEmpty(responseObserver);
+			ServiceUtil.returnObject(responseObserver, QuestionListResponse.newBuilder().build());
 
 			return;
 		}
@@ -148,26 +166,34 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 			return;
 		}
 
-		List<QuestionEntity> questionEntities = new ArrayList<>();
+		List<QuestionEntity> entitiesToAdd = new ArrayList<>();
 
 		for (int index = 0; index < request.getQuestionsCount(); index++) {
 
 			QuestionMessage questionMessage = new QuestionMessage(request.getQuestions(index));
 
-			questionEntities.add(questionMessage.parseMessage());
+			entitiesToAdd.add(questionMessage.parseMessage());
 		}
 
-		questionRepository.saveAll(questionEntities);
+		questionRepository.saveAll(entitiesToAdd);
 
-		ServiceUtil.returnEmpty(responseObserver);
+		List<Question> questions = entitiesToAdd.stream()
+				.map(eventTagEntity -> eventTagEntity.parseEntity().getQuestion())
+				.collect(Collectors.toList());
+
+		QuestionListResponse questionListResponse = QuestionListResponse.newBuilder()
+				.addAllQuestions(questions)
+				.build();
+
+		ServiceUtil.returnObject(responseObserver, questionListResponse);
 	}
 
 	@Override
-	public void removeQuestions(RemoveQuestionsRequest request, StreamObserver<Empty> responseObserver) {
+	public void removeQuestions(RemoveQuestionsRequest request, StreamObserver<QuestionListResponse> responseObserver) {
 
 		if (request.getQuestionIdsCount() == 0) {
 
-			ServiceUtil.returnEmpty(responseObserver);
+			ServiceUtil.returnObject(responseObserver, QuestionListResponse.newBuilder().build());
 
 			return;
 		}
@@ -219,10 +245,18 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 
 		questionRepository.deleteAll(entitiesToDelete);
 
-		ServiceUtil.returnEmpty(responseObserver);
+		List<Question> questions = entitiesToDelete.stream()
+				.map(eventTagEntity -> eventTagEntity.parseEntity().getQuestion())
+				.collect(Collectors.toList());
+
+		QuestionListResponse questionListResponse = QuestionListResponse.newBuilder()
+				.addAllQuestions(questions)
+				.build();
+
+		ServiceUtil.returnObject(responseObserver, questionListResponse);
 	}
 
-	private boolean hasValidEventId(StreamObserver<Empty> responseObserver, int questionGroupId, int userId) {
+	private <T> boolean hasValidEventId(StreamObserver<T> responseObserver, int questionGroupId, int userId) {
 
 		int eventId;
 
