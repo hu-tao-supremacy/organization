@@ -11,14 +11,16 @@ import com.google.protobuf.Empty;
 
 import app.onepass.apis.CreateOrganizationRequest;
 import app.onepass.apis.GetObjectByIdRequest;
-import app.onepass.apis.GetOrganizationsResponse;
 import app.onepass.apis.HasPermissionRequest;
 import app.onepass.apis.Organization;
+import app.onepass.apis.OrganizationListResponse;
 import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.Permission;
 import app.onepass.apis.RemoveOrganizationRequest;
 import app.onepass.apis.UpdateOrganizationRequest;
 import app.onepass.apis.UpdateUsersInOrganizationRequest;
+import app.onepass.apis.UserOrganization;
+import app.onepass.apis.UserOrganizationListResponse;
 import app.onepass.organizer.entities.OrganizationEntity;
 import app.onepass.organizer.entities.UserOrganizationEntity;
 import app.onepass.organizer.messages.OrganizationMessage;
@@ -68,7 +70,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 	}
 
 	@Override
-	public void getOrganizations(Empty request, StreamObserver<GetOrganizationsResponse> responseObserver) {
+	public void getOrganizations(Empty request, StreamObserver<OrganizationListResponse> responseObserver) {
 
 		List<OrganizationEntity> allOrganizationEntities = organizationRepository.findAll();
 
@@ -76,7 +78,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 				.map(organizationEntity -> organizationEntity.parseEntity().getOrganization())
 				.collect(Collectors.toList());
 
-		GetOrganizationsResponse getOrganizationResponse = GetOrganizationsResponse.newBuilder()
+		OrganizationListResponse getOrganizationResponse = OrganizationListResponse.newBuilder()
 				.addAllOrganizations(allOrganizations)
 				.build();
 
@@ -165,7 +167,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 	}
 
 	@Override
-	public void addUsersToOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+	public void addUsersToOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<UserOrganizationListResponse> responseObserver) {
 
 		HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(),
 				request.getOrganizationId(), Permission.ORGANIZATION_MEMBER_ADD);
@@ -177,7 +179,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 			return;
 		}
 
-		List<UserOrganizationEntity> userOrganizationEntities = new ArrayList<>();
+		List<UserOrganizationEntity> entitiesToAdd = new ArrayList<>();
 
 		for (int index = 0; index < request.getUserIdsCount(); index++) {
 
@@ -186,16 +188,24 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 					.organizationId(request.getOrganizationId())
 					.build();
 
-			userOrganizationEntities.add(userOrganizationEntity);
+			entitiesToAdd.add(userOrganizationEntity);
 		}
 
-		userOrganizationRepository.saveAll(userOrganizationEntities);
+		userOrganizationRepository.saveAll(entitiesToAdd);
 
-		ServiceUtil.returnEmpty(responseObserver);
+		List<UserOrganization> UserOrganizations = entitiesToAdd.stream()
+				.map(UserOrganizationEntity -> UserOrganizationEntity.parseEntity().getUserOrganization())
+				.collect(Collectors.toList());
+
+		UserOrganizationListResponse userOrganizationListResponse = UserOrganizationListResponse.newBuilder()
+				.addAllUserOrganizations(UserOrganizations)
+				.build();
+
+		ServiceUtil.returnObject(responseObserver, userOrganizationListResponse);
 	}
 
 	@Override
-	public void removeUsersFromOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+	public void removeUsersFromOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<UserOrganizationListResponse> responseObserver) {
 
 		HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(),
 				request.getOrganizationId(), Permission.ORGANIZATION_MEMBER_REMOVE);
@@ -226,6 +236,14 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
 		userOrganizationRepository.deleteAll(entitiesToDelete);
 
-		ServiceUtil.returnEmpty(responseObserver);
+		List<UserOrganization> UserOrganizations = entitiesToDelete.stream()
+				.map(UserOrganizationEntity -> UserOrganizationEntity.parseEntity().getUserOrganization())
+				.collect(Collectors.toList());
+
+		UserOrganizationListResponse userOrganizationListResponse = UserOrganizationListResponse.newBuilder()
+				.addAllUserOrganizations(UserOrganizations)
+				.build();
+
+		ServiceUtil.returnObject(responseObserver, userOrganizationListResponse);
 	}
 }
