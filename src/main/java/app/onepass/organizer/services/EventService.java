@@ -2,15 +2,16 @@ package app.onepass.organizer.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.protobuf.Empty;
-
 import app.onepass.apis.CreateEventRequest;
 import app.onepass.apis.Duration;
 import app.onepass.apis.Event;
+import app.onepass.apis.EventDuration;
+import app.onepass.apis.EventDurationListResponse;
 import app.onepass.apis.HasEventRequest;
 import app.onepass.apis.HasPermissionRequest;
 import app.onepass.apis.OrganizerServiceGrpc;
@@ -137,7 +138,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	}
 
 	@Override
-	public void updateEventDurations(UpdateEventDurationRequest request, StreamObserver<Empty> responseObserver) {
+	public void updateEventDurations(UpdateEventDurationRequest request, StreamObserver<EventDurationListResponse> responseObserver) {
 
 		if (!ServiceUtil.hasValidParameters(accountService, eventRepository, responseObserver, request.getUserId(),
 				request.getEventId(), Permission.EVENT_UPDATE)) {
@@ -166,7 +167,15 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		eventDurationRepository.saveAll(entitiesToAdd);
 
-		ServiceUtil.returnEmpty(responseObserver);
+		List<EventDuration> eventDurations = entitiesToAdd.stream()
+				.map(eventDurationEntity -> eventDurationEntity.parseEntity().getEventDuration())
+				.collect(Collectors.toList());
+
+		EventDurationListResponse eventDurationListResponse = EventDurationListResponse.newBuilder()
+				.addAllEventDurations(eventDurations)
+				.build();
+
+		ServiceUtil.returnObject(responseObserver, eventDurationListResponse);
 	}
 
 	@Override
