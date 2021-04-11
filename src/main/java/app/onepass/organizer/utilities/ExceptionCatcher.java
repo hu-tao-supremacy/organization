@@ -23,10 +23,13 @@ public class ExceptionCatcher {
 
 			responseObserver.onError(Status.UNAVAILABLE.withDescription("Unable to manipulate database.").asException());
 
+			throw exception;
+
 		} catch (StatusRuntimeException exception) {
 
 			responseObserver.onError(Status.UNAVAILABLE.withDescription("Exception occurred on other services.").asException());
 
+			throw exception;
 		}
 	}
 }
