@@ -8,5 +8,5 @@ import app.onepass.organizer.entities.UserEventEntity;
 @Repository
 public interface UserEventRepository extends JpaRepository<UserEventEntity, Integer> {
 
-	UserEventEntity findByUserIdAndEventId(long userId, long eventId);
+	UserEventEntity findByUserIdAndEventId(int userId, int eventId);
 }
