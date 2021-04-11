@@ -1,34 +1,73 @@
 package app.onepass.organizer.services;
 
+import javax.annotation.PreDestroy;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.google.protobuf.BoolValue;
+import com.google.protobuf.Empty;
+
+import app.onepass.apis.AccountServiceGrpc;
+import app.onepass.apis.AssignRoleRequest;
+import app.onepass.apis.HasPermissionRequest;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
+
 @Service
 public class AccountService {
+	private final ManagedChannel channel;
 
-// 	@Value("${GRPC_HOST}")
-// 	String host;
+	private final AccountServiceGrpc.AccountServiceBlockingStub stub;
 
-// 	@Value("${HTS_SVC_ACCOUNT}")
-// 	int port;
+	@Autowired
+	public AccountService(@Value("${HTS_SVC_ACCOUNT}") String address) {
 
-//	public Result ping() {
-//		ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
-//				.usePlaintext()
-//				.build();
-//
-//		AccountServiceGrpc.AccountServiceBlockingStub stub = AccountServiceGrpc.newBlockingStub(channel);
-//
-////		HasPermissionInput request = HasPermissionInput.newBuilder()
-////				.setUserId(1)
-////				.setOrganizationId(1)
-////				.setPermissionName(Permission.CREATE_TAG)
-////				.build();
-//
-//		Result result = stub.ping(Empty.newBuilder().build());
-//
-//		channel.shutdown();
-//
-//		return result;
-//	}
+		channel = ManagedChannelBuilder.forAddress(getHost(address), getPort(address)).usePlaintext().build();
+
+		stub = AccountServiceGrpc.newBlockingStub(channel);
+	}
+
+	private static String getHost(String address) {
+		return address.split(":")[0];
+	}
+
+	private static int getPort(String address) {
+		return Integer.parseInt(address.split(":")[1]);
+	}
+
+	@PreDestroy
+	public void onDestroy() {
+		channel.shutdown();
+	}
+
+	public BoolValue ping() {
+
+		return stub.ping(Empty.newBuilder().build());
+	}
+
+	public BoolValue hasPermission(HasPermissionRequest hasPermissionRequest) {
+
+		try {
+
+			return stub.hasPermission(hasPermissionRequest);
+
+		} catch (StatusRuntimeException exception) {
+
+			if (exception.getStatus().getCode().toStatus().equals(Status.PERMISSION_DENIED)) {
+
+				return BoolValue.of(false);
+			}
+
+			throw exception;
+		}
+	}
+
+	public BoolValue assignRole(AssignRoleRequest assignRoleRequest) {
+
+		return stub.assignRole(assignRoleRequest);
+	}
 }

@@ -26,17 +26,14 @@ public class TagEntity implements BaseEntity<TagMessage, TagEntity> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private int id;
 	@NotNull
 	private String name;
 
 	@Override
 	public TagMessage parseEntity() {
 
-		Tag tag = Tag.newBuilder()
-				.setId(id)
-				.setName(name)
-				.build();
+		Tag tag = Tag.newBuilder().setId(id).setName(name).build();
 
 		return new TagMessage(tag);
 	}

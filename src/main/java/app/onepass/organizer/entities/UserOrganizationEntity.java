@@ -25,9 +25,9 @@ public class UserOrganizationEntity implements BaseEntity<UserOrganizationMessag
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
-	private long userId;
-	private long organizationId;
+	private int id;
+	private int userId;
+	private int organizationId;
 
 	@Override
 	public UserOrganizationMessage parseEntity() {

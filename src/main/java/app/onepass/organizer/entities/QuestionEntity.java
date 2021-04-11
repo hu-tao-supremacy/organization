@@ -27,9 +27,9 @@ public class QuestionEntity implements BaseEntity<QuestionMessage, QuestionEntit
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
-	private long questionGroupId;
-	private long seq;
+	private int id;
+	private int questionGroupId;
+	private int seq;
 	@NotNull
 	private String answerType;
 	private boolean isOptional;

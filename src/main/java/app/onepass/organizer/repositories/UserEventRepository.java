@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import app.onepass.organizer.entities.UserEventEntity;
 
 @Repository
-public interface UserEventRepository extends JpaRepository<UserEventEntity, Long> {
+public interface UserEventRepository extends JpaRepository<UserEventEntity, Integer> {
 
 	UserEventEntity findByUserIdAndEventId(long userId, long eventId);
 }

@@ -10,11 +10,12 @@ import org.springframework.stereotype.Service;
 import com.google.protobuf.Empty;
 
 import app.onepass.apis.CreateOrganizationRequest;
-import app.onepass.apis.GetByIdRequest;
-import app.onepass.apis.GetOrganizationByIdResponse;
+import app.onepass.apis.GetObjectByIdRequest;
 import app.onepass.apis.GetOrganizationsResponse;
+import app.onepass.apis.HasPermissionRequest;
 import app.onepass.apis.Organization;
 import app.onepass.apis.OrganizerServiceGrpc;
+import app.onepass.apis.Permission;
 import app.onepass.apis.RemoveOrganizationRequest;
 import app.onepass.apis.UpdateOrganizationRequest;
 import app.onepass.apis.UpdateUsersInOrganizationRequest;
@@ -29,155 +30,202 @@ import io.grpc.stub.StreamObserver;
 @Service
 public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
-    @Autowired
-    private OrganizationRepository organizationRepository;
+	@Autowired
+	private AccountService accountService;
 
-    @Autowired
-    private UserOrganizationRepository userOrganizationRepository;
+	@Autowired
+	private OrganizationRepository organizationRepository;
 
-    @Override
-    public void createOrganization(CreateOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+	@Autowired
+	private UserOrganizationRepository userOrganizationRepository;
 
-        if (organizationRepository.findById(request.getOrganization().getId()).isPresent()) {
+	@Override
+	public void createOrganization(CreateOrganizationRequest request, StreamObserver<Organization> responseObserver) {
 
-            ServiceUtil.returnInvalidArgumentError(responseObserver, "An organization with this ID already exists.");
+		int organizationId = request.getOrganization().getId();
 
-            return;
-        }
+		if (organizationRepository.findById(organizationId).isPresent()) {
 
-        OrganizationMessage organizationMessage = new OrganizationMessage(request.getOrganization());
+			ServiceUtil.returnInvalidArgumentError(responseObserver, "An organization with this ID already exists.");
 
-        ServiceUtil.saveEntity(organizationMessage, organizationRepository);
+			return;
+		}
 
-        ServiceUtil.returnEmpty(responseObserver);
-    }
+		OrganizationMessage organizationMessage = new OrganizationMessage(request.getOrganization());
 
-    @Override
-    public void getOrganizations(Empty request, StreamObserver<GetOrganizationsResponse> responseObserver) {
+		ServiceUtil.saveEntity(organizationMessage, organizationRepository);
 
-        List<OrganizationEntity> allOrganizationEntities = organizationRepository.findAll();
+		OrganizationEntity savedEntity = organizationRepository.findByName(request.getOrganization().getName());
 
-        List<Organization> allOrganizations = allOrganizationEntities.stream()
-                .map(organizationEntity -> organizationEntity.parseEntity().getOrganization())
-                .collect(Collectors.toList());
+		UserOrganizationEntity userOrganizationEntity = UserOrganizationEntity.builder()
+				.userId(request.getUserId())
+				.organizationId(savedEntity.getId())
+				.build();
 
-        GetOrganizationsResponse getOrganizationResponse = GetOrganizationsResponse.newBuilder()
-                .addAllOrganizations(allOrganizations).build();
+		userOrganizationRepository.save(userOrganizationEntity);
 
-        ServiceUtil.returnObject(responseObserver, getOrganizationResponse);
-    }
+		ServiceUtil.returnObject(responseObserver, request.getOrganization());
+	}
 
-    @Override
-    public void getOrganizationById(GetByIdRequest request, StreamObserver<GetOrganizationByIdResponse> responseObserver) {
+	@Override
+	public void getOrganizations(Empty request, StreamObserver<GetOrganizationsResponse> responseObserver) {
 
-        OrganizationEntity organizationEntity;
+		List<OrganizationEntity> allOrganizationEntities = organizationRepository.findAll();
 
-        try {
+		List<Organization> allOrganizations = allOrganizationEntities.stream()
+				.map(organizationEntity -> organizationEntity.parseEntity().getOrganization())
+				.collect(Collectors.toList());
 
-            organizationEntity = organizationRepository
-                    .findById(request.getId())
-                    .orElseThrow(IllegalArgumentException::new);
+		GetOrganizationsResponse getOrganizationResponse = GetOrganizationsResponse.newBuilder()
+				.addAllOrganizations(allOrganizations)
+				.build();
 
-        } catch (IllegalArgumentException illegalArgumentException) {
+		ServiceUtil.returnObject(responseObserver, getOrganizationResponse);
+	}
 
-            GetOrganizationByIdResponse getOrganizationByIdResponse = GetOrganizationByIdResponse
-                    .newBuilder()
-                    .build();
+	@Override
+	public void getOrganizationById(GetObjectByIdRequest request, StreamObserver<Organization> responseObserver) {
 
-            ServiceUtil.returnObject(responseObserver, getOrganizationByIdResponse);
+		OrganizationEntity organizationEntity;
 
-            return;
-        }
+		try {
 
-        Organization organization = organizationEntity.parseEntity().getOrganization();
+			organizationEntity = organizationRepository.findById(request.getId()).orElseThrow(IllegalArgumentException::new);
 
-        GetOrganizationByIdResponse getOrganizationByIdResponse = GetOrganizationByIdResponse
-                .newBuilder()
-                .setOrganization(organization)
-                .build();
+		} catch (IllegalArgumentException illegalArgumentException) {
 
-       ServiceUtil.returnObject(responseObserver, getOrganizationByIdResponse);
-    }
+			ServiceUtil.returnObject(responseObserver, Organization.newBuilder().build());
 
-    @Override
-    public void updateOrganization(UpdateOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+			return;
+		}
 
-        if (!organizationRepository.findById(request.getOrganization().getId()).isPresent()) {
+		Organization organization = organizationEntity.parseEntity().getOrganization();
 
-            ServiceUtil.returnInvalidArgumentError(responseObserver, "An organization with this ID does not exist.");
+		ServiceUtil.returnObject(responseObserver, organization);
+	}
 
-            return;
-        }
+	@Override
+	public void updateOrganization(UpdateOrganizationRequest request, StreamObserver<Organization> responseObserver) {
 
-        OrganizationMessage organizationMessage = new OrganizationMessage(request.getOrganization());
+		HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(),
+				request.getOrganization().getId(), Permission.ORGANIZATION_UPDATE);
 
-        ServiceUtil.saveEntity(organizationMessage, organizationRepository);
+		if (!accountService.hasPermission(hasPermissionRequest).getValue()) {
 
-        ServiceUtil.returnEmpty(responseObserver);
-    }
+			ServiceUtil.returnPermissionDeniedError(responseObserver);
 
-    @Override
-    public void removeOrganization(RemoveOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+			return;
+		}
 
-        long organizationId = request.getOrganizationId();
+		if (!organizationRepository.findById(request.getOrganization().getId()).isPresent()) {
 
-        boolean deleteSuccessful = ServiceUtil.deleteEntity(organizationId, organizationRepository);
+			ServiceUtil.returnInvalidArgumentError(responseObserver, "An organization with this ID does not exist.");
 
-        if (!deleteSuccessful) {
+			return;
+		}
 
-            ServiceUtil.returnInvalidArgumentError(responseObserver, "Cannot find organization from given ID.");
+		OrganizationMessage organizationMessage = new OrganizationMessage(request.getOrganization());
 
-            return;
-        }
+		ServiceUtil.saveEntity(organizationMessage, organizationRepository);
 
-        ServiceUtil.returnEmpty(responseObserver);
-    }
+		ServiceUtil.returnObject(responseObserver, request.getOrganization());
+	}
 
-    @Override
-    public void addUsersToOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+	@Override
+	public void removeOrganization(RemoveOrganizationRequest request, StreamObserver<Organization> responseObserver) {
 
-        List<UserOrganizationEntity> userOrganizationEntities = new ArrayList<>();
+		HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(),
+				request.getOrganizationId(), Permission.ORGANIZATION_REMOVE);
 
-        for (int index = 0; index < request.getUserIdsCount(); index++) {
+		if (!accountService.hasPermission(hasPermissionRequest).getValue()) {
 
-            UserOrganizationEntity userOrganizationEntity = UserOrganizationEntity.builder()
-                    .userId(request.getUserIds(index))
-                    .organizationId(request.getOrganizationId())
-                    .build();
+			ServiceUtil.returnPermissionDeniedError(responseObserver);
 
-            userOrganizationEntities.add(userOrganizationEntity);
-        }
+			return;
+		}
 
-        userOrganizationRepository.saveAll(userOrganizationEntities);
+		int organizationId = request.getOrganizationId();
 
-        ServiceUtil.returnEmpty(responseObserver);
-    }
+		OrganizationEntity organizationEntity;
 
-    @Override
-    public void removeUsersFromOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+		try {
 
-        List<Long> userIds = request.getUserIdsList();
+			organizationEntity = organizationRepository.findById(organizationId).orElseThrow(IllegalArgumentException::new);
 
-        List<UserOrganizationEntity> userOrganizationEntities = userOrganizationRepository
-                .findAllByOrganizationId(request.getOrganizationId());
+		} catch (IllegalArgumentException illegalArgumentException) {
 
-        List<UserOrganizationEntity> entitiesToDelete = new ArrayList<>();
+			ServiceUtil.returnInvalidArgumentError(responseObserver, "Cannot find organization from given ID.");
 
-        //TODO: Optimize!
+			return;
+		}
 
-        for (UserOrganizationEntity userOrganizationEntity : userOrganizationEntities) {
+		organizationRepository.delete(organizationEntity);
 
-            for (Long userId : userIds) {
+		ServiceUtil.returnObject(responseObserver, organizationEntity.parseEntity().getOrganization());
+	}
 
-                if (userOrganizationEntity.getUserId() == userId) {
+	@Override
+	public void addUsersToOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Empty> responseObserver) {
 
-                    entitiesToDelete.add(userOrganizationEntity);
-                }
-            }
-        }
+		HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(),
+				request.getOrganizationId(), Permission.ORGANIZATION_MEMBER_ADD);
 
-        userOrganizationRepository.deleteAll(entitiesToDelete);
+		if (!accountService.hasPermission(hasPermissionRequest).getValue()) {
 
-        ServiceUtil.returnEmpty(responseObserver);
-    }
+			ServiceUtil.returnPermissionDeniedError(responseObserver);
+
+			return;
+		}
+
+		List<UserOrganizationEntity> userOrganizationEntities = new ArrayList<>();
+
+		for (int index = 0; index < request.getUserIdsCount(); index++) {
+
+			UserOrganizationEntity userOrganizationEntity = UserOrganizationEntity.builder()
+					.userId(request.getUserIds(index))
+					.organizationId(request.getOrganizationId())
+					.build();
+
+			userOrganizationEntities.add(userOrganizationEntity);
+		}
+
+		userOrganizationRepository.saveAll(userOrganizationEntities);
+
+		ServiceUtil.returnEmpty(responseObserver);
+	}
+
+	@Override
+	public void removeUsersFromOrganization(UpdateUsersInOrganizationRequest request, StreamObserver<Empty> responseObserver) {
+
+		HasPermissionRequest hasPermissionRequest = ServiceUtil.createHasPermissionRequest(request.getUserId(),
+				request.getOrganizationId(), Permission.ORGANIZATION_MEMBER_REMOVE);
+
+		if (!accountService.hasPermission(hasPermissionRequest).getValue()) {
+
+			ServiceUtil.returnPermissionDeniedError(responseObserver);
+
+			return;
+		}
+
+		int organizationId = request.getOrganizationId();
+
+		List<Integer> userIds = request.getUserIdsList();
+
+		List<UserOrganizationEntity> entitiesToDelete = new ArrayList<>();
+
+		for (int userId : userIds) {
+
+			UserOrganizationEntity userOrganizationEntity = userOrganizationRepository.findByUserIdAndOrganizationId(userId,
+					organizationId);
+
+			if (userOrganizationEntity != null) {
+
+				entitiesToDelete.add(userOrganizationEntity);
+			}
+		}
+
+		userOrganizationRepository.deleteAll(entitiesToDelete);
+
+		ServiceUtil.returnEmpty(responseObserver);
+	}
 }

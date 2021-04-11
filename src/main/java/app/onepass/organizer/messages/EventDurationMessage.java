@@ -7,12 +7,12 @@ import lombok.Getter;
 
 public class EventDurationMessage implements BaseMessage<EventDurationMessage, EventDurationEntity> {
 
+	@Getter
+	EventDuration eventDuration;
+
 	public EventDurationMessage(EventDuration eventDuration) {
 		this.eventDuration = eventDuration;
 	}
-
-	@Getter
-	EventDuration eventDuration;
 
 	@Override
 	public EventDurationEntity parseMessage() {

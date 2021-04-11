@@ -25,18 +25,14 @@ public class EventTagEntity implements BaseEntity<EventTagMessage, EventTagEntit
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
-	private long eventId;
-	private long tagId;
+	private int id;
+	private int eventId;
+	private int tagId;
 
 	@Override
 	public EventTagMessage parseEntity() {
 
-		EventTag eventTag = EventTag.newBuilder()
-				.setId(id)
-				.setEventId(eventId)
-				.setTagId(tagId)
-				.build();
+		EventTag eventTag = EventTag.newBuilder().setId(id).setEventId(eventId).setTagId(tagId).build();
 
 		return new EventTagMessage(eventTag);
 	}

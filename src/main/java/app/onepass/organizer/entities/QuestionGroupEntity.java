@@ -27,11 +27,11 @@ public class QuestionGroupEntity implements BaseEntity<QuestionGroupMessage, Que
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
-	private long eventId;
+	private int id;
+	private int eventId;
 	@NotNull
 	private String type;
-	private long seq;
+	private int seq;
 	@NotNull
 	private String title;
 

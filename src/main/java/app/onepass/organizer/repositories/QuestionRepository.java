@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import app.onepass.organizer.entities.QuestionEntity;
 
 @Repository
-public interface QuestionRepository extends JpaRepository<QuestionEntity, Long> {
+public interface QuestionRepository extends JpaRepository<QuestionEntity, Integer> {
 
 	List<QuestionEntity> findAllByQuestionGroupId(long questionGroupId);
 }

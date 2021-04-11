@@ -4,7 +4,7 @@ import java.time.Instant;
 
 import app.onepass.apis.AnswerType;
 import app.onepass.apis.QuestionGroupType;
-import app.onepass.apis.Status;
+import app.onepass.apis.UserEvent.Status;
 
 public class TypeUtil {
 
@@ -13,7 +13,7 @@ public class TypeUtil {
 		switch (questionGroupType) {
 		case "PRE_EVENT":
 			return QuestionGroupType.PRE_EVENT;
-		case "POSY_EVENT":
+		case "POST_EVENT":
 			return QuestionGroupType.POST_EVENT;
 		}
 
@@ -53,9 +53,6 @@ public class TypeUtil {
 
 	public static com.google.protobuf.Timestamp toProtobufTimestamp(java.sql.Timestamp timestamp) {
 
-		return com.google.protobuf.Timestamp.newBuilder()
-				.setSeconds(timestamp.getTime())
-				.setNanos(timestamp.getNanos())
-				.build();
+		return com.google.protobuf.Timestamp.newBuilder().setSeconds(timestamp.getTime()).setNanos(timestamp.getNanos()).build();
 	}
 }

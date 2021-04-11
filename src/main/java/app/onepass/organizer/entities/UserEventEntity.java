@@ -7,7 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import com.google.protobuf.Int64Value;
+import com.google.protobuf.Int32Value;
+import com.google.protobuf.StringValue;
 
 import app.onepass.apis.UserEvent;
 import app.onepass.organizer.messages.UserEventMessage;
@@ -29,11 +30,10 @@ public class UserEventEntity implements BaseEntity<UserEventMessage, UserEventEn
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
-	private long userId;
-	private long eventId;
-	private Long rating;
-	@NotNull
+	private int id;
+	private int userId;
+	private int eventId;
+	private Integer rating;
 	private String ticket;
 	@NotNull
 	private String status;
@@ -45,12 +45,15 @@ public class UserEventEntity implements BaseEntity<UserEventMessage, UserEventEn
 				.setId(id)
 				.setUserId(userId)
 				.setEventId(eventId)
-				.setTicket(ticket)
 				.setStatus(TypeUtil.toStatus(status))
 				.build();
 
 		if (rating != null) {
-			userEvent.toBuilder().setRating(Int64Value.of(rating)).build();
+			userEvent.toBuilder().setRating(Int32Value.of(rating)).build();
+		}
+
+		if (ticket != null) {
+			userEvent.toBuilder().setTicket(StringValue.of(ticket)).build();
 		}
 
 		return new UserEventMessage(userEvent);

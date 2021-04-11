@@ -28,7 +28,7 @@ public class OrganizationEntity implements BaseEntity<OrganizationMessage, Organ
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private int id;
 	@NotNull
 	private String name;
 	private boolean isVerified;
@@ -50,11 +50,7 @@ public class OrganizationEntity implements BaseEntity<OrganizationMessage, Organ
 	@Override
 	public OrganizationMessage parseEntity() {
 
-		Organization organization = Organization.newBuilder()
-				.setId(id)
-				.setName(name)
-				.setIsVerified(isVerified)
-				.build();
+		Organization organization = Organization.newBuilder().setId(id).setName(name).setIsVerified(isVerified).build();
 
 		if (abbreviation != null) {
 			organization = organization.toBuilder().setAbbreviation(StringValue.of(abbreviation)).build();
