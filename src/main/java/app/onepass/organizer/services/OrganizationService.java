@@ -66,7 +66,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
 		userOrganizationRepository.save(userOrganizationEntity);
 
-		ServiceUtil.returnObject(responseObserver, request.getOrganization());
+		ServiceUtil.returnObject(responseObserver, savedEntity.parseEntity().getOrganization());
 	}
 
 	@Override
