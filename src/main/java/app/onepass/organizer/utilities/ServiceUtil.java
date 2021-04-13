@@ -16,6 +16,7 @@ import io.grpc.stub.StreamObserver;
 
 public class ServiceUtil {
 
+	@Deprecated
 	public static <M extends BaseMessage<M, E>, E extends BaseEntity<M, E>> boolean saveEntity(BaseMessage<M, E> message,
 			JpaRepository<E, Integer> repository) {
 
@@ -26,6 +27,7 @@ public class ServiceUtil {
 		return true;
 	}
 
+	@Deprecated
 	public static <M extends BaseMessage<M, E>, E extends BaseEntity<M, E>> boolean deleteEntity(int id,
 			JpaRepository<E, Integer> repository) {
 
