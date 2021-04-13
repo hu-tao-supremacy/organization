@@ -2,6 +2,7 @@ package app.onepass.organizer.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import app.onepass.apis.Permission;
 import app.onepass.apis.RemoveOrganizationRequest;
 import app.onepass.apis.UpdateOrganizationRequest;
 import app.onepass.apis.UpdateUsersInOrganizationRequest;
+import app.onepass.apis.User;
+import app.onepass.apis.UserListResponse;
 import app.onepass.apis.UserOrganization;
 import app.onepass.apis.UserOrganizationListResponse;
 import app.onepass.organizer.entities.OrganizationEntity;
@@ -26,6 +29,7 @@ import app.onepass.organizer.entities.UserOrganizationEntity;
 import app.onepass.organizer.messages.OrganizationMessage;
 import app.onepass.organizer.repositories.OrganizationRepository;
 import app.onepass.organizer.repositories.UserOrganizationRepository;
+import app.onepass.organizer.repositories.UserRepository;
 import app.onepass.organizer.utilities.ServiceUtil;
 import io.grpc.stub.StreamObserver;
 
@@ -40,6 +44,9 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
 	@Autowired
 	private UserOrganizationRepository userOrganizationRepository;
+
+	@Autowired
+	private UserRepository userRepository;
 
 	@Override
 	public void createOrganization(CreateOrganizationRequest request, StreamObserver<Organization> responseObserver) {
@@ -102,6 +109,24 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 		Organization organization = organizationEntity.parseEntity().getOrganization();
 
 		ServiceUtil.returnObject(responseObserver, organization);
+	}
+
+	@Override
+	public void getUsersInOrganizationById(GetObjectByIdRequest request, StreamObserver<UserListResponse> responseObserver) {
+
+		List<UserOrganizationEntity> userOrganizationEntities = userOrganizationRepository.findByOrganizationId(request.getId());
+
+		List<User> users = userOrganizationEntities.stream()
+				.map(userOrganizationEntity -> userRepository.findById(userOrganizationEntity.getUserId()))
+				.filter(Optional::isPresent)
+				.map(userEntity -> userEntity.get().parseEntity().getUser())
+				.collect(Collectors.toList());
+
+		UserListResponse userListResponse = UserListResponse.newBuilder()
+				.addAllUsers(users)
+				.build();
+
+		ServiceUtil.returnObject(responseObserver, userListResponse);
 	}
 
 	@Override

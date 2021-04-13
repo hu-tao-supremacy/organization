@@ -35,6 +35,7 @@ import app.onepass.apis.UpdateRegistrationRequestRequest;
 import app.onepass.apis.UpdateTagRequest;
 import app.onepass.apis.UpdateUsersInOrganizationRequest;
 import app.onepass.apis.UserEvent;
+import app.onepass.apis.UserListResponse;
 import app.onepass.apis.UserOrganizationListResponse;
 import app.onepass.organizer.utilities.ExceptionCatcher;
 import io.grpc.stub.StreamObserver;
@@ -71,6 +72,11 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	@Override
 	public void getOrganizationById(GetObjectByIdRequest request, StreamObserver<Organization> responseObserver) {
 		ExceptionCatcher.catcher(organizationService::getOrganizationById, request, responseObserver);
+	}
+
+	@Override
+	public void getUsersInOrganizationById(GetObjectByIdRequest request, StreamObserver<UserListResponse> responseObserver) {
+		ExceptionCatcher.catcher(organizationService::getUsersInOrganizationById, request, responseObserver);
 	}
 
 	@Override
