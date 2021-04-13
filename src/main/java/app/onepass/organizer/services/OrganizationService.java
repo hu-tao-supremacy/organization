@@ -94,7 +94,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
 		} catch (IllegalArgumentException illegalArgumentException) {
 
-			ServiceUtil.returnObject(responseObserver, Organization.newBuilder().build());
+			ServiceUtil.returnInvalidArgumentError(responseObserver, "There is no organization with the specified ID.");
 
 			return;
 		}
