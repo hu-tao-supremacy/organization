@@ -9,6 +9,7 @@ import com.google.protobuf.Empty;
 
 import app.onepass.apis.AddQuestionGroupsRequest;
 import app.onepass.apis.AddQuestionsRequest;
+import app.onepass.apis.AnswerListResponse;
 import app.onepass.apis.CreateEventRequest;
 import app.onepass.apis.CreateOrganizationRequest;
 import app.onepass.apis.CreateTagRequest;
@@ -169,6 +170,11 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	@Transactional
 	public void removeQuestions(RemoveQuestionsRequest request, StreamObserver<QuestionListResponse> responseObserver) {
 		ExceptionCatcher.catcher(questionService::removeQuestions, request, responseObserver);
+	}
+
+	@Override
+	public void getAnswersByQuestionId(GetObjectByIdRequest request, StreamObserver<AnswerListResponse> responseObserver) {
+		ExceptionCatcher.catcher(questionService::getAnswersByQuestionId, request, responseObserver);
 	}
 
 	@Override

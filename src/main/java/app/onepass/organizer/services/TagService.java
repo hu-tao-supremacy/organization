@@ -16,6 +16,7 @@ import app.onepass.apis.Permission;
 import app.onepass.apis.Tag;
 import app.onepass.apis.UpdateTagRequest;
 import app.onepass.organizer.entities.EventTagEntity;
+import app.onepass.organizer.entities.TagEntity;
 import app.onepass.organizer.messages.TagMessage;
 import app.onepass.organizer.repositories.EventRepository;
 import app.onepass.organizer.repositories.EventTagRepository;
@@ -60,9 +61,9 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
         TagMessage tagMessage = new TagMessage(request.getTag());
 
-        ServiceUtil.saveEntity(tagMessage, tagRepository);
+        TagEntity savedEntity = tagRepository.save(tagMessage.parseMessage());
 
-        ServiceUtil.returnObject(responseObserver, request.getTag());
+        ServiceUtil.returnObject(responseObserver, savedEntity.parseEntity().getTag());
     }
 
     @Override
@@ -86,9 +87,9 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
             entitiesToAdd.add(eventTagEntity);
         }
 
-        eventTagRepository.saveAll(entitiesToAdd);
+        List<EventTagEntity> addedEntities = eventTagRepository.saveAll(entitiesToAdd);
 
-        List<EventTag> eventTags = entitiesToAdd.stream()
+        List<EventTag> eventTags = addedEntities.stream()
                 .map(eventTagEntity -> eventTagEntity.parseEntity().getEventTag())
                 .collect(Collectors.toList());
 

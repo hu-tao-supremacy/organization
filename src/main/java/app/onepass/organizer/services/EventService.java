@@ -69,9 +69,9 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		EventMessage eventMessage = new EventMessage(request.getEvent());
 
-		ServiceUtil.saveEntity(eventMessage, eventRepository);
+		EventEntity savedEntity = eventRepository.save(eventMessage.parseMessage());
 
-		ServiceUtil.returnObject(responseObserver, request.getEvent());
+		ServiceUtil.returnObject(responseObserver, savedEntity.parseEntity().getEvent());
 	}
 
 	@Override
@@ -103,9 +103,9 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		EventMessage eventMessage = new EventMessage(request.getEvent());
 
-		ServiceUtil.saveEntity(eventMessage, eventRepository);
+		EventEntity savedEntity = eventRepository.save(eventMessage.parseMessage());
 
-		ServiceUtil.returnObject(responseObserver, request.getEvent());
+		ServiceUtil.returnObject(responseObserver, savedEntity.parseEntity().getEvent());
 	}
 
 	@Override
@@ -165,9 +165,9 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 			entitiesToAdd.add(eventDurationEntity);
 		}
 
-		eventDurationRepository.saveAll(entitiesToAdd);
+		List<EventDurationEntity> addedEntities = eventDurationRepository.saveAll(entitiesToAdd);
 
-		List<EventDuration> eventDurations = entitiesToAdd.stream()
+		List<EventDuration> eventDurations = addedEntities.stream()
 				.map(eventDurationEntity -> eventDurationEntity.parseEntity().getEventDuration())
 				.collect(Collectors.toList());
 
@@ -199,9 +199,9 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		userEventEntity.setStatus(request.getStatus().toString());
 
-		userEventRepository.save(userEventEntity);
+		UserEventEntity savedEntity = userEventRepository.save(userEventEntity);
 
-		ServiceUtil.returnObject(responseObserver, userEventEntity.parseEntity().getUserEvent());
+		ServiceUtil.returnObject(responseObserver, savedEntity.parseEntity().getUserEvent());
 	}
 
 	@Override

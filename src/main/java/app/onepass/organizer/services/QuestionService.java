@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 
 import app.onepass.apis.AddQuestionGroupsRequest;
 import app.onepass.apis.AddQuestionsRequest;
+import app.onepass.apis.Answer;
+import app.onepass.apis.AnswerListResponse;
+import app.onepass.apis.GetObjectByIdRequest;
 import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.Permission;
 import app.onepass.apis.Question;
@@ -18,10 +21,12 @@ import app.onepass.apis.QuestionGroupListResponse;
 import app.onepass.apis.QuestionListResponse;
 import app.onepass.apis.RemoveQuestionGroupsRequest;
 import app.onepass.apis.RemoveQuestionsRequest;
+import app.onepass.organizer.entities.AnswerEntity;
 import app.onepass.organizer.entities.QuestionEntity;
 import app.onepass.organizer.entities.QuestionGroupEntity;
 import app.onepass.organizer.messages.QuestionGroupMessage;
 import app.onepass.organizer.messages.QuestionMessage;
+import app.onepass.organizer.repositories.AnswerRepository;
 import app.onepass.organizer.repositories.EventRepository;
 import app.onepass.organizer.repositories.QuestionGroupRepository;
 import app.onepass.organizer.repositories.QuestionRepository;
@@ -42,6 +47,9 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 
 	@Autowired
 	private QuestionGroupRepository questionGroupRepository;
+
+	@Autowired
+	private AnswerRepository answerRepository;
 
 	@Override
 	public void addQuestionGroups(AddQuestionGroupsRequest request, StreamObserver<QuestionGroupListResponse> responseObserver) {
@@ -79,9 +87,9 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 			entitiesToAdd.add(questionGroupMessage.parseMessage());
 		}
 
-		questionGroupRepository.saveAll(entitiesToAdd);
+		List<QuestionGroupEntity> addedEntities = questionGroupRepository.saveAll(entitiesToAdd);
 
-		List<QuestionGroup> questionGroups = entitiesToAdd.stream()
+		List<QuestionGroup> questionGroups = addedEntities.stream()
 				.map(eventTagEntity -> eventTagEntity.parseEntity().getQuestionGroup())
 				.collect(Collectors.toList());
 
@@ -175,9 +183,9 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 			entitiesToAdd.add(questionMessage.parseMessage());
 		}
 
-		questionRepository.saveAll(entitiesToAdd);
+		List<QuestionEntity> addedEntities = questionRepository.saveAll(entitiesToAdd);
 
-		List<Question> questions = entitiesToAdd.stream()
+		List<Question> questions = addedEntities.stream()
 				.map(eventTagEntity -> eventTagEntity.parseEntity().getQuestion())
 				.collect(Collectors.toList());
 
@@ -254,6 +262,22 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 				.build();
 
 		ServiceUtil.returnObject(responseObserver, questionListResponse);
+	}
+
+	@Override
+	public void getAnswersByQuestionId(GetObjectByIdRequest request, StreamObserver<AnswerListResponse> responseObserver) {
+
+		List<AnswerEntity> answerEntities = answerRepository.findAllByQuestionId(request.getId());
+
+		List<Answer> answers = answerEntities.stream()
+				.map(answerEntity -> answerEntity.parseEntity().getAnswer())
+				.collect(Collectors.toList());
+
+		AnswerListResponse answerListResponse = AnswerListResponse.newBuilder()
+				.addAllAnswers(answers)
+				.build();
+
+		ServiceUtil.returnObject(responseObserver, answerListResponse);
 	}
 
 	private <T> boolean hasValidEventId(StreamObserver<T> responseObserver, int questionGroupId, int userId) {
