@@ -3,6 +3,7 @@ package app.onepass.organizer.utilities;
 import java.time.Instant;
 
 import app.onepass.apis.AnswerType;
+import app.onepass.apis.Gender;
 import app.onepass.apis.QuestionGroupType;
 import app.onepass.apis.UserEvent.Status;
 
@@ -17,7 +18,7 @@ public class TypeUtil {
 			return QuestionGroupType.POST_EVENT;
 		}
 
-		return QuestionGroupType.POST_EVENT;
+		return QuestionGroupType.QUESTION_GROUP_TYPE_UNSPECIFIED;
 	}
 
 	public static AnswerType toAnswerType(String answerType) {
@@ -29,7 +30,7 @@ public class TypeUtil {
 			return AnswerType.TEXT;
 		}
 
-		return AnswerType.TEXT;
+		return AnswerType.ANSWER_TYPE_UNSPECIFIED;
 	}
 
 	public static Status toStatus(String status) {
@@ -43,7 +44,21 @@ public class TypeUtil {
 			return Status.REJECTED;
 		}
 
-		return Status.PENDING;
+		return Status.STATUS_UNSPECIFIED;
+	}
+
+	public static Gender toGender(String gender) {
+
+		switch (gender) {
+		case "M":
+			return Gender.M;
+		case "F":
+			return Gender.F;
+		case "NS":
+			return Gender.NS;
+		}
+
+		return Gender.GENDER_UNSPECIFIED;
 	}
 
 	public static java.sql.Timestamp toSqlTimestamp(com.google.protobuf.Timestamp timestamp) {
