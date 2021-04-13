@@ -55,9 +55,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
 		OrganizationMessage organizationMessage = new OrganizationMessage(request.getOrganization());
 
-		ServiceUtil.saveEntity(organizationMessage, organizationRepository);
-
-		OrganizationEntity savedEntity = organizationRepository.findByName(request.getOrganization().getName());
+		OrganizationEntity savedEntity = organizationRepository.save(organizationMessage.parseMessage());
 
 		UserOrganizationEntity userOrganizationEntity = UserOrganizationEntity.builder()
 				.userId(request.getUserId())
@@ -128,9 +126,9 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
 		OrganizationMessage organizationMessage = new OrganizationMessage(request.getOrganization());
 
-		ServiceUtil.saveEntity(organizationMessage, organizationRepository);
+		OrganizationEntity savedEntity = organizationRepository.save(organizationMessage.parseMessage());
 
-		ServiceUtil.returnObject(responseObserver, request.getOrganization());
+		ServiceUtil.returnObject(responseObserver, savedEntity.parseEntity().getOrganization());
 	}
 
 	@Override
@@ -191,14 +189,14 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 			entitiesToAdd.add(userOrganizationEntity);
 		}
 
-		userOrganizationRepository.saveAll(entitiesToAdd);
+		List<UserOrganizationEntity> addedEntities = userOrganizationRepository.saveAll(entitiesToAdd);
 
-		List<UserOrganization> UserOrganizations = entitiesToAdd.stream()
+		List<UserOrganization> userOrganizations = addedEntities.stream()
 				.map(UserOrganizationEntity -> UserOrganizationEntity.parseEntity().getUserOrganization())
 				.collect(Collectors.toList());
 
 		UserOrganizationListResponse userOrganizationListResponse = UserOrganizationListResponse.newBuilder()
-				.addAllUserOrganizations(UserOrganizations)
+				.addAllUserOrganizations(userOrganizations)
 				.build();
 
 		ServiceUtil.returnObject(responseObserver, userOrganizationListResponse);

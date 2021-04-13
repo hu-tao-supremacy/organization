@@ -87,9 +87,9 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 			entitiesToAdd.add(questionGroupMessage.parseMessage());
 		}
 
-		questionGroupRepository.saveAll(entitiesToAdd);
+		List<QuestionGroupEntity> addedEntities = questionGroupRepository.saveAll(entitiesToAdd);
 
-		List<QuestionGroup> questionGroups = entitiesToAdd.stream()
+		List<QuestionGroup> questionGroups = addedEntities.stream()
 				.map(eventTagEntity -> eventTagEntity.parseEntity().getQuestionGroup())
 				.collect(Collectors.toList());
 
@@ -183,9 +183,9 @@ public class QuestionService extends OrganizerServiceGrpc.OrganizerServiceImplBa
 			entitiesToAdd.add(questionMessage.parseMessage());
 		}
 
-		questionRepository.saveAll(entitiesToAdd);
+		List<QuestionEntity> addedEntities = questionRepository.saveAll(entitiesToAdd);
 
-		List<Question> questions = entitiesToAdd.stream()
+		List<Question> questions = addedEntities.stream()
 				.map(eventTagEntity -> eventTagEntity.parseEntity().getQuestion())
 				.collect(Collectors.toList());
 
