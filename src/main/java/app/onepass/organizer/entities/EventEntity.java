@@ -40,7 +40,6 @@ public class EventEntity implements BaseEntity<EventMessage, EventEntity> {
 	private String coverImageHash;
 	private String posterImageUrl;
 	private String posterImageHash;
-	@NotNull
 	private String contact;
 	private String profileImageUrl;
 	private String profileImageHash;
@@ -54,7 +53,6 @@ public class EventEntity implements BaseEntity<EventMessage, EventEntity> {
 				.setOrganizationId(organizationId)
 				.setDescription(description)
 				.setName(name)
-				.setContact(contact)
 				.setAttendeeLimit(attendeeLimit)
 				.build();
 
@@ -84,6 +82,10 @@ public class EventEntity implements BaseEntity<EventMessage, EventEntity> {
 
 		if (profileImageHash != null) {
 			event = event.toBuilder().setProfileImageHash(StringValue.of(profileImageHash)).build();
+		}
+
+		if (contact != null) {
+			event = event.toBuilder().setContact(StringValue.of(contact)).build();
 		}
 
 		return new EventMessage(event);
