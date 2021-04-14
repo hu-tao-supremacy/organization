@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import app.onepass.organizer.entities.AnswerEntity;
 
+@Repository
 public interface AnswerRepository extends JpaRepository<AnswerEntity, Integer> {
 
 	List<AnswerEntity> findAllByQuestionId(int questionId);
