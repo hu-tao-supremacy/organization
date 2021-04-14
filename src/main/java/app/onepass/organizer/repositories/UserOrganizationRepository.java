@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import app.onepass.organizer.entities.UserOrganizationEntity;
 
+@Repository
 public interface UserOrganizationRepository extends JpaRepository<UserOrganizationEntity, Integer> {
 
 	List<UserOrganizationEntity> findByOrganizationId(int organizationId);
