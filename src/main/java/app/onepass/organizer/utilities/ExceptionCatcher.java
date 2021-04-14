@@ -27,7 +27,7 @@ public class ExceptionCatcher {
 
 		} catch (StatusRuntimeException exception) {
 
-			responseObserver.onError(Status.UNAVAILABLE.withDescription("Exception occurred on other services.").asException());
+			responseObserver.onError(Status.fromThrowable(exception).withDescription(exception.getMessage()).asException());
 
 			throw exception;
 		}
