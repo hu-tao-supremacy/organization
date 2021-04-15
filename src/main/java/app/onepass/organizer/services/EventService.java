@@ -2,6 +2,7 @@ package app.onepass.organizer.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import app.onepass.apis.Duration;
 import app.onepass.apis.Event;
 import app.onepass.apis.EventDuration;
 import app.onepass.apis.EventDurationListResponse;
+import app.onepass.apis.GenerateTicketRequest;
 import app.onepass.apis.HasEventRequest;
 import app.onepass.apis.HasPermissionRequest;
 import app.onepass.apis.OrganizerServiceGrpc;
@@ -60,7 +62,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 			return;
 		}
 
-		if (eventRepository.findById(request.getEvent().getId()).isPresent()) {
+		if (eventRepository.existsById(request.getEvent().getId())) {
 
 			ServiceUtil.returnInvalidArgumentError(responseObserver, "An event with this ID already exists.");
 
@@ -94,7 +96,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 			return;
 		}
 
-		if (!eventRepository.findById(request.getEvent().getId()).isPresent()) {
+		if (!eventRepository.existsById(request.getEvent().getId())) {
 
 			ServiceUtil.returnInvalidArgumentError(responseObserver, "An event with this ID does not exist.");
 
@@ -231,5 +233,26 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 			ServiceUtil.returnInvalidArgumentError(responseObserver, "The event is not hosted by this organization.");
 
 		}
+	}
+
+	@Override
+	public void generateTicket(GenerateTicketRequest request, StreamObserver<UserEvent> responseObserver) {
+
+		String ticketCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+		int ticketLength = 6;
+
+		String generatedTicket = (new Random()).ints(ticketLength, 0, ticketCharacters.length() - 1)
+				.map(ticketCharacters::charAt)
+				.collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+				.toString();
+
+		UserEventEntity userEventEntity = userEventRepository.findByUserIdAndEventId(request.getUserId(), request.getEventId());
+
+		userEventEntity.setTicket(generatedTicket);
+
+		UserEventEntity savedEntity = userEventRepository.save(userEventEntity);
+
+		ServiceUtil.returnObject(responseObserver, savedEntity.parseEntity().getUserEvent());
 	}
 }

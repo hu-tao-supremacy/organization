@@ -37,6 +37,7 @@ public class UserEventEntity implements BaseEntity<UserEventMessage, UserEventEn
 	private String ticket;
 	@NotNull
 	private String status;
+	private boolean isInternal;
 
 	@Override
 	public UserEventMessage parseEntity() {
@@ -46,14 +47,15 @@ public class UserEventEntity implements BaseEntity<UserEventMessage, UserEventEn
 				.setUserId(userId)
 				.setEventId(eventId)
 				.setStatus(TypeUtil.toStatus(status))
+				.setIsInternal(isInternal)
 				.build();
 
 		if (rating != null) {
-			userEvent.toBuilder().setRating(Int32Value.of(rating)).build();
+			userEvent = userEvent.toBuilder().setRating(Int32Value.of(rating)).build();
 		}
 
 		if (ticket != null) {
-			userEvent.toBuilder().setTicket(StringValue.of(ticket)).build();
+			userEvent = userEvent.toBuilder().setTicket(StringValue.of(ticket)).build();
 		}
 
 		return new UserEventMessage(userEvent);

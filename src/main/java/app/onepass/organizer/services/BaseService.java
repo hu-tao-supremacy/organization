@@ -11,25 +11,32 @@ import app.onepass.apis.AddQuestionGroupsRequest;
 import app.onepass.apis.AddQuestionsRequest;
 import app.onepass.apis.AnswerListResponse;
 import app.onepass.apis.CreateEventRequest;
+import app.onepass.apis.CreateLocationRequest;
 import app.onepass.apis.CreateOrganizationRequest;
 import app.onepass.apis.CreateTagRequest;
 import app.onepass.apis.Event;
 import app.onepass.apis.EventDurationListResponse;
 import app.onepass.apis.EventTagListResponse;
+import app.onepass.apis.GenerateTicketRequest;
 import app.onepass.apis.GetObjectByIdRequest;
+import app.onepass.apis.GetObjectByNameRequest;
 import app.onepass.apis.HasEventRequest;
+import app.onepass.apis.Location;
+import app.onepass.apis.LocationListResponse;
 import app.onepass.apis.Organization;
 import app.onepass.apis.OrganizationListResponse;
 import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.QuestionGroupListResponse;
 import app.onepass.apis.QuestionListResponse;
 import app.onepass.apis.RemoveEventRequest;
+import app.onepass.apis.RemoveLocationRequest;
 import app.onepass.apis.RemoveOrganizationRequest;
 import app.onepass.apis.RemoveQuestionGroupsRequest;
 import app.onepass.apis.RemoveQuestionsRequest;
 import app.onepass.apis.Tag;
 import app.onepass.apis.UpdateEventDurationRequest;
 import app.onepass.apis.UpdateEventRequest;
+import app.onepass.apis.UpdateLocationRequest;
 import app.onepass.apis.UpdateOrganizationRequest;
 import app.onepass.apis.UpdateRegistrationRequestRequest;
 import app.onepass.apis.UpdateTagRequest;
@@ -57,6 +64,9 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Autowired
 	PingService pingService;
+
+	@Autowired
+	LocationService locationService;
 
 	@Override
 	@Transactional
@@ -181,6 +191,41 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	@Override
 	public void getAnswersByQuestionId(GetObjectByIdRequest request, StreamObserver<AnswerListResponse> responseObserver) {
 		ExceptionCatcher.catcher(questionService::getAnswersByQuestionId, request, responseObserver);
+	}
+
+	@Override
+	public void createLocation(CreateLocationRequest request, StreamObserver<Location> responseObserver) {
+		ExceptionCatcher.catcher(locationService::createLocation, request, responseObserver);
+	}
+
+	@Override
+	public void getLocations(Empty request, StreamObserver<LocationListResponse> responseObserver) {
+		ExceptionCatcher.catcher(locationService::getLocations, request, responseObserver);
+	}
+
+	@Override
+	public void getLocationById(GetObjectByIdRequest request, StreamObserver<Location> responseObserver) {
+		ExceptionCatcher.catcher(locationService::getLocationById, request, responseObserver);
+	}
+
+	@Override
+	public void searchLocationsByName(GetObjectByNameRequest request, StreamObserver<LocationListResponse> responseObserver) {
+		ExceptionCatcher.catcher(locationService::searchLocationsByName, request, responseObserver);
+	}
+
+	@Override
+	public void updateLocation(UpdateLocationRequest request, StreamObserver<Location> responseObserver) {
+		ExceptionCatcher.catcher(locationService::updateLocation, request, responseObserver);
+	}
+
+	@Override
+	public void removeLocation(RemoveLocationRequest request, StreamObserver<Location> responseObserver) {
+		ExceptionCatcher.catcher(locationService::removeLocation, request, responseObserver);
+	}
+
+	@Override
+	public void generateTicket(GenerateTicketRequest request, StreamObserver<UserEvent> responseObserver) {
+		ExceptionCatcher.catcher(eventService::generateTicket, request, responseObserver);
 	}
 
 	@Override

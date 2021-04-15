@@ -53,7 +53,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 
 		int organizationId = request.getOrganization().getId();
 
-		if (organizationRepository.findById(organizationId).isPresent()) {
+		if (organizationRepository.existsById(organizationId)) {
 
 			ServiceUtil.returnInvalidArgumentError(responseObserver, "An organization with this ID already exists.");
 
@@ -142,7 +142,7 @@ public class OrganizationService extends OrganizerServiceGrpc.OrganizerServiceIm
 			return;
 		}
 
-		if (!organizationRepository.findById(request.getOrganization().getId()).isPresent()) {
+		if (!organizationRepository.existsById(request.getOrganization().getId())) {
 
 			ServiceUtil.returnInvalidArgumentError(responseObserver, "An organization with this ID does not exist.");
 
