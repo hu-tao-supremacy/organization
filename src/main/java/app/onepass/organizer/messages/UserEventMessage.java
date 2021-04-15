@@ -23,6 +23,7 @@ public class UserEventMessage implements BaseMessage<UserEventMessage, UserEvent
 				.rating(userEvent.hasRating() ? userEvent.getRating().getValue() : null)
 				.ticket(userEvent.hasTicket() ? userEvent.getTicket().getValue() : null)
 				.status(userEvent.getStatus().toString())
+				.isInternal(userEvent.getIsInternal())
 				.build();
 	}
 }
