@@ -51,11 +51,11 @@ public class UserEventEntity implements BaseEntity<UserEventMessage, UserEventEn
 				.build();
 
 		if (rating != null) {
-			userEvent.toBuilder().setRating(Int32Value.of(rating)).build();
+			userEvent = userEvent.toBuilder().setRating(Int32Value.of(rating)).build();
 		}
 
 		if (ticket != null) {
-			userEvent.toBuilder().setTicket(StringValue.of(ticket)).build();
+			userEvent = userEvent.toBuilder().setTicket(StringValue.of(ticket)).build();
 		}
 
 		return new UserEventMessage(userEvent);

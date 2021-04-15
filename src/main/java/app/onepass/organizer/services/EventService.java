@@ -251,8 +251,8 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		userEventEntity.setTicket(generatedTicket);
 
-		userEventRepository.save(userEventEntity);
+		UserEventEntity savedEntity = userEventRepository.save(userEventEntity);
 
-		ServiceUtil.returnObject(responseObserver, userEventEntity.parseEntity().getUserEvent());
+		ServiceUtil.returnObject(responseObserver, savedEntity.parseEntity().getUserEvent());
 	}
 }
