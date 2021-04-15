@@ -52,7 +52,7 @@ public class TagService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
             return;
         }
 
-        if (tagRepository.findById(request.getTag().getId()).isPresent()) {
+        if (tagRepository.existsById(request.getTag().getId())) {
 
             ServiceUtil.returnInvalidArgumentError(responseObserver, "A tag with this ID already exists.");
 

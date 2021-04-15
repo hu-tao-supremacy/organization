@@ -62,7 +62,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 			return;
 		}
 
-		if (eventRepository.findById(request.getEvent().getId()).isPresent()) {
+		if (eventRepository.existsById(request.getEvent().getId())) {
 
 			ServiceUtil.returnInvalidArgumentError(responseObserver, "An event with this ID already exists.");
 
@@ -96,7 +96,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 			return;
 		}
 
-		if (!eventRepository.findById(request.getEvent().getId()).isPresent()) {
+		if (!eventRepository.existsById(request.getEvent().getId())) {
 
 			ServiceUtil.returnInvalidArgumentError(responseObserver, "An event with this ID does not exist.");
 
