@@ -22,6 +22,7 @@ public class EventMessage implements BaseMessage<EventMessage, EventEntity> {
 				.locationId(event.hasLocationId() ? event.getLocationId().getValue() : null)
 				.description(event.getDescription())
 				.name(event.getName())
+				.attendeeLimit(event.getAttendeeLimit())
 				.coverImageUrl(event.hasCoverImageUrl() ? event.getCoverImageUrl().getValue() : null)
 				.coverImageHash(event.hasCoverImageHash() ? event.getCoverImageHash().getValue() : null)
 				.posterImageUrl(event.hasPosterImageUrl() ? event.getPosterImageUrl().getValue() : null)
