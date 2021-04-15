@@ -200,7 +200,7 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	public void getLocations(Empty request, StreamObserver<LocationListResponse> responseObserver) {
-		ExceptionCatcher.catcher(locationService.getLocations, request, responseObserver);
+		ExceptionCatcher.catcher(locationService::getLocations, request, responseObserver);
 	}
 
 	@Override
