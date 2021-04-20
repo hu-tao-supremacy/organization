@@ -37,15 +37,20 @@ public class EventDurationEntity implements BaseEntity<EventDurationMessage, Eve
 	@Override
 	public EventDurationMessage parseEntity() {
 
-		com.google.protobuf.Timestamp startTime = TypeUtil.toProtobufTimestamp(start);
-		com.google.protobuf.Timestamp finishTime = TypeUtil.toProtobufTimestamp(finish);
-
 		EventDuration eventDuration = EventDuration.newBuilder()
 				.setId(id)
 				.setEventId(eventId)
-				.setStart(startTime)
-				.setFinish(finishTime)
 				.build();
+
+		if (start != null) {
+			com.google.protobuf.Timestamp startTime = TypeUtil.toProtobufTimestamp(start);
+			eventDuration = eventDuration.toBuilder().setStart(startTime).build();
+		}
+
+		if (finish != null) {
+			com.google.protobuf.Timestamp finishTime = TypeUtil.toProtobufTimestamp(finish);
+			eventDuration = eventDuration.toBuilder().setFinish(finishTime).build();
+		}
 
 		return new EventDurationMessage(eventDuration);
 	}
