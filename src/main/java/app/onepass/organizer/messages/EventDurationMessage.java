@@ -23,8 +23,8 @@ public class EventDurationMessage implements BaseMessage<EventDurationMessage, E
 		return EventDurationEntity.builder()
 				.id(eventDuration.getId())
 				.eventId(eventDuration.getEventId())
-				.start(startTime)
-				.finish(finishTime)
+				.start(eventDuration.hasStart() ? startTime : null)
+				.finish(eventDuration.hasFinish() ? finishTime : null)
 				.build();
 	}
 }

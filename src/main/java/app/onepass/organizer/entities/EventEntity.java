@@ -12,6 +12,7 @@ import com.google.protobuf.StringValue;
 
 import app.onepass.apis.Event;
 import app.onepass.organizer.messages.EventMessage;
+import app.onepass.organizer.utilities.TypeUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -44,6 +45,7 @@ public class EventEntity implements BaseEntity<EventMessage, EventEntity> {
 	private String profileImageUrl;
 	private String profileImageHash;
 	private int attendeeLimit;
+	private java.sql.Timestamp registrationDueDate;
 
 	@Override
 	public EventMessage parseEntity() {
@@ -86,6 +88,11 @@ public class EventEntity implements BaseEntity<EventMessage, EventEntity> {
 
 		if (contact != null) {
 			event = event.toBuilder().setContact(StringValue.of(contact)).build();
+		}
+
+		if (registrationDueDate != null) {
+			com.google.protobuf.Timestamp dueDate = TypeUtil.toProtobufTimestamp(registrationDueDate);
+			event = event.toBuilder().setRegistrationDueDate(dueDate).build();
 		}
 
 		return new EventMessage(event);

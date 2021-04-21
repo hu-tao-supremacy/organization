@@ -2,6 +2,7 @@ package app.onepass.organizer.messages;
 
 import app.onepass.apis.Event;
 import app.onepass.organizer.entities.EventEntity;
+import app.onepass.organizer.utilities.TypeUtil;
 import lombok.Getter;
 
 public class EventMessage implements BaseMessage<EventMessage, EventEntity> {
@@ -15,6 +16,8 @@ public class EventMessage implements BaseMessage<EventMessage, EventEntity> {
 
 	@Override
 	public EventEntity parseMessage() {
+
+		java.sql.Timestamp dueDate = TypeUtil.toSqlTimestamp(event.getRegistrationDueDate());
 
 		return EventEntity.builder()
 				.id(event.getId())
@@ -30,6 +33,7 @@ public class EventMessage implements BaseMessage<EventMessage, EventEntity> {
 				.contact(event.hasContact() ? event.getContact().getValue() : null)
 				.profileImageUrl(event.hasProfileImageUrl() ? event.getProfileImageUrl().getValue() : null)
 				.profileImageHash(event.hasProfileImageHash() ? event.getProfileImageHash().getValue() : null)
+				.registrationDueDate(event.hasRegistrationDueDate() ? dueDate : null)
 				.build();
 	}
 }
