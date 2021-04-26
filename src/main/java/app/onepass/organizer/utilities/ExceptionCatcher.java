@@ -21,7 +21,7 @@ public class ExceptionCatcher {
 
 		} catch (DataAccessException exception) {
 
-			responseObserver.onError(Status.UNAVAILABLE.withDescription("Unable to manipulate database.").asException());
+			responseObserver.onError(Status.UNAVAILABLE.withDescription(exception.getMostSpecificCause().getMessage()).asException());
 
 			throw exception;
 
