@@ -36,6 +36,7 @@ public class LocationEntity implements BaseEntity<LocationMessage, LocationEntit
 	private String description;
 	private String travelInformationImageUrl;
 	private String travelInformationImageHash;
+	private boolean isOnline;
 
 	@Override
 	public LocationMessage parseEntity() {
@@ -44,6 +45,7 @@ public class LocationEntity implements BaseEntity<LocationMessage, LocationEntit
 				.setId(id)
 				.setName(name)
 				.setGoogleMapUrl(googleMapUrl)
+				.setIsOnline(isOnline)
 				.build();
 
 		if (description != null) {
