@@ -201,6 +201,12 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		userEventEntity.setStatus(request.getStatus().toString());
 
+		if (request.getStatus().equals(UserEvent.Status.APPROVED)) {
+
+			userEventEntity.setTicket(createTicket());
+
+		}
+
 		UserEventEntity savedEntity = userEventRepository.save(userEventEntity);
 
 		ServiceUtil.returnObject(responseObserver, savedEntity.parseEntity().getUserEvent());
@@ -238,21 +244,25 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	@Override
 	public void generateTicket(GenerateTicketRequest request, StreamObserver<UserEvent> responseObserver) {
 
-		String ticketCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-		int ticketLength = 6;
-
-		String generatedTicket = (new Random()).ints(ticketLength, 0, ticketCharacters.length() - 1)
-				.map(ticketCharacters::charAt)
-				.collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-				.toString();
-
 		UserEventEntity userEventEntity = userEventRepository.findByUserIdAndEventId(request.getUserId(), request.getEventId());
 
-		userEventEntity.setTicket(generatedTicket);
+		userEventEntity.setTicket(createTicket());
 
 		UserEventEntity savedEntity = userEventRepository.save(userEventEntity);
 
 		ServiceUtil.returnObject(responseObserver, savedEntity.parseEntity().getUserEvent());
+	}
+
+	private String createTicket() {
+
+		String ticketCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+		int ticketLength = 6;
+
+		return (new Random()).ints(ticketLength, 0, ticketCharacters.length() - 1)
+				.map(ticketCharacters::charAt)
+				.collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+				.toString();
+
 	}
 }
