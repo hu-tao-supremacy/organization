@@ -25,6 +25,7 @@ public class LocationMessage implements BaseMessage<LocationMessage, LocationEnt
 						location.getTravelInformationImageUrl().getValue() : null)
 				.travelInformationImageHash(location.hasTravelInformationImageHash() ?
 						location.getTravelInformationImageHash().getValue() : null)
+				.isOnline(location.getIsOnline())
 				.build();
 	}
 }
