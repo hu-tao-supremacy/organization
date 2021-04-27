@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import app.onepass.apis.CheckInRequest;
 import app.onepass.apis.CreateEventRequest;
 import app.onepass.apis.Duration;
 import app.onepass.apis.Event;
@@ -247,6 +248,18 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 		UserEventEntity userEventEntity = userEventRepository.findByUserIdAndEventId(request.getUserId(), request.getEventId());
 
 		userEventEntity.setTicket(createTicket());
+
+		UserEventEntity savedEntity = userEventRepository.save(userEventEntity);
+
+		ServiceUtil.returnObject(responseObserver, savedEntity.parseEntity().getUserEvent());
+	}
+
+	@Override
+	public void checkIn(CheckInRequest request, StreamObserver<UserEvent> responseObserver) {
+
+		UserEventEntity userEventEntity = userEventRepository.findByUserIdAndEventId(request.getUserId(), request.getEventId());
+
+		userEventEntity.setStatus("ATTENDED");
 
 		UserEventEntity savedEntity = userEventRepository.save(userEventEntity);
 
