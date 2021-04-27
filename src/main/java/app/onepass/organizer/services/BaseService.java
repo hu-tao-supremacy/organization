@@ -10,6 +10,7 @@ import com.google.protobuf.Empty;
 import app.onepass.apis.AddQuestionGroupsRequest;
 import app.onepass.apis.AddQuestionsRequest;
 import app.onepass.apis.AnswerListResponse;
+import app.onepass.apis.CheckInRequest;
 import app.onepass.apis.CreateEventRequest;
 import app.onepass.apis.CreateLocationRequest;
 import app.onepass.apis.CreateOrganizationRequest;
@@ -226,6 +227,11 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 	@Override
 	public void generateTicket(GenerateTicketRequest request, StreamObserver<UserEvent> responseObserver) {
 		ExceptionCatcher.catcher(eventService::generateTicket, request, responseObserver);
+	}
+
+	@Override
+	public void checkIn(CheckInRequest request, StreamObserver<UserEvent> responseObserver) {
+		ExceptionCatcher.catcher(eventService::checkIn, request, responseObserver);
 	}
 
 	@Override

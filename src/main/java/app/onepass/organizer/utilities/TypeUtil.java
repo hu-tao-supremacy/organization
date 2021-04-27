@@ -42,6 +42,8 @@ public class TypeUtil {
 			return Status.APPROVED;
 		case "REJECTED":
 			return Status.REJECTED;
+		case "ATTENDED":
+			return Status.ATTENDED;
 		}
 
 		return Status.STATUS_UNSPECIFIED;
