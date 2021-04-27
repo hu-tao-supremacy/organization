@@ -201,7 +201,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 
 		userEventEntity.setStatus(request.getStatus().toString());
 
-		if (request.getStatus().equals(UserEvent.Status.APPROVED)) {
+		if (request.getStatus().equals(UserEvent.Status.APPROVED) && userEventEntity.getTicket() == null) {
 
 			userEventEntity.setTicket(createTicket());
 
