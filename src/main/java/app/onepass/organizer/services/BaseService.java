@@ -35,7 +35,7 @@ import app.onepass.apis.RemoveOrganizationRequest;
 import app.onepass.apis.RemoveQuestionGroupsRequest;
 import app.onepass.apis.RemoveQuestionsRequest;
 import app.onepass.apis.Tag;
-import app.onepass.apis.UpdateEventDurationRequest;
+import app.onepass.apis.UpdateEventDurationsRequest;
 import app.onepass.apis.UpdateEventRequest;
 import app.onepass.apis.UpdateLocationRequest;
 import app.onepass.apis.UpdateOrganizationRequest;
@@ -128,7 +128,8 @@ public class BaseService extends OrganizerServiceGrpc.OrganizerServiceImplBase {
 
 	@Override
 	@Transactional
-	public void updateEventDurations(UpdateEventDurationRequest request, StreamObserver<EventDurationListResponse> responseObserver) {
+	public void updateEventDurations(
+			UpdateEventDurationsRequest request, StreamObserver<EventDurationListResponse> responseObserver) {
 		ExceptionCatcher.catcher(eventService::updateEventDurations, request, responseObserver);
 	}
 

@@ -20,7 +20,7 @@ import app.onepass.apis.HasPermissionRequest;
 import app.onepass.apis.OrganizerServiceGrpc;
 import app.onepass.apis.Permission;
 import app.onepass.apis.RemoveEventRequest;
-import app.onepass.apis.UpdateEventDurationRequest;
+import app.onepass.apis.UpdateEventDurationsRequest;
 import app.onepass.apis.UpdateEventRequest;
 import app.onepass.apis.UpdateRegistrationRequestRequest;
 import app.onepass.apis.UserEvent;
@@ -141,7 +141,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	}
 
 	@Override
-	public void updateEventDurations(UpdateEventDurationRequest request, StreamObserver<EventDurationListResponse> responseObserver) {
+	public void updateEventDurations(UpdateEventDurationsRequest request, StreamObserver<EventDurationListResponse> responseObserver) {
 
 		if (!ServiceUtil.hasValidParameters(accountService, eventRepository, responseObserver, request.getUserId(),
 				request.getEventId(), Permission.EVENT_UPDATE)) {
@@ -257,7 +257,7 @@ public class EventService extends OrganizerServiceGrpc.OrganizerServiceImplBase 
 	@Override
 	public void checkIn(CheckInRequest request, StreamObserver<UserEvent> responseObserver) {
 
-		UserEventEntity userEventEntity = userEventRepository.findByUserIdAndEventId(request.getUserId(), request.getEventId());
+		UserEventEntity userEventEntity = userEventRepository.findByTicketAndEventId(request.getTicket(), request.getEventId());
 
 		userEventEntity.setStatus("ATTENDED");
 
